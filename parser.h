@@ -51,37 +51,45 @@ extern int yydebug;
   {
     psize = 258,
     pmkdisk = 259,
-    p_path = 260,
-    p_u = 261,
-    pmkdir = 262,
-    punto = 263,
-    bracketabre = 264,
-    bracketcierra = 265,
-    corcheteabre = 266,
-    corchetecierra = 267,
-    puntocoma = 268,
-    potencia = 269,
-    coma = 270,
-    parentesisabre = 271,
-    parentesiscierra = 272,
-    llaveabre = 273,
-    llavecierra = 274,
-    mas = 275,
-    menos = 276,
-    multiplicacion = 277,
-    igual = 278,
-    dolar = 279,
-    dospuntos = 280,
-    entero = 281,
-    numnegativo = 282,
-    cadena = 283,
-    identificador = 284,
-    caracter = 285,
-    ruta = 286,
-    rutacualquiera = 287,
-    suma = 288,
-    multi = 289,
-    division = 290
+    prmdisk = 260,
+    pfdisk = 261,
+    pmount = 262,
+    punmount = 263,
+    p_id = 264,
+    p_path = 265,
+    p_name = 266,
+    p_type = 267,
+    ruta_sin_espacio = 268,
+    p_u = 269,
+    pmkdir = 270,
+    punto = 271,
+    bracketabre = 272,
+    bracketcierra = 273,
+    corcheteabre = 274,
+    corchetecierra = 275,
+    puntocoma = 276,
+    potencia = 277,
+    coma = 278,
+    parentesisabre = 279,
+    parentesiscierra = 280,
+    llaveabre = 281,
+    llavecierra = 282,
+    mas = 283,
+    menos = 284,
+    multiplicacion = 285,
+    igual = 286,
+    dolar = 287,
+    dospuntos = 288,
+    entero = 289,
+    numnegativo = 290,
+    cadena = 291,
+    identificador = 292,
+    caracter = 293,
+    ruta = 294,
+    rutacualquiera = 295,
+    suma = 296,
+    multi = 297,
+    division = 298
   };
 #endif
 
@@ -89,7 +97,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 26 "parser.y"
+#line 31 "parser.y"
 
 //se especifican los tipo de valores para los no terminales y lo terminales
 //char TEXT [256];
@@ -97,9 +105,12 @@ union YYSTYPE
 char TEXT[256];
 //class obmkdisk *mdisk;
 class mkdisk *mkdisk_cmd;
+class rmdisk *rmdisk_cmd;
+class fdisk *fdisk_cmd;
+class mount *mount_cmd;
+class unmount *unmount_cmd;
 
-
-#line 103 "parser.h"
+#line 114 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

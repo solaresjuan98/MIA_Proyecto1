@@ -5,8 +5,13 @@
 #include "qdebug.h"
 #include <iostream>
 #include "obmkdisk.h"
-//
+// comandos usados
 #include "mkdisk.h"
+#include "rmdisk.h"
+#include "fdisk.h"
+#include "mount.h"
+#include "unmount.h"
+
 using namespace std;
 extern int yylineno; //linea actual donde se encuentra el parser (analisis lexico) lo maneja BISON
 extern int columna; //columna actual donde se encuentra el parser (analisis lexico) lo maneja BISON
@@ -30,15 +35,29 @@ return 0;
 char TEXT[256];
 //class obmkdisk *mdisk;
 class mkdisk *mkdisk_cmd;
-
+class rmdisk *rmdisk_cmd;
+class fdisk *fdisk_cmd;
+class mount *mount_cmd;
+class unmount *unmount_cmd;
 }
 //TERMINALES DE TIPO TEXT, SON STRINGS
 
 %token<TEXT> psize;
 %token<TEXT> pmkdisk;
+%token<TEXT> prmdisk;
+%token<TEXT> pfdisk;
+%token<TEXT> pmount;
+%token<TEXT> punmount;
+
+%token<TEXT> p_id;
 %token<TEXT> p_path;
+%token<TEXT> p_name;
+%token<TEXT> p_type;
+%token<TEXT> ruta_sin_espacio;
 %token<TEXT> p_u;
 %token<TEXT> pmkdir;
+
+
 %token<TEXT> punto;
 %token<TEXT> bracketabre;
 %token<TEXT> bracketcierra;
@@ -71,8 +90,13 @@ class mkdisk *mkdisk_cmd;
 
 
 
+// Comandos usados
+%type<mkdisk_cmd> COMANDOMKDISK;
+%type<rmdisk_cmd> COMANDORMDISK;
+%type<fdisk_cmd> COMANDOFDISK;
+%type<mount_cmd> COMANDOMOUNT;
+%type<unmount_cmd> COMANDOUNMOUNT;
 
-%type<mkdisk_cmd> COMANDOMKDISK; // lista de instrucciones
 
 %left suma menos
 %left multi division
@@ -85,17 +109,55 @@ INICIO : LEXPA { }
 
 LEXPA:  pmkdisk COMANDOMKDISK
 {
-
-
-$2->mostrarDatos($2);//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
-printf("\nHello!!!\n");
+    $2->mostrarDatos($2);//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
+    printf("\ejecutado!!!\n");
 }
-
-
+| prmdisk COMANDORMDISK
+{
+    printf("\n >> Ejecutando comando rmdisk");
+}
+| pfdisk COMANDOFDISK
+{
+    printf("\n >> Ejecutando comando fdisk... \n");
+}
+| pmount COMANDOMOUNT
+{
+    printf("\n >> Ejecutando comando mount... \n");
+}
+| punmount COMANDOUNMOUNT
+{
+    printf("\n >> Ejecutando comando unmount... \n");
+}
 ;
 
 COMANDOMKDISK:
-//menos psize igual entero {int tam=atoi($4); obmkdisk *disco=new obmkdisk(); disco->size=tam;  $$=disco;}
-menos psize igual entero menos p_u igual identificador menos p_path igual cadena {int tam=atoi($4); mkdisk *disco=new mkdisk(); disco->tamanio=tam;  $$=disco;}
+// –size=5 –u=M –path="/home/mis discos/Disco3.dk"
+menos psize igual entero menos p_u igual identificador menos p_path igual cadena {int tam=atoi($4); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  $$=disco;}
+// -path=/ruta/archivo -u=K -size=entero
+| menos p_path igual ruta_sin_espacio menos p_u igual identificador menos psize igual entero {int tam=atoi($12); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  $$=disco;}
+// -size=entero -path="ruta entre comillas"
+| menos psize igual entero menos p_path igual cadena {int tam=atoi($4); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  $$=disco;}
+// -size=entero -path=/ruta/archivo
+| menos psize igual entero menos p_path igual ruta_sin_espacio {int tam=atoi($4); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  $$=disco;}
 
+;
+
+
+COMANDORMDISK:
+menos p_path igual cadena {}
+| menos p_path igual ruta_sin_espacio {}
+;
+
+COMANDOFDISK:
+// fdisk –Size=300 –path=/home/Disco1.disk –name=Particion1
+menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual identificador {}
+;
+
+COMANDOMOUNT:
+menos p_path igual ruta_sin_espacio menos p_name igual identificador {}
+| menos p_path igual cadena menos p_name igual identificador {}
+;
+
+COMANDOUNMOUNT:
+ menos p_id igual identificador {}
 ;

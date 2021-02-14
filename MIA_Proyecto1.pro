@@ -13,7 +13,11 @@ SOURCES += main.cpp \
     parser.cpp \
     scanner.cpp \
     obmkdisk.cpp \
-    mkdisk.cpp
+    mkdisk.cpp \
+    rmdisk.cpp \
+    fdisk.cpp \
+    mount.cpp \
+    unmount.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -35,4 +39,8 @@ HEADERS += \
     parser.h \
     scanner.h \
     obmkdisk.h \
-    mkdisk.h
+    mkdisk.h \
+    rmdisk.h \
+    fdisk.h \
+    mount.h \
+    unmount.h
