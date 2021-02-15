@@ -131,8 +131,31 @@ LEXPA:  pmkdisk COMANDOMKDISK
 ;
 
 COMANDOMKDISK:
-// –size=5 –u=M –path="/home/mis discos/Disco3.dk"
-menos psize igual entero menos p_u igual identificador menos p_path igual cadena {int tam=atoi($4); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  $$=disco;}
+// –size=5 –u=m –path="/home/juan/Desktop"
+menos psize igual entero menos p_u igual identificador menos p_path igual cadena
+    {
+        int tam=atoi($4);
+        string comilla = "\"";
+        std::string unidad = $8;
+        std::string ruta = $12;
+        mkdisk *disco=new mkdisk();
+        cout << ruta << endl;
+        disco->setTamanio(tam);
+        disco->setUnidad(unidad);
+
+        size_t pos = 0;
+        std::string ruta_final;
+        while ((pos = ruta.find(comilla)) != std::string::npos) {
+            ruta_final = ruta.substr(0, pos);
+            std::cout << ruta_final << std::endl;
+            ruta.erase(0, pos + comilla.length());
+        }
+        cout << ruta_final << endl;
+        disco->setRuta(ruta_final);
+        //disco->setRuta("/home/juan/Desktop/Prueba.dk");
+        disco->crearDisco(disco);
+        $$=disco;
+    }
 // -path=/ruta/archivo -u=K -size=entero
 | menos p_path igual ruta_sin_espacio menos p_u igual identificador menos psize igual entero {int tam=atoi($12); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  $$=disco;}
 // -size=entero -path="ruta entre comillas"

@@ -2,6 +2,8 @@
 #define MKDISK_H
 
 #include <iostream>
+#include <string.h>
+#include <string>
 using namespace std;
 class mkdisk
 {
@@ -10,21 +12,28 @@ private:
     // Atributos:
     int tamanio;
     string ruta;
+    string unidad;
 
 public:
 
-    // Métodos:
+    /**
+     ** Métodos:
+     * */
     mkdisk();
     void ejecutarMkdisk();
     void mostrarDatos(mkdisk *disco);
+    void crearDisco(mkdisk *disco);
 
-    // Getters y setters
-    void setTamanio(int tamanio);
+
+    // Getters
     int getTamanio();
-
-    void setRuta(string ruta);
     string getRuta();
+    string getUnidad();
 
+    // Setters
+    void setTamanio(int tamanio);
+    void setRuta(string ruta);
+    void setUnidad(string unidad);
 
 };
 

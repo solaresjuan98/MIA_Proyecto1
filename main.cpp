@@ -4,6 +4,7 @@
 #include <parser.h>  // Nuestro parser
 #include <scanner.h>  // Nuestro scanner
 #include <QTextStream>
+#include "mkdisk.h"
 using namespace std;
 extern int yyparse(); //
 //static QList<discosmontados> discosenmemoria;
@@ -14,6 +15,13 @@ extern int yylineno;
 int main(int argc, char *argv[])
 {
 
+    /*mkdisk *disco = new mkdisk();
+    disco->setTamanio(1);
+    disco->setUnidad("m");
+    disco->setRuta("/home/juan/Desktop/Disco3.dk");
+    cout << disco->getRuta() <<endl;
+    disco->crearDisco(disco);
+    */
     QTextStream qtin(stdin);
     QString line;
 
@@ -24,13 +32,11 @@ int main(int argc, char *argv[])
             if(line.isEmpty()==false){
                 YY_BUFFER_STATE buffer = yy_scan_string(line.toUtf8().constData());
 
-                /*Limpiamos los contadores
-                    ya que son variables globales*/
                 linea = 0;
                 columna = 0;
                 yylineno = 0;
 
-                if(yyparse()==0) // Si nos da un número negativo, signifca error.
+                if(yyparse()==0) // Si nos da un número negativo, es error.
                 {
                     //printf("\n\Comando ejecutado correctamente\n\n");
 
@@ -44,5 +50,5 @@ int main(int argc, char *argv[])
 
     }
 
-
+    //return 0;
 }
