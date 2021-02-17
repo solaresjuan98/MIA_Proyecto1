@@ -1,5 +1,7 @@
 #include "mkdisk.h"
 #include <cstdio>
+#include "estructuras.h"
+
 mkdisk::mkdisk() {}
 
 // Getters y setters
@@ -29,6 +31,7 @@ void mkdisk::mostrarDatos(mkdisk *disco) {
 
 void mkdisk::crearDisco(mkdisk *disco) {
 
+  mbr prueba_mbr;
   FILE *archivo;
   //cout << disco->getRuta() <<endl;
   archivo = fopen(disco->getRuta().c_str(), "wb");
@@ -52,6 +55,7 @@ void mkdisk::crearDisco(mkdisk *disco) {
     }
 
     fclose(archivo);
+    //si son megas
   } else if (disco->getUnidad() == "m" || disco->getUnidad().empty() == 1) {
       cout << "no f" <<endl;
     for (int i = 0; i < 1024; i++) {
@@ -60,6 +64,22 @@ void mkdisk::crearDisco(mkdisk *disco) {
         fwrite(&buffer, 1024, 1, archivo);
       }
       fclose(archivo);
+    }
+
+    // **** Etiqueta única para el disco ****
+    prueba_mbr.mbr_disk_signature = (rand() %100);
+
+    string fechaPrueba = "15/02/2020 21:38";
+
+    particion particion_vacia;
+    particion_vacia.part_status = '0';
+    particion_vacia.part_type = '-';
+    particion_vacia.part_start = -1;
+    particion_vacia.part_size = -1;
+    particion_vacia.part_name[0] = '\0';
+
+    for(int i = 0; i < 4; i++){
+        prueba_mbr.mbr_particions[i] = particion_vacia;
     }
   }
 }

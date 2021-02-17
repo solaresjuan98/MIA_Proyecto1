@@ -147,17 +147,24 @@ menos psize igual entero menos p_u igual identificador menos p_path igual cadena
         std::string ruta_final;
         while ((pos = ruta.find(comilla)) != std::string::npos) {
             ruta_final = ruta.substr(0, pos);
-            std::cout << ruta_final << std::endl;
+            //std::cout << ruta_final << std::endl;
             ruta.erase(0, pos + comilla.length());
         }
-        cout << ruta_final << endl;
         disco->setRuta(ruta_final);
-        //disco->setRuta("/home/juan/Desktop/Prueba.dk");
         disco->crearDisco(disco);
         $$=disco;
     }
 // -path=/ruta/archivo -u=K -size=entero
-| menos p_path igual ruta_sin_espacio menos p_u igual identificador menos psize igual entero {int tam=atoi($12); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  $$=disco;}
+| menos p_path igual ruta_sin_espacio menos p_u igual identificador menos psize igual entero
+    {
+        int tam=atoi($12);
+        mkdisk *disco=new mkdisk();
+        disco->setTamanio(tam);
+        std::string ruta = $4;
+        std::string unidad = $8;
+
+        $$=disco;
+    }
 // -size=entero -path="ruta entre comillas"
 | menos psize igual entero menos p_path igual cadena {int tam=atoi($4); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  $$=disco;}
 // -size=entero -path=/ruta/archivo
@@ -167,8 +174,21 @@ menos psize igual entero menos p_u igual identificador menos p_path igual cadena
 
 
 COMANDORMDISK:
-menos p_path igual cadena {}
-| menos p_path igual ruta_sin_espacio {}
+menos p_path igual cadena
+{
+    std::string rutaBorrar = $4;
+    rmdisk *discoBorrar = new rmdisk();
+    discoBorrar->borrarDisco(rutaBorrar);
+    $$=discoBorrar;
+
+}
+| menos p_path igual ruta_sin_espacio
+{
+    std::string rutaBorrar = $4;
+    rmdisk *discoBorrar = new rmdisk();
+    discoBorrar->borrarDisco(rutaBorrar);
+    $$=discoBorrar;
+}
 ;
 
 COMANDOFDISK:

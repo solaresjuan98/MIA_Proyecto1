@@ -598,7 +598,7 @@ static const yytype_int8 yytranslate[] =
 static const yytype_uint8 yyrline[] =
 {
        0,   107,   107,   110,   115,   119,   123,   127,   135,   160,
-     162,   164,   170,   171,   176,   180,   181,   185
+     162,   164,   170,   178,   189,   193,   194,   198
 };
 #endif
 
@@ -1589,10 +1589,10 @@ yyreduce:
         std::string ruta_final;
         while ((pos = ruta.find(comilla)) != std::string::npos) {
             ruta_final = ruta.substr(0, pos);
-            std::cout << ruta_final << std::endl;
+            //std::cout << ruta_final << std::endl;
             ruta.erase(0, pos + comilla.length());
         }
-        cout << ruta_final << endl;
+        //cout << ruta_final << endl;
         disco->setRuta(ruta_final);
         //disco->setRuta("/home/juan/Desktop/Prueba.dk");
         disco->crearDisco(disco);
@@ -1620,43 +1620,54 @@ yyreduce:
     break;
 
   case 12:
-#line 170 "parser.y"
-                          {}
-#line 1626 "parser.cpp"
-    break;
-
-  case 13:
 #line 171 "parser.y"
-                                      {}
+{
+    std::string rutaBorrar = (yyvsp[0].TEXT);
+    rmdisk *discoBorrar = new rmdisk();
+    discoBorrar->borrarDisco(rutaBorrar);
+    (yyval.rmdisk_cmd)=discoBorrar;
+
+}
 #line 1632 "parser.cpp"
     break;
 
+  case 13:
+#line 179 "parser.y"
+{
+    std::string rutaBorrar = (yyvsp[0].TEXT);
+    rmdisk *discoBorrar = new rmdisk();
+    discoBorrar->borrarDisco(rutaBorrar);
+    (yyval.rmdisk_cmd)=discoBorrar;
+}
+#line 1643 "parser.cpp"
+    break;
+
   case 14:
-#line 176 "parser.y"
+#line 189 "parser.y"
                                                                                               {}
-#line 1638 "parser.cpp"
+#line 1649 "parser.cpp"
     break;
 
   case 15:
-#line 180 "parser.y"
+#line 193 "parser.y"
                                                                      {}
-#line 1644 "parser.cpp"
+#line 1655 "parser.cpp"
     break;
 
   case 16:
-#line 181 "parser.y"
+#line 194 "parser.y"
                                                              {}
-#line 1650 "parser.cpp"
+#line 1661 "parser.cpp"
     break;
 
   case 17:
-#line 185 "parser.y"
+#line 198 "parser.y"
                                 {}
-#line 1656 "parser.cpp"
+#line 1667 "parser.cpp"
     break;
 
 
-#line 1660 "parser.cpp"
+#line 1671 "parser.cpp"
 
       default: break;
     }
