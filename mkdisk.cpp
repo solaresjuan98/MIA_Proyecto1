@@ -67,12 +67,12 @@ void mkdisk::crearDisco(mkdisk *disco) {
 
     for (int i = 0; i < 1024; i++) {
       buffer[i] = '\0';
-      for (int j = 0; j < (disco->getTamanio() * 1024); i++) {
-        fwrite(&buffer, 1024, 1, archivo);
-      }
-      fclose(archivo);
+            for (int j = 0; j < (disco->getTamanio() * 1024); i++) {
+                fwrite(&buffer, 1024, 1, archivo);
+            }
+            fclose(archivo);
+        }
     }
-
     // **** Etiqueta única para el disco ****
 
     string fechaPrueba = "15/02/2020 21:38";
@@ -82,7 +82,7 @@ void mkdisk::crearDisco(mkdisk *disco) {
     strcpy(prueba_mbr.mbr_fecha_creacion, fechaPrueba.c_str());
 
 
-    if(disco->getAjuste().empty() == true){
+    if(disco->getAjuste().empty()){
         strcpy(&prueba_mbr.disk_fit, "F");
     }else{
         strcpy(&prueba_mbr.disk_fit, disco->getAjuste().c_str());
@@ -113,5 +113,5 @@ void mkdisk::crearDisco(mkdisk *disco) {
         cout << " Error. MBR no creado. " <<endl;
     }
 
-  }
+
 }
