@@ -18,6 +18,14 @@ void mkdisk::setUnidad(string unidad) { this->unidad = unidad; }
 
 string mkdisk::getUnidad() { return this->unidad; }
 
+void mkdisk::setFechaCreacion(string fecha) { this->fecha_creacion = fecha; }
+
+string mkdisk::getFechaCreacion() { return this->fecha_creacion; }
+
+void mkdisk::setAjuste(string ajuste) { this->ajuste = ajuste; }
+
+string mkdisk::getAjuste() { return this->ajuste; }
+
 // ********************
 
 void mkdisk::ejecutarMkdisk() {
@@ -55,9 +63,8 @@ void mkdisk::crearDisco(mkdisk *disco) {
     }
 
     fclose(archivo);
-    //si son megas
-  } else if (disco->getUnidad() == "m" || disco->getUnidad().empty() == 1) {
-      cout << "no f" <<endl;
+  } else if (disco->getUnidad() == "m" || disco->getUnidad() == "M" || disco->getUnidad().empty() == 1) {
+
     for (int i = 0; i < 1024; i++) {
       buffer[i] = '\0';
       for (int j = 0; j < (disco->getTamanio() * 1024); i++) {
@@ -67,9 +74,20 @@ void mkdisk::crearDisco(mkdisk *disco) {
     }
 
     // **** Etiqueta única para el disco ****
-    prueba_mbr.mbr_disk_signature = (rand() %100);
 
     string fechaPrueba = "15/02/2020 21:38";
+    disco->setFechaCreacion(fechaPrueba);
+
+    prueba_mbr.mbr_disk_signature = (rand() %100);
+    strcpy(prueba_mbr.mbr_fecha_creacion, fechaPrueba.c_str());
+
+
+    if(disco->getAjuste().empty() == true){
+        strcpy(&prueba_mbr.disk_fit, "F");
+    }else{
+        strcpy(&prueba_mbr.disk_fit, disco->getAjuste().c_str());
+    }
+
 
     particion particion_vacia;
     particion_vacia.part_status = '0';
@@ -81,5 +99,19 @@ void mkdisk::crearDisco(mkdisk *disco) {
     for(int i = 0; i < 4; i++){
         prueba_mbr.mbr_particions[i] = particion_vacia;
     }
+
+    archivo = fopen(disco->getRuta().c_str(), "rb+");
+
+    if(archivo != NULL){
+        fseek(archivo, 0, SEEK_SET);
+        fwrite(&prueba_mbr, sizeof(mbr), 1, archivo);
+        fclose(archivo);
+        cout << " Disco creado correctanmente. " <<endl;
+        cout << " Se agrego el mbr de forma correcta. " <<endl;
+
+    }else{
+        cout << " Error. MBR no creado. " <<endl;
+    }
+
   }
 }

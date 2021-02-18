@@ -109,8 +109,8 @@ INICIO : LEXPA { }
 
 LEXPA:  pmkdisk COMANDOMKDISK
 {
-    $2->mostrarDatos($2);//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
-    printf("\ejecutado!!!\n");
+    //$2->mostrarDatos($2);//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
+    printf("\n ejecutado!!!\n");
 }
 | prmdisk COMANDORMDISK
 {
@@ -136,15 +136,15 @@ menos psize igual entero menos p_u igual identificador menos p_path igual cadena
     {
         int tam=atoi($4);
         string comilla = "\"";
-        std::string unidad = $8;
-        std::string ruta = $12;
+        string unidad = $8;
+        string ruta = $12;
         mkdisk *disco=new mkdisk();
-        cout << ruta << endl;
+        //cout << ruta << endl;
         disco->setTamanio(tam);
         disco->setUnidad(unidad);
 
         size_t pos = 0;
-        std::string ruta_final;
+        string ruta_final;
         while ((pos = ruta.find(comilla)) != std::string::npos) {
             ruta_final = ruta.substr(0, pos);
             //std::cout << ruta_final << std::endl;
@@ -160,15 +160,48 @@ menos psize igual entero menos p_u igual identificador menos p_path igual cadena
         int tam=atoi($12);
         mkdisk *disco=new mkdisk();
         disco->setTamanio(tam);
-        std::string ruta = $4;
-        std::string unidad = $8;
+        string ruta = $4;
+        string unidad = $8;
+
+        disco->setTamanio(tam);
+        disco->setUnidad(unidad);
+        disco->crearDisco(disco);
 
         $$=disco;
     }
 // -size=entero -path="ruta entre comillas"
-| menos psize igual entero menos p_path igual cadena {int tam=atoi($4); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  $$=disco;}
+| menos psize igual entero menos p_path igual cadena
+    {
+        int tam=atoi($4);
+        string comilla = "\"";
+        mkdisk *disco=new mkdisk();
+        string ruta = $8;
+        disco->setTamanio(tam);
+        disco->setUnidad("k");
+        size_t pos = 0;
+        string ruta_final;
+        while ((pos = ruta.find(comilla)) != std::string::npos) {
+            ruta_final = ruta.substr(0, pos);
+            //std::cout << ruta_final << std::endl;
+            ruta.erase(0, pos + comilla.length());
+        }
+        disco->setRuta(ruta_final);
+        disco->crearDisco(disco);
+        $$=disco;
+    }
 // -size=entero -path=/ruta/archivo
-| menos psize igual entero menos p_path igual ruta_sin_espacio {int tam=atoi($4); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  $$=disco;}
+| menos psize igual entero menos p_path igual ruta_sin_espacio
+    {
+        int tam=atoi($4);
+        string ruta = $8;
+        mkdisk *disco=new mkdisk();
+        disco->setTamanio(tam);
+        disco->setRuta(ruta);
+        disco->setUnidad("k");
+        disco->crearDisco(disco);
+        $$=disco;
+
+    }
 
 ;
 

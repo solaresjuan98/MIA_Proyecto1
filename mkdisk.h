@@ -13,6 +13,8 @@ private:
     int tamanio;
     string ruta;
     string unidad;
+    string fecha_creacion;
+    string ajuste;
 
 public:
 
@@ -29,11 +31,15 @@ public:
     int getTamanio();
     string getRuta();
     string getUnidad();
+    string getFechaCreacion();
+    string getAjuste();
 
     // Setters
     void setTamanio(int tamanio);
     void setRuta(string ruta);
     void setUnidad(string unidad);
+    void setFechaCreacion(string fecha);
+    void setAjuste(string ajuste);
 
 };
 

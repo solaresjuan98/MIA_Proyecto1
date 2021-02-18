@@ -597,8 +597,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   107,   107,   110,   115,   119,   123,   127,   135,   160,
-     162,   164,   170,   178,   189,   193,   194,   198
+       0,   107,   107,   110,   115,   119,   123,   127,   135,   158,
+     173,   193,   210,   218,   229,   233,   234,   238
 };
 #endif
 
@@ -1535,8 +1535,8 @@ yyreduce:
   case 3:
 #line 111 "parser.y"
 {
-    (yyvsp[0].mkdisk_cmd)->mostrarDatos((yyvsp[0].mkdisk_cmd));//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
-    printf("\ejecutado!!!\n");
+    //$2->mostrarDatos($2);//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
+    printf("\n ejecutado!!!\n");
 }
 #line 1542 "parser.cpp"
     break;
@@ -1578,49 +1578,86 @@ yyreduce:
     {
         int tam=atoi((yyvsp[-8].TEXT));
         string comilla = "\"";
-        std::string unidad = (yyvsp[-4].TEXT);
-        std::string ruta = (yyvsp[0].TEXT);
+        string unidad = (yyvsp[-4].TEXT);
+        string ruta = (yyvsp[0].TEXT);
         mkdisk *disco=new mkdisk();
-        cout << ruta << endl;
+        //cout << ruta << endl;
         disco->setTamanio(tam);
         disco->setUnidad(unidad);
 
         size_t pos = 0;
-        std::string ruta_final;
+        string ruta_final;
         while ((pos = ruta.find(comilla)) != std::string::npos) {
             ruta_final = ruta.substr(0, pos);
             //std::cout << ruta_final << std::endl;
             ruta.erase(0, pos + comilla.length());
         }
-        //cout << ruta_final << endl;
         disco->setRuta(ruta_final);
-        //disco->setRuta("/home/juan/Desktop/Prueba.dk");
         disco->crearDisco(disco);
         (yyval.mkdisk_cmd)=disco;
     }
-#line 1602 "parser.cpp"
+#line 1600 "parser.cpp"
     break;
 
   case 9:
-#line 160 "parser.y"
-                                                                                             {int tam=atoi((yyvsp[0].TEXT)); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  (yyval.mkdisk_cmd)=disco;}
-#line 1608 "parser.cpp"
+#line 159 "parser.y"
+    {
+        int tam=atoi((yyvsp[0].TEXT));
+        mkdisk *disco=new mkdisk();
+        disco->setTamanio(tam);
+        string ruta = (yyvsp[-8].TEXT);
+        string unidad = (yyvsp[-4].TEXT);
+
+        disco->setTamanio(tam);
+        disco->setUnidad(unidad);
+        disco->crearDisco(disco);
+
+        (yyval.mkdisk_cmd)=disco;
+    }
+#line 1618 "parser.cpp"
     break;
 
   case 10:
-#line 162 "parser.y"
-                                                     {int tam=atoi((yyvsp[-4].TEXT)); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  (yyval.mkdisk_cmd)=disco;}
-#line 1614 "parser.cpp"
+#line 174 "parser.y"
+    {
+        int tam=atoi((yyvsp[-4].TEXT));
+        string comilla = "\"";
+        mkdisk *disco=new mkdisk();
+        string ruta = (yyvsp[0].TEXT);
+        disco->setTamanio(tam);
+        disco->setUnidad("k");
+        size_t pos = 0;
+        string ruta_final;
+        while ((pos = ruta.find(comilla)) != std::string::npos) {
+            ruta_final = ruta.substr(0, pos);
+            //std::cout << ruta_final << std::endl;
+            ruta.erase(0, pos + comilla.length());
+        }
+        disco->setRuta(ruta_final);
+        disco->crearDisco(disco);
+        (yyval.mkdisk_cmd)=disco;
+    }
+#line 1641 "parser.cpp"
     break;
 
   case 11:
-#line 164 "parser.y"
-                                                               {int tam=atoi((yyvsp[-4].TEXT)); mkdisk *disco=new mkdisk(); disco->setTamanio(tam);  (yyval.mkdisk_cmd)=disco;}
-#line 1620 "parser.cpp"
+#line 194 "parser.y"
+    {
+        int tam=atoi((yyvsp[-4].TEXT));
+        string ruta = (yyvsp[0].TEXT);
+        mkdisk *disco=new mkdisk();
+        disco->setTamanio(tam);
+        disco->setRuta(ruta);
+        disco->setUnidad("k");
+        disco->crearDisco(disco);
+        (yyval.mkdisk_cmd)=disco;
+
+    }
+#line 1657 "parser.cpp"
     break;
 
   case 12:
-#line 171 "parser.y"
+#line 211 "parser.y"
 {
     std::string rutaBorrar = (yyvsp[0].TEXT);
     rmdisk *discoBorrar = new rmdisk();
@@ -1628,46 +1665,46 @@ yyreduce:
     (yyval.rmdisk_cmd)=discoBorrar;
 
 }
-#line 1632 "parser.cpp"
+#line 1669 "parser.cpp"
     break;
 
   case 13:
-#line 179 "parser.y"
+#line 219 "parser.y"
 {
     std::string rutaBorrar = (yyvsp[0].TEXT);
     rmdisk *discoBorrar = new rmdisk();
     discoBorrar->borrarDisco(rutaBorrar);
     (yyval.rmdisk_cmd)=discoBorrar;
 }
-#line 1643 "parser.cpp"
+#line 1680 "parser.cpp"
     break;
 
   case 14:
-#line 189 "parser.y"
+#line 229 "parser.y"
                                                                                               {}
-#line 1649 "parser.cpp"
+#line 1686 "parser.cpp"
     break;
 
   case 15:
-#line 193 "parser.y"
+#line 233 "parser.y"
                                                                      {}
-#line 1655 "parser.cpp"
+#line 1692 "parser.cpp"
     break;
 
   case 16:
-#line 194 "parser.y"
+#line 234 "parser.y"
                                                              {}
-#line 1661 "parser.cpp"
+#line 1698 "parser.cpp"
     break;
 
   case 17:
-#line 198 "parser.y"
+#line 238 "parser.y"
                                 {}
-#line 1667 "parser.cpp"
+#line 1704 "parser.cpp"
     break;
 
 
-#line 1671 "parser.cpp"
+#line 1708 "parser.cpp"
 
       default: break;
     }
