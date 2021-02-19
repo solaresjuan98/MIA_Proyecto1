@@ -1,6 +1,6 @@
 #include "mkdisk.h"
-#include <cstdio>
 #include "estructuras.h"
+#include <cstdio>
 
 mkdisk::mkdisk() {}
 
@@ -41,11 +41,11 @@ void mkdisk::crearDisco(mkdisk *disco) {
 
   mbr prueba_mbr;
   FILE *archivo;
-  //cout << disco->getRuta() <<endl;
+  // cout << disco->getRuta() <<endl;
   archivo = fopen(disco->getRuta().c_str(), "wb");
-    //archivo = fopen("Disco1", "wb");
+  // archivo = fopen("Disco1", "wb");
   if (archivo == NULL) {
-    cout << errno <<endl;
+    cout << errno << endl;
     exit(1);
   }
 
@@ -63,55 +63,52 @@ void mkdisk::crearDisco(mkdisk *disco) {
     }
 
     fclose(archivo);
-  } else if (disco->getUnidad() == "m" || disco->getUnidad() == "M" || disco->getUnidad().empty() == 1) {
+  } else if (disco->getUnidad() == "m" || disco->getUnidad() == "M" ||
+             disco->getUnidad().empty() == 1) {
 
     for (int i = 0; i < 1024; i++) {
       buffer[i] = '\0';
-            for (int j = 0; j < (disco->getTamanio() * 1024); i++) {
-                fwrite(&buffer, 1024, 1, archivo);
-            }
-            fclose(archivo);
-        }
+      for (int j = 0; j < (disco->getTamanio() * 1024); i++) {
+        fwrite(&buffer, 1024, 1, archivo);
+      }
+      fclose(archivo);
     }
-    // **** Etiqueta única para el disco ****
+  }
+  // **** Etiqueta única para el disco ****
 
-    string fechaPrueba = "15/02/2020 21:38";
-    disco->setFechaCreacion(fechaPrueba);
+  string fechaPrueba = "15/02/2020 21:38";
+  disco->setFechaCreacion(fechaPrueba);
 
-    prueba_mbr.mbr_disk_signature = (rand() %100);
-    strcpy(prueba_mbr.mbr_fecha_creacion, fechaPrueba.c_str());
+  prueba_mbr.mbr_disk_signature = (rand() % 100);
+  strcpy(prueba_mbr.mbr_fecha_creacion, fechaPrueba.c_str());
 
+  if (disco->getAjuste().empty()) {
+    strcpy(&prueba_mbr.disk_fit, "F");
+  } else {
+    strcpy(&prueba_mbr.disk_fit, disco->getAjuste().c_str());
+  }
 
-    if(disco->getAjuste().empty()){
-        strcpy(&prueba_mbr.disk_fit, "F");
-    }else{
-        strcpy(&prueba_mbr.disk_fit, disco->getAjuste().c_str());
-    }
+  particion particion_vacia;
+  particion_vacia.part_status = '0';
+  particion_vacia.part_type = '-';
+  particion_vacia.part_start = -1;
+  particion_vacia.part_size = -1;
+  particion_vacia.part_name[0] = '\0';
 
+  for (int i = 0; i < 4; i++) {
+    prueba_mbr.mbr_particions[i] = particion_vacia;
+  }
 
-    particion particion_vacia;
-    particion_vacia.part_status = '0';
-    particion_vacia.part_type = '-';
-    particion_vacia.part_start = -1;
-    particion_vacia.part_size = -1;
-    particion_vacia.part_name[0] = '\0';
+  archivo = fopen(disco->getRuta().c_str(), "rb+");
 
-    for(int i = 0; i < 4; i++){
-        prueba_mbr.mbr_particions[i] = particion_vacia;
-    }
+  if (archivo != NULL) {
+    fseek(archivo, 0, SEEK_SET);
+    fwrite(&prueba_mbr, sizeof(mbr), 1, archivo);
+    fclose(archivo);
+    cout << " Disco creado correctanmente. " << endl;
+    cout << " Se agrego el mbr de forma correcta. " << endl;
 
-    archivo = fopen(disco->getRuta().c_str(), "rb+");
-
-    if(archivo != NULL){
-        fseek(archivo, 0, SEEK_SET);
-        fwrite(&prueba_mbr, sizeof(mbr), 1, archivo);
-        fclose(archivo);
-        cout << " Disco creado correctanmente. " <<endl;
-        cout << " Se agrego el mbr de forma correcta. " <<endl;
-
-    }else{
-        cout << " Error. MBR no creado. " <<endl;
-    }
-
-
+  } else {
+    cout << " Error. MBR no creado. " << endl;
+  }
 }

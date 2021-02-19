@@ -55,6 +55,11 @@ class unmount *unmount_cmd;
 %token<TEXT> p_type;
 %token<TEXT> ruta_sin_espacio;
 %token<TEXT> p_u;
+%token<TEXT> p_f;
+%token<TEXT> p_fast;
+%token<TEXT> p_delete;
+%token<TEXT> p_full;
+%token<TEXT> p_add;
 %token<TEXT> pmkdir;
 
 
@@ -112,6 +117,7 @@ LEXPA:  pmkdisk COMANDOMKDISK
     //$2->mostrarDatos($2);//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
     printf("\n ejecutado!!!\n");
 }
+
 | prmdisk COMANDORMDISK
 {
     printf("\n >> Ejecutando comando rmdisk");
@@ -225,8 +231,58 @@ menos p_path igual cadena
 ;
 
 COMANDOFDISK:
-// fdisk –Size=300 –path=/home/Disco1.disk –name=Particion1
-menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual identificador {}
+// –Size=300 –path=/home/Disco1.disk –name=Particion1
+menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual identificador
+    {
+        int tamanio = atoi($4);
+        string ruta = $8;
+        string nombreDisco = $12;
+
+        fdisk *disco = new fdisk();
+        disco->setTamanio(tamanio);
+        disco->setNombre(nombreDisco);
+        disco->setRuta(ruta);
+        disco->setUnidad("k");
+        disco->setTipo("P");
+        disco->setAjuste("W");
+        disco->crearParticion(disco);
+        disco->mostrarDatosDisco(ruta);
+        $$ = disco;
+
+
+
+    }
+// -type=E –path=/home/Disco1.disk -U=k –name=Particion1 -size=300
+| menos p_type igual identificador menos p_path igual ruta_sin_espacio menos p_u igual identificador p_name psize igual entero
+    {
+
+    }
+// -size=1 -type=L -u=M -f=BF -path="/mis discos/Disco3.disk" -name="Particion3"
+| menos psize igual entero menos p_type igual identificador menos p_u igual identificador menos p_f igual identificador
+  menos p_path igual cadena menos p_name igual cadena
+    {
+
+    }
+// -delete=fast -name="Particion1" -path=/home/Disco1.dk
+| menos p_delete igual p_fast menos p_name igual cadena menos p_path igual ruta_sin_espacio
+    {
+
+    }
+// -name=Particion1 -delete=full -path=/home/Disco1.disk
+| menos p_name igual identificador menos p_delete igual p_full menos p_path igual ruta_sin_espacio
+    {
+
+    }
+// -add=1 -u=M -path="/home/mis discos/Disco4.dk" -name="Particion 4"
+| menos p_add igual entero menos p_u igual identificador menos p_path igual cadena menos p_name igual cadena
+    {
+
+    }
+// -add=1 -u=M -path="/home/juan/Desktop/Disco.dk" -name="Particion 4"
+| menos p_add entero menos p_u igual identificador menos p_path igual cadena menos p_name igual cadena
+    {
+
+    }
 ;
 
 COMANDOMOUNT:

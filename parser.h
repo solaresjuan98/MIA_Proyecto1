@@ -61,35 +61,40 @@ extern int yydebug;
     p_type = 267,
     ruta_sin_espacio = 268,
     p_u = 269,
-    pmkdir = 270,
-    punto = 271,
-    bracketabre = 272,
-    bracketcierra = 273,
-    corcheteabre = 274,
-    corchetecierra = 275,
-    puntocoma = 276,
-    potencia = 277,
-    coma = 278,
-    parentesisabre = 279,
-    parentesiscierra = 280,
-    llaveabre = 281,
-    llavecierra = 282,
-    mas = 283,
-    menos = 284,
-    multiplicacion = 285,
-    igual = 286,
-    dolar = 287,
-    dospuntos = 288,
-    entero = 289,
-    numnegativo = 290,
-    cadena = 291,
-    identificador = 292,
-    caracter = 293,
-    ruta = 294,
-    rutacualquiera = 295,
-    suma = 296,
-    multi = 297,
-    division = 298
+    p_f = 270,
+    p_fast = 271,
+    p_delete = 272,
+    p_full = 273,
+    p_add = 274,
+    pmkdir = 275,
+    punto = 276,
+    bracketabre = 277,
+    bracketcierra = 278,
+    corcheteabre = 279,
+    corchetecierra = 280,
+    puntocoma = 281,
+    potencia = 282,
+    coma = 283,
+    parentesisabre = 284,
+    parentesiscierra = 285,
+    llaveabre = 286,
+    llavecierra = 287,
+    mas = 288,
+    menos = 289,
+    multiplicacion = 290,
+    igual = 291,
+    dolar = 292,
+    dospuntos = 293,
+    entero = 294,
+    numnegativo = 295,
+    cadena = 296,
+    identificador = 297,
+    caracter = 298,
+    ruta = 299,
+    rutacualquiera = 300,
+    suma = 301,
+    multi = 302,
+    division = 303
   };
 #endif
 
@@ -110,7 +115,7 @@ class fdisk *fdisk_cmd;
 class mount *mount_cmd;
 class unmount *unmount_cmd;
 
-#line 114 "parser.h"
+#line 119 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
