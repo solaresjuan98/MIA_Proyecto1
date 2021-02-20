@@ -117,7 +117,6 @@ LEXPA:  pmkdisk COMANDOMKDISK
     //$2->mostrarDatos($2);//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
     printf("\n ejecutado!!!\n");
 }
-
 | prmdisk COMANDORMDISK
 {
     printf("\n >> Ejecutando comando rmdisk");
@@ -253,9 +252,23 @@ menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual 
 
     }
 // -type=E –path=/home/Disco1.disk -U=k –name=Particion1 -size=300
-| menos p_type igual identificador menos p_path igual ruta_sin_espacio menos p_u igual identificador p_name psize igual entero
+| menos p_type igual identificador menos p_path igual ruta_sin_espacio menos p_u igual identificador menos p_name igual identificador psize igual entero
     {
+        string ruta= $8;
+        string tipoAjuste = $4;
+        string unidad = $12;
+        string nombreParticion = $16;
+        int tamanio = atoi($19);
 
+        fdisk *disco = new fdisk();
+        disco->setAjuste(tipoAjuste);
+        disco->setRuta(ruta);
+        disco->setUnidad(unidad);
+        disco->setNombre(nombreParticion);
+        disco->setTamanio(tamanio);
+        disco->crearParticion(disco);
+        disco->mostrarDatosDisco(ruta);
+        $$ = disco;
     }
 // -size=1 -type=L -u=M -f=BF -path="/mis discos/Disco3.disk" -name="Particion3"
 | menos psize igual entero menos p_type igual identificador menos p_u igual identificador menos p_f igual identificador
@@ -271,6 +284,16 @@ menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual 
 // -name=Particion1 -delete=full -path=/home/Disco1.disk
 | menos p_name igual identificador menos p_delete igual p_full menos p_path igual ruta_sin_espacio
     {
+        string nombreParticion = $4;
+        string tipoBorrado = $8;
+        string ruta = $12;
+        fdisk *particion = new fdisk();
+        particion->setRuta(ruta);
+        particion->setBorrar(tipoBorrado);
+        particion->borrarParticion(ruta, particion, nombreParticion);
+        particion->mostrarDatosDisco(ruta);
+        $$ = particion;
+
 
     }
 // -add=1 -u=M -path="/home/mis discos/Disco4.dk" -name="Particion 4"

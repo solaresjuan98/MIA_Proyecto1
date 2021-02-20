@@ -103,6 +103,7 @@ void fdisk::crearParticion(fdisk *disco){
 
 }
 
+// Mostrar datos del disco (y sus particiones)
 void fdisk::mostrarDatosDisco(string ruta){
     FILE *archivo;
 
@@ -120,8 +121,11 @@ void fdisk::mostrarDatosDisco(string ruta){
 
     std::cout << "\n **** Datos **** \n";
 
+    std::cout << " Nombre mbr: " << mbr_.mbr_disk_signature <<std::endl;
+    std::cout << " Tamanio del mbr: " << mbr_.mbr_tamanio << std::endl;
+
     for(int i = 0; i < 4; i++){
-        std::cout << " Nombre mbr: " << mbr_.mbr_particions[i].part_status <<std::endl;
+        std::cout << " Estado mbr: " << mbr_.mbr_particions[i].part_status <<std::endl;
         std::cout << " Tipo de particion: " << mbr_.mbr_particions[i].part_type <<std::endl;
         std::cout << " Ajuste de particion: " << mbr_.mbr_particions[i].part_fit <<std::endl;
         std::cout << " Inicio de particion: " << mbr_.mbr_particions[i].part_start <<std::endl;
@@ -131,4 +135,47 @@ void fdisk::mostrarDatosDisco(string ruta){
 
 
 
+}
+
+//Borrar particion
+void fdisk::borrarParticion(string ruta, fdisk *disco, string nombreParticion) {
+
+    FILE *archivo;
+    archivo = fopen(ruta.c_str(), "rb+");
+    std::cout << disco->getBorrar() << std::endl;
+    if(archivo == NULL){
+        std::cout << " << Disco no encontrado \n";
+    }
+
+    mbr mbr_;
+    fseek(archivo, 0, SEEK_SET);
+    fread(&mbr_, sizeof(mbr), 1, archivo);
+    fclose(archivo);
+
+    if(disco->getBorrar() == "fast"){ // borrar en modo "fast"
+
+        for(int i = 0; i < 4; i++){
+            if(mbr_.mbr_particions[i].part_name == nombreParticion.c_str()){
+                //cout << " << Aqui tengo que borrar \n";
+            }
+        }
+    }else if(disco->getBorrar() =="full"){ // borrar en modo "full"
+        cout << " >> Borrando en modo \"full\" \n";
+        for(int i = 0; i < 4; i++){
+            if(strcmp(mbr_.mbr_particions[i].part_name, nombreParticion.c_str()) == 0){
+                //cout << " << Aqui tengo que borrar \n";
+               mbr_.mbr_particions[i].part_status = 0; // Se pone en estado inactivo
+               mbr_.mbr_particions[i].part_name[i] = '\0';
+               mbr_.mbr_particions[i].part_type = '-';
+               mbr_.mbr_particions[i].part_size = 0;
+               mbr_.mbr_particions[i].part_start = -1;
+               mbr_.mbr_particions[i].part_fit = '-';
+
+               break;
+
+            }
+        }
+    }else {
+        std::cout << " >> Modo de borrado incorrecto. \n";
+    }
 }

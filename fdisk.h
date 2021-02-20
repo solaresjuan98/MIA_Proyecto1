@@ -21,6 +21,7 @@ public:
     fdisk();
     void crearParticion(fdisk *disco);
     void mostrarDatosDisco(string ruta);
+    void borrarParticion(string ruta, fdisk *disco, string nombreParticion);
 
     // Getters y setters
     void setTamanio(int tamanio);
