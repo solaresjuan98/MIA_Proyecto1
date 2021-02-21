@@ -31,8 +31,27 @@ typedef struct {
     particion mbr_particions[4];
 } mbr;
 
+/*
+    PARA COMANDO MOUNT
+*/
+
+typedef struct {
+    int numero;
+    char nombre[16];
+    int estado;
+} particion_disco;
+
+typedef struct  {
+    char letra;
+    char ruta[100];
+    int estado;
+    particion_disco particiones[99];
+}disco;
 
 
+//disco discosmontados[26];
+
+/*
 class estructuras
 {
 public:
@@ -40,5 +59,5 @@ public:
 
 
 };
-
+*/
 #endif // ESTRUCTURAS_H

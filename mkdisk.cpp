@@ -45,7 +45,7 @@ void mkdisk::crearDisco(mkdisk *disco) {
   archivo = fopen(disco->getRuta().c_str(), "wb");
   // archivo = fopen("Disco1", "wb");
   if (archivo == NULL) {
-    cout << errno << endl;
+    cout << " >> El archivo no existe. " << endl;
     exit(1);
   }
 
@@ -111,4 +111,5 @@ void mkdisk::crearDisco(mkdisk *disco) {
   } else {
     cout << " Error. MBR no creado. " << endl;
   }
+
 }

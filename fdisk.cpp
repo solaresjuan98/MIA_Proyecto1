@@ -61,8 +61,57 @@ void fdisk::crearParticion(fdisk *disco){
         tamanio_parcicion = disco->getTamanio();
     }
 
-    // Tipos de ajustes
 
+    /* 1. Validar si no existe ninguna particion (Recorrer el arreglo de particiones)
+
+    */
+
+    for(int i = 0; i < 4; i++){
+
+        if(mbr_tmp.mbr_particions[i].part_status == '0'){
+            cout << " Aqui tengo que crear la particion. \n";
+
+            if(disco->getAjuste() == "B"){
+                mbr_tmp.mbr_particions[i].part_fit = 'B';
+            }else if (disco->getAjuste() == "F") {
+                mbr_tmp.mbr_particions[i].part_fit = 'F';
+            }else if (disco->getAjuste() == "W") {
+                mbr_tmp.mbr_particions[i].part_fit = 'W';
+            }
+
+            strcpy(mbr_tmp.mbr_particions[i].part_name, disco->getNombre().c_str());
+
+            mbr_tmp.mbr_particions[i].part_size = tamanio_parcicion;
+            mbr_tmp.mbr_particions[i].part_start = sizeof(mbr);
+            mbr_tmp.mbr_particions[i].part_status ='1';
+
+            if(disco->getTipo() == "P" || disco->getTipo().empty() == true){
+                // creaando una particion primaria
+                mbr_tmp.mbr_particions[i].part_type = 'P';
+
+            } else if (disco->getTipo() == "E") {
+                // creando una parcicion extendida
+                std::cout << " >> Creando una particion extendida... \n";
+                mbr_tmp.mbr_particions[i].part_type = 'E';
+
+                ebr ebr_aux;
+                ebr_aux.part_fit = '-';
+                ebr_aux.part_name[i] = '\0';
+                ebr_aux.part_next = -1;
+                ebr_aux.part_size = -1;
+                ebr_aux.part_status = '0';
+
+                fseek(archivo, mbr_tmp.mbr_particions[0].part_start, SEEK_SET);
+                fwrite(&ebr_aux, sizeof(ebr_aux),1, archivo);
+
+            }
+
+            break;
+        }
+    }
+
+    /*
+    // Tipos de ajustes
     if(disco->getAjuste() == "B"){
         mbr_tmp.mbr_particions[0].part_fit = 'B';
     }else if (disco->getAjuste() == "F") {
@@ -78,8 +127,12 @@ void fdisk::crearParticion(fdisk *disco){
     mbr_tmp.mbr_particions[0].part_status ='1';
 
     if(disco->getTipo() == "P" || disco->getTipo().empty() == true){
+        // creaando una particion primaria
         mbr_tmp.mbr_particions[0].part_type = 'P';
+
     } else if (disco->getTipo() == "E") {
+        // creando una parcicion extendida
+        std::cout << " >> Creando una particion extendida... \n";
         mbr_tmp.mbr_particions[0].part_type = 'E';
 
         ebr ebr_aux;
@@ -92,14 +145,14 @@ void fdisk::crearParticion(fdisk *disco){
         fseek(archivo, mbr_tmp.mbr_particions[0].part_start, SEEK_SET);
         fwrite(&ebr_aux, sizeof(ebr_aux),1, archivo);
 
-    } /*else if (disco->getTipo() == "L"){
-        mbr_tmp.mbr_particions[0].part_type = 'L';
-    }*/
+    }
 
+    */
 
     fseek(archivo, 0, SEEK_SET);
     fwrite(&mbr_tmp,sizeof(mbr_tmp), 1, archivo);
     fclose(archivo);
+
 
 }
 
@@ -121,16 +174,17 @@ void fdisk::mostrarDatosDisco(string ruta){
 
     std::cout << "\n **** Datos **** \n";
 
-    std::cout << " Nombre mbr: " << mbr_.mbr_disk_signature <<std::endl;
-    std::cout << " Tamanio del mbr: " << mbr_.mbr_tamanio << std::endl;
+    std::cout << " Mbr signature: " << mbr_.mbr_disk_signature <<std::endl;
+    std::cout << " Tamanio del mbr: " << mbr_.mbr_tamanio << "\n\n";
 
     for(int i = 0; i < 4; i++){
-        std::cout << " Estado mbr: " << mbr_.mbr_particions[i].part_status <<std::endl;
+        std::cout << " Estado de particion: " << mbr_.mbr_particions[i].part_status <<std::endl;
         std::cout << " Tipo de particion: " << mbr_.mbr_particions[i].part_type <<std::endl;
         std::cout << " Ajuste de particion: " << mbr_.mbr_particions[i].part_fit <<std::endl;
         std::cout << " Inicio de particion: " << mbr_.mbr_particions[i].part_start <<std::endl;
         std::cout << " Tamanio de particion: " << mbr_.mbr_particions[i].part_size <<std::endl;
         std::cout << " Nombre de particion: " << mbr_.mbr_particions[i].part_name <<std::endl;
+        std::cout << "\n\n";
     }
 
 
@@ -142,9 +196,9 @@ void fdisk::borrarParticion(string ruta, fdisk *disco, string nombreParticion) {
 
     FILE *archivo;
     archivo = fopen(ruta.c_str(), "rb+");
-    std::cout << disco->getBorrar() << std::endl;
+
     if(archivo == NULL){
-        std::cout << " << Disco no encontrado \n";
+        std::cout << " >> Disco no encontrado \n";
     }
 
     mbr mbr_;
@@ -160,18 +214,16 @@ void fdisk::borrarParticion(string ruta, fdisk *disco, string nombreParticion) {
             }
         }
     }else if(disco->getBorrar() =="full"){ // borrar en modo "full"
-        cout << " >> Borrando en modo \"full\" \n";
+        cout << " >> Borrando en modo full \n";
         for(int i = 0; i < 4; i++){
             if(strcmp(mbr_.mbr_particions[i].part_name, nombreParticion.c_str()) == 0){
-                //cout << " << Aqui tengo que borrar \n";
+               cout << " >> Borrando... \n";
                mbr_.mbr_particions[i].part_status = 0; // Se pone en estado inactivo
                mbr_.mbr_particions[i].part_name[i] = '\0';
                mbr_.mbr_particions[i].part_type = '-';
-               mbr_.mbr_particions[i].part_size = 0;
+               mbr_.mbr_particions[i].part_size = -1;
                mbr_.mbr_particions[i].part_start = -1;
                mbr_.mbr_particions[i].part_fit = '-';
-
-               break;
 
             }
         }

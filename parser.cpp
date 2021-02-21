@@ -542,7 +542,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  18
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   163
+#define YYLAST   164
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  49
@@ -551,7 +551,7 @@ union yyalloc
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  23
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  162
+#define YYNSTATES  163
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   303
@@ -669,9 +669,9 @@ static const yytype_int16 yypact[] =
       81,    83,    85,    86,    87,    88,    89,    72,    90,    91,
       92,    93,   103,    94,   105,    96,    95,   -30,   -30,   -30,
       98,   -30,    99,   -30,   104,   109,   111,   116,   117,   106,
-     107,   108,   110,   112,    97,   113,   115,   -30,   114,   137,
-     -30,   131,   118,   121,   119,   120,   -30,   125,   134,   124,
-     122,   -30
+     107,   108,   110,   112,    97,   113,   115,   -30,   114,   118,
+     -30,   130,   138,   121,   122,   119,   120,   127,   -30,   134,
+     126,   123,   -30
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -694,8 +694,8 @@ static const yytype_int8 yydefact[] =
        0,     0,     0,     0,     0,     0,     0,     8,     9,    14,
        0,    18,     0,    17,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,    20,     0,     0,
-      19,     0,     0,     0,     0,     0,    15,     0,     0,     0,
-       0,    16
+      19,     0,     0,     0,     0,     0,     0,     0,    15,     0,
+       0,     0,    16
 };
 
   /* YYPGOTO[NTERM-NUM].  */
@@ -729,9 +729,9 @@ static const yytype_uint8 yytable[] =
      115,   116,   117,   126,     0,   118,   131,   119,   133,   120,
      139,   121,   122,   123,   124,   125,   140,   141,   142,   135,
      128,   127,   136,   137,   129,   130,   132,   134,   138,   148,
-     152,   153,   143,   144,   145,   159,   146,     0,   151,     0,
-       0,     0,     0,   147,   154,   149,   150,   155,   156,   158,
-     160,   157,     0,   161
+     153,   154,   143,   144,   145,   160,   146,     0,   151,     0,
+       0,     0,   152,   147,     0,   149,   150,   155,   156,   158,
+     157,   159,   161,     0,   162
 };
 
 static const yytype_int8 yycheck[] =
@@ -750,9 +750,9 @@ static const yytype_int8 yycheck[] =
       10,    10,    36,    41,    -1,    36,    13,    36,    13,    36,
       11,    36,    36,    36,    36,    36,    15,    11,    11,    34,
       39,    41,    34,    34,    42,    42,    42,    41,    34,    42,
-       3,    10,    36,    36,    36,    11,    36,    -1,    34,    -1,
-      -1,    -1,    -1,    41,    36,    42,    41,    36,    39,    34,
-      36,    41,    -1,    41
+      10,     3,    36,    36,    36,    11,    36,    -1,    34,    -1,
+      -1,    -1,    34,    41,    -1,    42,    41,    36,    36,    39,
+      41,    34,    36,    -1,    41
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -774,8 +774,8 @@ static const yytype_int8 yystos[] =
       36,    36,    36,    36,    36,    36,    41,    41,    39,    42,
       42,    13,    42,    13,    41,    34,    34,    34,    34,    11,
       15,    11,    11,    36,    36,    36,    36,    41,    42,    42,
-      41,    34,     3,    10,    36,    36,    39,    41,    34,    11,
-      36,    41
+      41,    34,    34,    10,     3,    36,    36,    41,    39,    34,
+      11,    36,    41
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -790,7 +790,7 @@ static const yytype_int8 yyr1[] =
 static const yytype_int8 yyr2[] =
 {
        0,     2,     1,     2,     2,     2,     2,     2,    12,    12,
-       8,     8,     4,     4,    12,    19,    24,    12,    12,    16,
+       8,     8,     4,     4,    12,    20,    24,    12,    12,    16,
       15,     8,     8,     4
 };
 
@@ -1761,10 +1761,10 @@ yyreduce:
   case 15:
 #line 256 "parser.y"
     {
-        string ruta= (yyvsp[-11].TEXT);
-        string tipoAjuste = (yyvsp[-15].TEXT);
-        string unidad = (yyvsp[-7].TEXT);
-        string nombreParticion = (yyvsp[-3].TEXT);
+        string ruta= (yyvsp[-12].TEXT);
+        string tipoAjuste = (yyvsp[-16].TEXT);
+        string unidad = (yyvsp[-8].TEXT);
+        string nombreParticion = (yyvsp[-4].TEXT);
         int tamanio = atoi((yyvsp[0].TEXT));
 
         fdisk *disco = new fdisk();

@@ -252,13 +252,13 @@ menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual 
 
     }
 // -type=E –path=/home/Disco1.disk -U=k –name=Particion1 -size=300
-| menos p_type igual identificador menos p_path igual ruta_sin_espacio menos p_u igual identificador menos p_name igual identificador psize igual entero
+| menos p_type igual identificador menos p_path igual ruta_sin_espacio menos p_u igual identificador menos p_name igual identificador menos psize igual entero
     {
         string ruta= $8;
         string tipoAjuste = $4;
         string unidad = $12;
         string nombreParticion = $16;
-        int tamanio = atoi($19);
+        int tamanio = atoi($20);
 
         fdisk *disco = new fdisk();
         disco->setAjuste(tipoAjuste);
@@ -279,8 +279,18 @@ menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual 
 // -delete=fast -name="Particion1" -path=/home/Disco1.dk
 | menos p_delete igual p_fast menos p_name igual cadena menos p_path igual ruta_sin_espacio
     {
-
-    }
+        /*
+        string nombreParticion = $4;
+        string tipoBorrado = $8;
+        string ruta = $12;
+        fdisk *particion = new fdisk();
+        particion->setRuta(ruta);
+        particion->setBorrar(tipoBorrado);
+        particion->borrarParticion(ruta, particion, nombreParticion);
+        particion->mostrarDatosDisco(ruta);
+        $$ = particion;
+        */
+}
 // -name=Particion1 -delete=full -path=/home/Disco1.disk
 | menos p_name igual identificador menos p_delete igual p_full menos p_path igual ruta_sin_espacio
     {
