@@ -604,8 +604,8 @@ static const yytype_int8 yytranslate[] =
 static const yytype_int16 yyrline[] =
 {
        0,   112,   112,   115,   120,   124,   128,   132,   140,   163,
-     178,   198,   215,   223,   234,   255,   274,   280,   285,   300,
-     305,   312,   313,   317
+     178,   198,   215,   223,   234,   255,   274,   280,   295,   310,
+     315,   322,   323,   327
 };
 #endif
 
@@ -1591,7 +1591,7 @@ yyreduce:
 #line 116 "parser.y"
 {
     //$2->mostrarDatos($2);//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
-    printf("\n ejecutado!!!\n");
+    //printf("\n ejecutado!!!\n");
 }
 #line 1597 "parser.cpp"
     break;
@@ -1599,7 +1599,7 @@ yyreduce:
   case 4:
 #line 121 "parser.y"
 {
-    printf("\n >> Ejecutando comando rmdisk");
+    //printf("\n >> Ejecutando comando rmdisk");
 }
 #line 1605 "parser.cpp"
     break;
@@ -1607,7 +1607,7 @@ yyreduce:
   case 5:
 #line 125 "parser.y"
 {
-    printf("\n >> Ejecutando comando fdisk... \n");
+    //printf("\n >> Ejecutando comando fdisk... \n");
 }
 #line 1613 "parser.cpp"
     break;
@@ -1615,7 +1615,7 @@ yyreduce:
   case 6:
 #line 129 "parser.y"
 {
-    printf("\n >> Ejecutando comando mount... \n");
+    //printf("\n >> Ejecutando comando mount... \n");
 }
 #line 1621 "parser.cpp"
     break;
@@ -1623,7 +1623,7 @@ yyreduce:
   case 7:
 #line 133 "parser.y"
 {
-    printf("\n >> Ejecutando comando unmount... \n");
+    //printf("\n >> Ejecutando comando unmount... \n");
 }
 #line 1629 "parser.cpp"
     break;
@@ -1791,13 +1791,23 @@ yyreduce:
   case 17:
 #line 281 "parser.y"
     {
-
-    }
-#line 1797 "parser.cpp"
+        /*
+        string nombreParticion = $4;
+        string tipoBorrado = $8;
+        string ruta = $12;
+        fdisk *particion = new fdisk();
+        particion->setRuta(ruta);
+        particion->setBorrar(tipoBorrado);
+        particion->borrarParticion(ruta, particion, nombreParticion);
+        particion->mostrarDatosDisco(ruta);
+        $$ = particion;
+        */
+}
+#line 1807 "parser.cpp"
     break;
 
   case 18:
-#line 286 "parser.y"
+#line 296 "parser.y"
     {
         string nombreParticion = (yyvsp[-8].TEXT);
         string tipoBorrado = (yyvsp[-4].TEXT);
@@ -1811,45 +1821,45 @@ yyreduce:
 
 
     }
-#line 1815 "parser.cpp"
+#line 1825 "parser.cpp"
     break;
 
   case 19:
-#line 301 "parser.y"
+#line 311 "parser.y"
     {
 
     }
-#line 1823 "parser.cpp"
+#line 1833 "parser.cpp"
     break;
 
   case 20:
-#line 306 "parser.y"
+#line 316 "parser.y"
     {
 
     }
-#line 1831 "parser.cpp"
+#line 1841 "parser.cpp"
     break;
 
   case 21:
-#line 312 "parser.y"
+#line 322 "parser.y"
                                                                      {}
-#line 1837 "parser.cpp"
+#line 1847 "parser.cpp"
     break;
 
   case 22:
-#line 313 "parser.y"
+#line 323 "parser.y"
                                                              {}
-#line 1843 "parser.cpp"
+#line 1853 "parser.cpp"
     break;
 
   case 23:
-#line 317 "parser.y"
+#line 327 "parser.y"
                                 {}
-#line 1849 "parser.cpp"
+#line 1859 "parser.cpp"
     break;
 
 
-#line 1853 "parser.cpp"
+#line 1863 "parser.cpp"
 
       default: break;
     }

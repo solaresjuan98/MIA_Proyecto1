@@ -80,6 +80,8 @@ void mkdisk::crearDisco(mkdisk *disco) {
   disco->setFechaCreacion(fechaPrueba);
 
   prueba_mbr.mbr_disk_signature = (rand() % 100);
+  prueba_mbr.mbr_tamanio = sizeof(mbr);
+  cout << prueba_mbr.mbr_disk_signature << "\n";
   strcpy(prueba_mbr.mbr_fecha_creacion, fechaPrueba.c_str());
 
   if (disco->getAjuste().empty()) {

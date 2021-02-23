@@ -115,23 +115,23 @@ INICIO : LEXPA { }
 LEXPA:  pmkdisk COMANDOMKDISK
 {
     //$2->mostrarDatos($2);//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
-    printf("\n ejecutado!!!\n");
+    //printf("\n ejecutado!!!\n");
 }
 | prmdisk COMANDORMDISK
 {
-    printf("\n >> Ejecutando comando rmdisk");
+    //printf("\n >> Ejecutando comando rmdisk");
 }
 | pfdisk COMANDOFDISK
 {
-    printf("\n >> Ejecutando comando fdisk... \n");
+    //printf("\n >> Ejecutando comando fdisk... \n");
 }
 | pmount COMANDOMOUNT
 {
-    printf("\n >> Ejecutando comando mount... \n");
+    //printf("\n >> Ejecutando comando mount... \n");
 }
 | punmount COMANDOUNMOUNT
 {
-    printf("\n >> Ejecutando comando unmount... \n");
+    //printf("\n >> Ejecutando comando unmount... \n");
 }
 ;
 
