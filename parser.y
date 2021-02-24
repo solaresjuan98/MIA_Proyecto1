@@ -11,11 +11,16 @@
 #include "fdisk.h"
 #include "mount.h"
 #include "unmount.h"
+// estructuras
+#include "estructuras.h"
+disco arregloDiscos[26];
+//int numeros[5];
 
 using namespace std;
 extern int yylineno; //linea actual donde se encuentra el parser (analisis lexico) lo maneja BISON
 extern int columna; //columna actual donde se encuentra el parser (analisis lexico) lo maneja BISON
 extern char *yytext; //lexema actual donde esta el parser (analisis lexico) lo maneja BISON
+bool mountInicializado = false;
 
 int yyerror(const char* mens)
 {
@@ -39,6 +44,7 @@ class rmdisk *rmdisk_cmd;
 class fdisk *fdisk_cmd;
 class mount *mount_cmd;
 class unmount *unmount_cmd;
+//class mount *cmd_mount = new mount();
 }
 //TERMINALES DE TIPO TEXT, SON STRINGS
 
@@ -131,6 +137,8 @@ LEXPA:  pmkdisk COMANDOMKDISK
 }
 | punmount COMANDOUNMOUNT
 {
+
+
     //printf("\n >> Ejecutando comando unmount... \n");
 }
 ;
@@ -304,7 +312,6 @@ menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual 
         particion->mostrarDatosDisco(ruta);
         $$ = particion;
 
-
     }
 // -add=1 -u=M -path="/home/mis discos/Disco4.dk" -name="Particion 4"
 | menos p_add igual entero menos p_u igual identificador menos p_path igual cadena menos p_name igual cadena
@@ -319,7 +326,99 @@ menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual 
 ;
 
 COMANDOMOUNT:
-menos p_path igual ruta_sin_espacio menos p_name igual identificador {}
+menos p_path igual ruta_sin_espacio menos p_name igual identificador
+    {
+        string ruta = $4;
+        int i = 0;
+        string nombreParticion = $8;
+        mount *comando_mount = new mount();
+        //cout << " Verificando discos montados... \n";
+        disco discoVacio;
+        discoVacio.letra = ' ';
+        discoVacio.ruta[0] = '\0';
+        discoVacio.estado = 0;
+
+        particion_disco part_vacia;
+        part_vacia.numero = 0;
+        part_vacia.nombre[0] = '\0';
+        part_vacia.estado = 0;
+
+        // Inicializando el arreglo de particiones por primera vez
+        if (!mountInicializado) {
+            for (int i = 0; i < 99; i++) {
+                discoVacio.particiones[i] = part_vacia;
+            }
+
+            for (int j = 0; j < 26; j++) {
+                arregloDiscos[i] = discoVacio;
+            }
+
+            mountInicializado = true;
+        }
+        else {
+            /* "i" representa a cada uno de los discos montados (representados por letras)
+             * validar si la ruta existe, etc etc
+             *
+             * */
+            for (int i = 0; i < 26; i++) { // Recorriendo todas las posiciones del disco
+
+                // encuentro el primer disco inactivo (o libre)
+                if (arregloDiscos[i].estado == 0) {
+
+                    for (int j = 0; j < 99; j++) {
+
+                        disco discoaMontar = comando_mount->montarDisco(ruta, i);
+                        // encuentro una particion libre (estado 0)
+                        if (arregloDiscos[i].particiones[j].estado == 0) {
+                            //cout << " >> Agregar particion en la particion del disco: " << j << "\n";
+                            discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j);
+                            arregloDiscos[i] = discoaMontar;
+                            break;
+                        }
+
+
+                    }
+
+                    break;
+
+                }else if((arregloDiscos[i].estado == 1) && strcmp(arregloDiscos[i].ruta, ruta.c_str()) == 0){
+                    for (int j = 0; j < 99; j++) {
+
+                        disco discoaMontar = comando_mount->montarDisco(ruta, i);
+                        // encuentro una particion libre (estado 0)
+                        if (arregloDiscos[i].particiones[j].estado == 0) {
+                            //cout << " >> Agregar particion en la particion del disco: " << j << "\n";
+                            discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j);
+                            arregloDiscos[i] = discoaMontar;
+                            break;
+                        }
+
+
+                    }
+
+                    break;
+                }
+
+            }
+        }
+
+
+
+        for(int i = 0; i < 26; i++){
+
+            if(arregloDiscos[i].estado != 0){
+                cout << " Letra: " <<arregloDiscos[i].letra << "\n";
+                cout << arregloDiscos[i].ruta << "\n";
+                cout << " \t Particiones montadas : \n";
+                for(int j = 0; j <99; j++){
+
+                    if(arregloDiscos[i].particiones[j].estado != 0){
+                        cout << "\t >> Nombre particion: " << arregloDiscos[i].particiones[j].nombre << "\n";
+                    }
+                }
+            }
+        }
+    }
 | menos p_path igual cadena menos p_name igual identificador {}
 ;
 

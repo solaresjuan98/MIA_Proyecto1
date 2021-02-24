@@ -188,7 +188,7 @@ void fdisk::mostrarDatosDisco(string ruta){
         }
     }
 
-    // Si no hay particiones activas
+    // Si no hay particiones activas (dentro del mbr)
     if(particionesInactivas == 4){
         std::cout << " >> (No hay particiones). Hay espacio libre en el rango ["<<sizeof(mbr) << "," <<tamanioArchivo<<"]\n";
     }

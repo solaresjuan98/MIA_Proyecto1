@@ -80,11 +80,16 @@
 #include "fdisk.h"
 #include "mount.h"
 #include "unmount.h"
+// estructuras
+#include "estructuras.h"
+disco arregloDiscos[26];
+//int numeros[5];
 
 using namespace std;
 extern int yylineno; //linea actual donde se encuentra el parser (analisis lexico) lo maneja BISON
 extern int columna; //columna actual donde se encuentra el parser (analisis lexico) lo maneja BISON
 extern char *yytext; //lexema actual donde esta el parser (analisis lexico) lo maneja BISON
+bool mountInicializado = false;
 
 int yyerror(const char* mens)
 {
@@ -92,7 +97,7 @@ std::cout << mens <<" "<<yytext<< std::endl;
 return 0;
 }
 
-#line 96 "parser.cpp"
+#line 101 "parser.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -193,7 +198,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 31 "parser.y"
+#line 36 "parser.y"
 
 //se especifican los tipo de valores para los no terminales y lo terminales
 //char TEXT [256];
@@ -205,8 +210,9 @@ class rmdisk *rmdisk_cmd;
 class fdisk *fdisk_cmd;
 class mount *mount_cmd;
 class unmount *unmount_cmd;
+//class mount *cmd_mount = new mount();
 
-#line 210 "parser.cpp"
+#line 216 "parser.cpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -603,9 +609,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   112,   112,   115,   120,   124,   128,   132,   140,   163,
-     178,   198,   215,   223,   234,   255,   274,   280,   295,   310,
-     315,   322,   323,   327
+       0,   118,   118,   121,   126,   130,   134,   138,   148,   171,
+     186,   206,   223,   231,   242,   263,   282,   288,   303,   317,
+     322,   329,   422,   426
 };
 #endif
 
@@ -1582,54 +1588,56 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 112 "parser.y"
+#line 118 "parser.y"
                { }
-#line 1588 "parser.cpp"
+#line 1594 "parser.cpp"
     break;
 
   case 3:
-#line 116 "parser.y"
+#line 122 "parser.y"
 {
     //$2->mostrarDatos($2);//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
     //printf("\n ejecutado!!!\n");
 }
-#line 1597 "parser.cpp"
+#line 1603 "parser.cpp"
     break;
 
   case 4:
-#line 121 "parser.y"
+#line 127 "parser.y"
 {
     //printf("\n >> Ejecutando comando rmdisk");
 }
-#line 1605 "parser.cpp"
+#line 1611 "parser.cpp"
     break;
 
   case 5:
-#line 125 "parser.y"
+#line 131 "parser.y"
 {
     //printf("\n >> Ejecutando comando fdisk... \n");
 }
-#line 1613 "parser.cpp"
+#line 1619 "parser.cpp"
     break;
 
   case 6:
-#line 129 "parser.y"
+#line 135 "parser.y"
 {
     //printf("\n >> Ejecutando comando mount... \n");
 }
-#line 1621 "parser.cpp"
+#line 1627 "parser.cpp"
     break;
 
   case 7:
-#line 133 "parser.y"
+#line 139 "parser.y"
 {
+
+
     //printf("\n >> Ejecutando comando unmount... \n");
 }
-#line 1629 "parser.cpp"
+#line 1637 "parser.cpp"
     break;
 
   case 8:
-#line 141 "parser.y"
+#line 149 "parser.y"
     {
         int tam=atoi((yyvsp[-8].TEXT));
         string comilla = "\"";
@@ -1651,11 +1659,11 @@ yyreduce:
         disco->crearDisco(disco);
         (yyval.mkdisk_cmd)=disco;
     }
-#line 1655 "parser.cpp"
+#line 1663 "parser.cpp"
     break;
 
   case 9:
-#line 164 "parser.y"
+#line 172 "parser.y"
     {
         int tam=atoi((yyvsp[0].TEXT));
         mkdisk *disco=new mkdisk();
@@ -1669,11 +1677,11 @@ yyreduce:
 
         (yyval.mkdisk_cmd)=disco;
     }
-#line 1673 "parser.cpp"
+#line 1681 "parser.cpp"
     break;
 
   case 10:
-#line 179 "parser.y"
+#line 187 "parser.y"
     {
         int tam=atoi((yyvsp[-4].TEXT));
         string comilla = "\"";
@@ -1692,11 +1700,11 @@ yyreduce:
         disco->crearDisco(disco);
         (yyval.mkdisk_cmd)=disco;
     }
-#line 1696 "parser.cpp"
+#line 1704 "parser.cpp"
     break;
 
   case 11:
-#line 199 "parser.y"
+#line 207 "parser.y"
     {
         int tam=atoi((yyvsp[-4].TEXT));
         string ruta = (yyvsp[0].TEXT);
@@ -1708,34 +1716,34 @@ yyreduce:
         (yyval.mkdisk_cmd)=disco;
 
     }
-#line 1712 "parser.cpp"
+#line 1720 "parser.cpp"
     break;
 
   case 12:
-#line 216 "parser.y"
-{
-    std::string rutaBorrar = (yyvsp[0].TEXT);
-    rmdisk *discoBorrar = new rmdisk();
-    discoBorrar->borrarDisco(rutaBorrar);
-    (yyval.rmdisk_cmd)=discoBorrar;
-
-}
-#line 1724 "parser.cpp"
-    break;
-
-  case 13:
 #line 224 "parser.y"
 {
     std::string rutaBorrar = (yyvsp[0].TEXT);
     rmdisk *discoBorrar = new rmdisk();
     discoBorrar->borrarDisco(rutaBorrar);
     (yyval.rmdisk_cmd)=discoBorrar;
+
 }
-#line 1735 "parser.cpp"
+#line 1732 "parser.cpp"
+    break;
+
+  case 13:
+#line 232 "parser.y"
+{
+    std::string rutaBorrar = (yyvsp[0].TEXT);
+    rmdisk *discoBorrar = new rmdisk();
+    discoBorrar->borrarDisco(rutaBorrar);
+    (yyval.rmdisk_cmd)=discoBorrar;
+}
+#line 1743 "parser.cpp"
     break;
 
   case 14:
-#line 235 "parser.y"
+#line 243 "parser.y"
     {
         int tamanio = atoi((yyvsp[-8].TEXT));
         string ruta = (yyvsp[-4].TEXT);
@@ -1755,11 +1763,11 @@ yyreduce:
 
 
     }
-#line 1759 "parser.cpp"
+#line 1767 "parser.cpp"
     break;
 
   case 15:
-#line 256 "parser.y"
+#line 264 "parser.y"
     {
         string ruta= (yyvsp[-12].TEXT);
         string tipoAjuste = (yyvsp[-16].TEXT);
@@ -1777,19 +1785,19 @@ yyreduce:
         disco->mostrarDatosDisco(ruta);
         (yyval.fdisk_cmd) = disco;
     }
-#line 1781 "parser.cpp"
-    break;
-
-  case 16:
-#line 276 "parser.y"
-    {
-
-    }
 #line 1789 "parser.cpp"
     break;
 
+  case 16:
+#line 284 "parser.y"
+    {
+
+    }
+#line 1797 "parser.cpp"
+    break;
+
   case 17:
-#line 281 "parser.y"
+#line 289 "parser.y"
     {
         /*
         string nombreParticion = $4;
@@ -1803,11 +1811,11 @@ yyreduce:
         $$ = particion;
         */
 }
-#line 1807 "parser.cpp"
+#line 1815 "parser.cpp"
     break;
 
   case 18:
-#line 296 "parser.y"
+#line 304 "parser.y"
     {
         string nombreParticion = (yyvsp[-8].TEXT);
         string tipoBorrado = (yyvsp[-4].TEXT);
@@ -1819,47 +1827,137 @@ yyreduce:
         particion->mostrarDatosDisco(ruta);
         (yyval.fdisk_cmd) = particion;
 
-
     }
-#line 1825 "parser.cpp"
+#line 1832 "parser.cpp"
     break;
 
   case 19:
-#line 311 "parser.y"
+#line 318 "parser.y"
     {
 
     }
-#line 1833 "parser.cpp"
+#line 1840 "parser.cpp"
     break;
 
   case 20:
-#line 316 "parser.y"
+#line 323 "parser.y"
     {
 
     }
-#line 1841 "parser.cpp"
+#line 1848 "parser.cpp"
     break;
 
   case 21:
-#line 322 "parser.y"
-                                                                     {}
-#line 1847 "parser.cpp"
+#line 330 "parser.y"
+    {
+        string ruta = (yyvsp[-4].TEXT);
+        int i = 0;
+        string nombreParticion = (yyvsp[0].TEXT);
+        mount *comando_mount = new mount();
+        //cout << " Verificando discos montados... \n";
+        disco discoVacio;
+        discoVacio.letra = ' ';
+        discoVacio.ruta[0] = '\0';
+        discoVacio.estado = 0;
+
+        particion_disco part_vacia;
+        part_vacia.numero = 0;
+        part_vacia.nombre[0] = '\0';
+        part_vacia.estado = 0;
+
+        // Inicializando el arreglo de particiones por primera vez
+        if (!mountInicializado) {
+            for (int i = 0; i < 99; i++) {
+                discoVacio.particiones[i] = part_vacia;
+            }
+
+            for (int j = 0; j < 26; j++) {
+                arregloDiscos[i] = discoVacio;
+            }
+
+            mountInicializado = true;
+        }
+        else {
+            /* "i" representa a cada uno de los discos montados (representados por letras)
+             * validar si la ruta existe, etc etc
+             *
+             * */
+            for (int i = 0; i < 26; i++) { // Recorriendo todas las posiciones del disco
+
+                // encuentro el primer disco inactivo (o libre)
+                if (arregloDiscos[i].estado == 0) {
+
+                    for (int j = 0; j < 99; j++) {
+
+                        disco discoaMontar = comando_mount->montarDisco(ruta, i);
+                        // encuentro una particion libre (estado 0)
+                        if (arregloDiscos[i].particiones[j].estado == 0) {
+                            //cout << " >> Agregar particion en la particion del disco: " << j << "\n";
+                            discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j);
+                            arregloDiscos[i] = discoaMontar;
+                            break;
+                        }
+
+
+                    }
+
+                    break;
+
+                }else if((arregloDiscos[i].estado == 1) && strcmp(arregloDiscos[i].ruta, ruta.c_str()) == 0){
+                    for (int j = 0; j < 99; j++) {
+
+                        disco discoaMontar = comando_mount->montarDisco(ruta, i);
+                        // encuentro una particion libre (estado 0)
+                        if (arregloDiscos[i].particiones[j].estado == 0) {
+                            //cout << " >> Agregar particion en la particion del disco: " << j << "\n";
+                            discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j);
+                            arregloDiscos[i] = discoaMontar;
+                            break;
+                        }
+
+
+                    }
+
+                    break;
+                }
+
+            }
+        }
+
+
+
+        for(int i = 0; i < 26; i++){
+
+            if(arregloDiscos[i].estado != 0){
+                cout << " Letra: " <<arregloDiscos[i].letra << "\n";
+                cout << arregloDiscos[i].ruta << "\n";
+                cout << " \t Particiones montadas : \n";
+                for(int j = 0; j <99; j++){
+
+                    if(arregloDiscos[i].particiones[j].estado != 0){
+                        cout << "\t >> Nombre particion: " << arregloDiscos[i].particiones[j].nombre << "\n";
+                    }
+                }
+            }
+        }
+    }
+#line 1945 "parser.cpp"
     break;
 
   case 22:
-#line 323 "parser.y"
+#line 422 "parser.y"
                                                              {}
-#line 1853 "parser.cpp"
+#line 1951 "parser.cpp"
     break;
 
   case 23:
-#line 327 "parser.y"
+#line 426 "parser.y"
                                 {}
-#line 1859 "parser.cpp"
+#line 1957 "parser.cpp"
     break;
 
 
-#line 1863 "parser.cpp"
+#line 1961 "parser.cpp"
 
       default: break;
     }

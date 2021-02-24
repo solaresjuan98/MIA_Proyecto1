@@ -3,23 +3,23 @@
 #include <iostream>
 #include <string.h>
 #include <string>
+#include "estructuras.h"
 using namespace std;
 class mount
 {
 
 private:
     string ruta;
-    string nombre;
+    string nombre;    
+    char asignarLetra(int numero);
 
 public:
     mount();
-    void montarParticion(string ruta);
+    void montarParticion(string ruta, string nombreParticion);
+    disco montarDisco(string ruta,int pos);
+    particion_disco montarParticion(string nombreParticion, int pos);
 
-    // Getters y setters
-    void setRuta(string ruta);
-    string getRuta();
-    void setNombre(string nombre);
-    string getNombre();
+
 };
 
 #endif // MOUNT_H
