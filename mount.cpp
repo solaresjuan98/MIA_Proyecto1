@@ -7,7 +7,7 @@ mount::mount()
 
 }
 
-
+/*
 void mount::montarParticion(string ruta, string nombreParticion){
 
     int prefijo_id = 96;
@@ -49,7 +49,7 @@ void mount::montarParticion(string ruta, string nombreParticion){
 
     fclose(archivo_disco);
 }
-
+*/
 disco mount::montarDisco(string ruta, int pos){
 
     FILE *archivo;
@@ -156,10 +156,30 @@ char mount::asignarLetra(int numero){
 
 }
 
-particion_disco mount::montarParticion(string nombreParticion, int pos) {
+particion_disco mount::montarParticion(string nombreParticion, int pos, string letra) {
+
+    string num = "96";
+
+    num.append(to_string(pos));//961
+    string str;
+    str.append(letra);
+    //str.append(letra);
+    cout << letra << " --- \n";
+    string l = letra;
+
+    string st = num + letra;
+
+    cout << st  << "\n";
+
+    char id[st.length()];
+
+    for(int i = 0; i< sizeof(id);i++){
+        id[i] = st[i];
+    }
+
 
     particion_disco part;
-
+    strcpy(part.id, id);
     part.numero = pos;
     part.estado = 1;
     strcpy(part.nombre, nombreParticion.c_str());

@@ -15,9 +15,9 @@ private:
 
 public:
     mount();
-    void montarParticion(string ruta, string nombreParticion);
+    //void montarParticion(string ruta, string nombreParticion);
     disco montarDisco(string ruta,int pos);
-    particion_disco montarParticion(string nombreParticion, int pos);
+    particion_disco montarParticion(string nombreParticion, int pos, string letra);
 
 
 };

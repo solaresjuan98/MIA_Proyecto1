@@ -6,6 +6,8 @@ class unmount
 {
 public:
     unmount();
+
+    //void desmontarParticion(int id);
 };
 
 #endif // UNMOUNT_H

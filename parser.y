@@ -332,7 +332,7 @@ menos p_path igual ruta_sin_espacio menos p_name igual identificador
         int i = 0;
         string nombreParticion = $8;
         mount *comando_mount = new mount();
-        //cout << " Verificando discos montados... \n";
+
         disco discoVacio;
         discoVacio.letra = ' ';
         discoVacio.ruta[0] = '\0';
@@ -342,15 +342,18 @@ menos p_path igual ruta_sin_espacio menos p_name igual identificador
         part_vacia.numero = 0;
         part_vacia.nombre[0] = '\0';
         part_vacia.estado = 0;
+        part_vacia.id[0] = '\0';
 
         // Inicializando el arreglo de particiones por primera vez
         if (!mountInicializado) {
-            for (int i = 0; i < 99; i++) {
-                discoVacio.particiones[i] = part_vacia;
-            }
 
-            for (int j = 0; j < 26; j++) {
+
+            for (int i= 0; i < 26; i++) {
                 arregloDiscos[i] = discoVacio;
+
+                for(int j = 0; j < 99; j++){
+                    arregloDiscos[i].particiones[j] = part_vacia;
+                }
             }
 
             mountInicializado = true;
@@ -364,14 +367,16 @@ menos p_path igual ruta_sin_espacio menos p_name igual identificador
 
                 // encuentro el primer disco inactivo (o libre)
                 if (arregloDiscos[i].estado == 0) {
-
+                    disco discoaMontar = comando_mount->montarDisco(ruta, i);
                     for (int j = 0; j < 99; j++) {
 
-                        disco discoaMontar = comando_mount->montarDisco(ruta, i);
-                        // encuentro una particion libre (estado 0)
+                        //cout << j << '\n';
                         if (arregloDiscos[i].particiones[j].estado == 0) {
-                            //cout << " >> Agregar particion en la particion del disco: " << j << "\n";
-                            discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j);
+                            cout << " Insertando en disco " << i << "\n";
+                            cout << " Insertando en particion " << j  << "\n";
+                            //particion particionaMontar;
+                            string str(1, discoaMontar.letra);
+                            discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j, str);
                             arregloDiscos[i] = discoaMontar;
                             break;
                         }
@@ -381,14 +386,18 @@ menos p_path igual ruta_sin_espacio menos p_name igual identificador
 
                     break;
 
+                // Si el disco está activo y la ruta es igual
                 }else if((arregloDiscos[i].estado == 1) && strcmp(arregloDiscos[i].ruta, ruta.c_str()) == 0){
+                    disco discoaMontar = comando_mount->montarDisco(ruta, i);
                     for (int j = 0; j < 99; j++) {
-
-                        disco discoaMontar = comando_mount->montarDisco(ruta, i);
+                        //cout << " - i " <<i << '\n';
+                        //cout << " - j " <<j << '\n';
                         // encuentro una particion libre (estado 0)
                         if (arregloDiscos[i].particiones[j].estado == 0) {
-                            //cout << " >> Agregar particion en la particion del disco: " << j << "\n";
-                            discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j);
+                            cout << " Insertando en disco " << i << "\n";
+                            cout << " Insertando en particion " << j  << "\n";
+                            string str(1, discoaMontar.letra);
+                            discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j, str);
                             arregloDiscos[i] = discoaMontar;
                             break;
                         }
@@ -408,16 +417,22 @@ menos p_path igual ruta_sin_espacio menos p_name igual identificador
 
             if(arregloDiscos[i].estado != 0){
                 cout << " Letra: " <<arregloDiscos[i].letra << "\n";
-                cout << arregloDiscos[i].ruta << "\n";
+                cout << " Ruta del disco: " <<arregloDiscos[i].ruta << "\n";
                 cout << " \t Particiones montadas : \n";
-                for(int j = 0; j <99; j++){
+
+                for(int j = 0; j < 99; j++){
 
                     if(arregloDiscos[i].particiones[j].estado != 0){
-                        cout << "\t >> Nombre particion: " << arregloDiscos[i].particiones[j].nombre << "\n";
+
+                        cout << "\t " << j + 1 <<". Nombre particion: " << arregloDiscos[i].particiones[j].nombre << "\n";
+                        cout << "\t  ID particion: " << arregloDiscos[i].particiones[j].id << "\n";
+                        fflush(stdin);
                     }
                 }
             }
         }
+
+        //$$ = comando_mount;
     }
 | menos p_path igual cadena menos p_name igual identificador {}
 ;

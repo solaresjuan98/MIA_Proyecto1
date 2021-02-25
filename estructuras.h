@@ -1,7 +1,7 @@
 #ifndef ESTRUCTURAS_H
 #define ESTRUCTURAS_H
 #include "time.h"
-
+#include<iostream>
 // extended boot record
 typedef struct {
     char part_status;
@@ -36,6 +36,8 @@ typedef struct {
 */
 
 typedef struct {
+    char id[4];
+    //std::string id;
     int numero;
     char nombre[16];
     int estado;
