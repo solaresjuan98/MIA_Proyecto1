@@ -55,46 +55,50 @@ extern int yydebug;
     pfdisk = 261,
     pmount = 262,
     punmount = 263,
-    p_id = 264,
-    p_path = 265,
-    p_name = 266,
-    p_type = 267,
-    ruta_sin_espacio = 268,
-    p_u = 269,
-    p_f = 270,
-    p_fast = 271,
-    p_delete = 272,
-    p_full = 273,
-    p_add = 274,
-    pmkdir = 275,
-    punto = 276,
-    bracketabre = 277,
-    bracketcierra = 278,
-    corcheteabre = 279,
-    corchetecierra = 280,
-    puntocoma = 281,
-    potencia = 282,
-    coma = 283,
-    parentesisabre = 284,
-    parentesiscierra = 285,
-    llaveabre = 286,
-    llavecierra = 287,
-    mas = 288,
-    menos = 289,
-    multiplicacion = 290,
-    igual = 291,
-    dolar = 292,
-    dospuntos = 293,
-    entero = 294,
-    numnegativo = 295,
-    cadena = 296,
-    identificador = 297,
-    caracter = 298,
-    ruta = 299,
-    rutacualquiera = 300,
-    suma = 301,
-    multi = 302,
-    division = 303
+    pmkfs = 264,
+    p_id = 265,
+    p_path = 266,
+    p_name = 267,
+    p_type = 268,
+    ruta_sin_espacio = 269,
+    id_particion = 270,
+    id_particionl = 271,
+    p_u = 272,
+    p_f = 273,
+    p_fast = 274,
+    p_delete = 275,
+    p_full = 276,
+    p_add = 277,
+    pmkdir = 278,
+    punto = 279,
+    bracketabre = 280,
+    bracketcierra = 281,
+    corcheteabre = 282,
+    corchetecierra = 283,
+    puntocoma = 284,
+    potencia = 285,
+    coma = 286,
+    parentesisabre = 287,
+    parentesiscierra = 288,
+    llaveabre = 289,
+    llavecierra = 290,
+    mas = 291,
+    menos = 292,
+    multiplicacion = 293,
+    igual = 294,
+    dolar = 295,
+    dospuntos = 296,
+    entero = 297,
+    letra = 298,
+    numnegativo = 299,
+    cadena = 300,
+    identificador = 301,
+    caracter = 302,
+    ruta = 303,
+    rutacualquiera = 304,
+    suma = 305,
+    multi = 306,
+    division = 307
   };
 #endif
 
@@ -102,7 +106,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 36 "parser.y"
+#line 37 "parser.y"
 
 //se especifican los tipo de valores para los no terminales y lo terminales
 //char TEXT [256];
@@ -114,9 +118,10 @@ class rmdisk *rmdisk_cmd;
 class fdisk *fdisk_cmd;
 class mount *mount_cmd;
 class unmount *unmount_cmd;
-//class mount *cmd_mount = new mount();
+class mkfs *mkfs_cmd;
 
-#line 120 "parser.h"
+
+#line 125 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

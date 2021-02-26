@@ -29,6 +29,8 @@ identificador {letra}({letra}|{entero}|"_")*
 caracter "\'"("\\")?({letra}|{entero})"\'"
 cadena [\"][^\"\n]*[\"\n]
 ruta_sin_espacio ("/"({letra}|{entero}|"_"|"-"|".")*)+
+id_particion {entero}{entero}{entero}{letra}
+id_particionl {entero}{entero}{entero}{entero}{letra}
 %x COM
 
 
@@ -38,6 +40,7 @@ ruta_sin_espacio ("/"({letra}|{entero}|"_"|"-"|".")*)+
 "FDISK" {columna=columna+ anterior;  anterior = strlen(yytext);strcpy(yylval.TEXT, yytext);return pfdisk;}
 "MOUNT" {columna=columna+ anterior;  anterior = strlen(yytext); strcpy(yylval.TEXT, yytext);return pmount;}
 "UNMOUNT" {columna=columna+ anterior;  anterior = strlen(yytext); strcpy(yylval.TEXT, yytext);return punmount;}
+"MKFS" {columna=columna+ anterior;  anterior = strlen(yytext); strcpy(yylval.TEXT, yytext);return pmkfs;}
 "SIZE" {columna=columna+ anterior;  anterior = strlen(yytext); strcpy(yylval.TEXT, yytext);return psize;}
 "PATH" {columna=columna+ anterior;  anterior = strlen(yytext); strcpy(yylval.TEXT, yytext);return p_path;}
 "U" {columna=columna+ anterior;  anterior = strlen(yytext); strcpy(yylval.TEXT, yytext);return p_u;}
@@ -56,6 +59,8 @@ ruta_sin_espacio ("/"({letra}|{entero}|"_"|"-"|".")*)+
 {identificador} {columna=columna+ anterior;  anterior = strlen(yytext);strcpy(yylval.TEXT, yytext); return identificador;}
 {ruta_sin_espacio} {columna=columna+ anterior;  anterior = strlen(yytext);strcpy(yylval.TEXT, yytext); return ruta_sin_espacio;}
 {caracter} {columna=columna+ anterior;  anterior = strlen(yytext);strcpy(yylval.TEXT, yytext); return caracter;}
+{id_particionl} {columna=columna+ anterior;  anterior = strlen(yytext);strcpy(yylval.TEXT, yytext); return id_particionl;}
+{id_particion} {columna=columna+ anterior;  anterior = strlen(yytext);strcpy(yylval.TEXT, yytext); return id_particion;}
 
 
 "." {columna=columna+ anterior;  anterior = strlen(yytext);strcpy(yylval.TEXT, yytext);return punto;}

@@ -12,16 +12,9 @@ int p;
 extern int linea; // Linea del token
 extern int columna; // Columna de los tokens
 extern int yylineno;
-int main(int argc, char *argv[])
+int main()
 {
 
-    /*mkdisk *disco = new mkdisk();
-    disco->setTamanio(1);
-    disco->setUnidad("m");
-    disco->setRuta("/home/juan/Desktop/Disco3.dk");
-    cout << disco->getRuta() <<endl;
-    disco->crearDisco(disco);
-    */
     QTextStream qtin(stdin);
     QString line;
 

@@ -80,6 +80,7 @@
 #include "fdisk.h"
 #include "mount.h"
 #include "unmount.h"
+#include "mkfs.h"
 // estructuras
 #include "estructuras.h"
 disco arregloDiscos[26];
@@ -97,7 +98,7 @@ std::cout << mens <<" "<<yytext<< std::endl;
 return 0;
 }
 
-#line 101 "parser.cpp"
+#line 102 "parser.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -151,46 +152,50 @@ extern int yydebug;
     pfdisk = 261,
     pmount = 262,
     punmount = 263,
-    p_id = 264,
-    p_path = 265,
-    p_name = 266,
-    p_type = 267,
-    ruta_sin_espacio = 268,
-    p_u = 269,
-    p_f = 270,
-    p_fast = 271,
-    p_delete = 272,
-    p_full = 273,
-    p_add = 274,
-    pmkdir = 275,
-    punto = 276,
-    bracketabre = 277,
-    bracketcierra = 278,
-    corcheteabre = 279,
-    corchetecierra = 280,
-    puntocoma = 281,
-    potencia = 282,
-    coma = 283,
-    parentesisabre = 284,
-    parentesiscierra = 285,
-    llaveabre = 286,
-    llavecierra = 287,
-    mas = 288,
-    menos = 289,
-    multiplicacion = 290,
-    igual = 291,
-    dolar = 292,
-    dospuntos = 293,
-    entero = 294,
-    numnegativo = 295,
-    cadena = 296,
-    identificador = 297,
-    caracter = 298,
-    ruta = 299,
-    rutacualquiera = 300,
-    suma = 301,
-    multi = 302,
-    division = 303
+    pmkfs = 264,
+    p_id = 265,
+    p_path = 266,
+    p_name = 267,
+    p_type = 268,
+    ruta_sin_espacio = 269,
+    id_particion = 270,
+    id_particionl = 271,
+    p_u = 272,
+    p_f = 273,
+    p_fast = 274,
+    p_delete = 275,
+    p_full = 276,
+    p_add = 277,
+    pmkdir = 278,
+    punto = 279,
+    bracketabre = 280,
+    bracketcierra = 281,
+    corcheteabre = 282,
+    corchetecierra = 283,
+    puntocoma = 284,
+    potencia = 285,
+    coma = 286,
+    parentesisabre = 287,
+    parentesiscierra = 288,
+    llaveabre = 289,
+    llavecierra = 290,
+    mas = 291,
+    menos = 292,
+    multiplicacion = 293,
+    igual = 294,
+    dolar = 295,
+    dospuntos = 296,
+    entero = 297,
+    letra = 298,
+    numnegativo = 299,
+    cadena = 300,
+    identificador = 301,
+    caracter = 302,
+    ruta = 303,
+    rutacualquiera = 304,
+    suma = 305,
+    multi = 306,
+    division = 307
   };
 #endif
 
@@ -198,7 +203,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 36 "parser.y"
+#line 37 "parser.y"
 
 //se especifican los tipo de valores para los no terminales y lo terminales
 //char TEXT [256];
@@ -210,9 +215,10 @@ class rmdisk *rmdisk_cmd;
 class fdisk *fdisk_cmd;
 class mount *mount_cmd;
 class unmount *unmount_cmd;
-//class mount *cmd_mount = new mount();
+class mkfs *mkfs_cmd;
 
-#line 216 "parser.cpp"
+
+#line 222 "parser.cpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -546,21 +552,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  18
+#define YYFINAL  21
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   164
+#define YYLAST   184
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  49
+#define YYNTOKENS  53
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  8
+#define YYNNTS  9
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  23
+#define YYNRULES  29
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  163
+#define YYNSTATES  182
 
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   303
+#define YYMAXUTOK   307
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -602,16 +608,16 @@ static const yytype_int8 yytranslate[] =
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
-      45,    46,    47,    48
+      45,    46,    47,    48,    49,    50,    51,    52
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   118,   118,   121,   126,   130,   134,   138,   148,   171,
-     186,   206,   223,   231,   242,   263,   282,   288,   303,   317,
-     322,   329,   437,   441
+       0,   125,   125,   131,   132,   133,   134,   135,   136,   141,
+     164,   179,   199,   216,   224,   235,   256,   275,   281,   296,
+     310,   315,   322,   414,   415,   469,   502,   538,   542,   546
 };
 #endif
 
@@ -621,16 +627,17 @@ static const yytype_int16 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "psize", "pmkdisk", "prmdisk", "pfdisk",
-  "pmount", "punmount", "p_id", "p_path", "p_name", "p_type",
-  "ruta_sin_espacio", "p_u", "p_f", "p_fast", "p_delete", "p_full",
-  "p_add", "pmkdir", "punto", "bracketabre", "bracketcierra",
-  "corcheteabre", "corchetecierra", "puntocoma", "potencia", "coma",
-  "parentesisabre", "parentesiscierra", "llaveabre", "llavecierra", "mas",
-  "menos", "multiplicacion", "igual", "dolar", "dospuntos", "entero",
-  "numnegativo", "cadena", "identificador", "caracter", "ruta",
-  "rutacualquiera", "suma", "multi", "division", "$accept", "INICIO",
-  "LEXPA", "COMANDOMKDISK", "COMANDORMDISK", "COMANDOFDISK",
-  "COMANDOMOUNT", "COMANDOUNMOUNT", YY_NULLPTR
+  "pmount", "punmount", "pmkfs", "p_id", "p_path", "p_name", "p_type",
+  "ruta_sin_espacio", "id_particion", "id_particionl", "p_u", "p_f",
+  "p_fast", "p_delete", "p_full", "p_add", "pmkdir", "punto",
+  "bracketabre", "bracketcierra", "corcheteabre", "corchetecierra",
+  "puntocoma", "potencia", "coma", "parentesisabre", "parentesiscierra",
+  "llaveabre", "llavecierra", "mas", "menos", "multiplicacion", "igual",
+  "dolar", "dospuntos", "entero", "letra", "numnegativo", "cadena",
+  "identificador", "caracter", "ruta", "rutacualquiera", "suma", "multi",
+  "division", "$accept", "INICIO", "LEXPA", "COMANDOMKDISK",
+  "COMANDORMDISK", "COMANDOFDISK", "COMANDOMOUNT", "COMANDOUNMOUNT",
+  "COMANDOMKFS", YY_NULLPTR
 };
 #endif
 
@@ -643,11 +650,12 @@ static const yytype_int16 yytoknum[] =
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
      285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
-     295,   296,   297,   298,   299,   300,   301,   302,   303
+     295,   296,   297,   298,   299,   300,   301,   302,   303,   304,
+     305,   306,   307
 };
 # endif
 
-#define YYPACT_NINF (-30)
+#define YYPACT_NINF (-31)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -661,23 +669,25 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      16,   -25,   -19,   -16,    -9,    -8,     5,   -30,     3,   -30,
-      17,   -30,     0,   -30,    21,   -30,    23,   -30,   -30,    -3,
-      -2,    -1,     1,     2,     6,     7,   -29,     8,     9,    10,
-      26,   -13,    11,    12,    13,    20,    14,    18,   -12,    15,
-      22,    24,   -30,   -30,    25,    27,    28,    29,    30,    32,
-      31,    33,   -30,    -6,    34,     4,    43,    37,    40,    52,
-      35,    57,    58,    36,    38,    39,    41,    42,    44,    45,
-      46,    47,    48,    49,    50,   -11,    51,    53,    60,    54,
-      61,    63,    56,    59,    55,    62,    64,   -30,   -30,    65,
-      66,    68,    69,    71,    73,    74,    75,    77,   -30,   -30,
-      78,    67,    80,    70,    82,    84,   100,   101,    76,    79,
-      81,    83,    85,    86,    87,    88,    89,    72,    90,    91,
-      92,    93,   103,    94,   105,    96,    95,   -30,   -30,   -30,
-      98,   -30,    99,   -30,   104,   109,   111,   116,   117,   106,
-     107,   108,   110,   112,    97,   113,   115,   -30,   114,   118,
-     -30,   130,   138,   121,   122,   119,   120,   127,   -30,   134,
-     126,   123,   -30
+      19,   -30,   -21,   -16,    -3,    -2,    -1,    37,   -31,     3,
+     -31,    27,   -31,     0,   -31,    28,   -31,    30,   -31,    -5,
+     -31,   -31,     2,     4,     5,     7,     8,     9,    10,   -24,
+      11,    12,    13,    15,    16,    31,   -14,    17,    -4,    18,
+      34,    20,    23,   -13,    14,    40,   -10,    24,    26,   -31,
+     -31,    29,    32,    33,    35,    36,    39,    38,    41,   -31,
+     -31,   -31,    42,    43,    -7,    48,     6,    47,    46,    56,
+      54,    44,    62,    64,    67,    71,    45,    49,    50,    51,
+      52,    53,    55,    57,    58,    59,    60,    61,    63,    65,
+     -12,    66,    68,    72,    69,    74,    73,    75,    70,    76,
+      77,    78,    83,    86,   -31,   -31,    80,    81,    82,    84,
+      85,    88,    89,    90,    92,   -31,   -31,   -31,   -31,    95,
+      79,    96,    93,    98,    94,   117,   118,    91,    97,    99,
+     100,   101,   102,   103,   104,   105,    87,   106,   107,   108,
+     109,   119,   110,   120,   112,   111,   -31,   -31,   -31,   113,
+     -31,   115,   -31,   116,   123,   127,   125,   134,   121,   122,
+     124,   126,   114,   128,   129,   131,   -31,   130,   132,   -31,
+     136,   155,   133,   138,   135,   137,   141,   -31,   150,   142,
+     139,   -31
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -685,35 +695,37 @@ static const yytype_int16 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     0,     0,     0,     0,     0,     0,     2,     0,     3,
-       0,     4,     0,     5,     0,     6,     0,     7,     1,     0,
+       0,     0,     0,     0,    24,     0,     0,     0,     2,     0,
+       3,     0,     4,     0,     5,     0,     6,     0,     7,     0,
+       8,     1,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    14,
+      13,     0,     0,     0,     0,     0,     0,     0,     0,    25,
+      26,    29,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    13,    12,     0,     0,     0,     0,     0,     0,
-       0,     0,    23,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,    12,    11,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    22,    23,    27,    28,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    11,    10,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    21,    22,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     8,     9,    14,
-       0,    18,     0,    17,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    20,     0,     0,
-      19,     0,     0,     0,     0,     0,     0,     0,    15,     0,
-       0,     0,    16
+       0,     0,     0,     0,     0,     0,     9,    10,    15,     0,
+      19,     0,    18,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    21,     0,     0,    20,
+       0,     0,     0,     0,     0,     0,     0,    16,     0,     0,
+       0,    17
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -30,   -30,   -30,   -30,   -30,   -30,   -30,   -30
+     -31,   -31,   -31,   -31,   -31,   -31,   -31,   -31,   -31
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     6,     7,     9,    11,    13,    15,    17
+      -1,     7,     8,    10,    12,    14,    16,    18,    20
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -721,83 +733,89 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      42,    50,    87,    22,    63,    18,    19,    36,    64,     8,
-      37,    23,    24,    20,    66,    10,    67,    25,    12,    26,
-       1,     2,     3,     4,     5,    14,    16,    21,    43,    51,
-      88,    27,    28,    29,    30,    31,    47,    32,    33,    41,
-       0,     0,    34,    35,    38,    39,    60,    69,    65,    40,
-      44,    70,    49,    48,    45,    46,    53,    52,    54,    55,
-      68,    56,    57,    58,    59,    61,    71,    62,    73,    74,
-     110,    72,    75,    91,    76,    77,    94,    78,    79,    93,
-      80,    81,    82,    83,   112,    85,    86,   108,   109,    97,
-      84,   111,   113,    89,     0,    90,    92,    95,   114,   100,
-     101,    96,   102,   103,    98,   104,    99,   105,   106,   107,
-     115,   116,   117,   126,     0,   118,   131,   119,   133,   120,
-     139,   121,   122,   123,   124,   125,   140,   141,   142,   135,
-     128,   127,   136,   137,   129,   130,   132,   134,   138,   148,
-     153,   154,   143,   144,   145,   160,   146,     0,   151,     0,
-       0,     0,   152,   147,     0,   149,   150,   155,   156,   158,
-     157,   159,   161,     0,   162
+      49,    57,   104,    25,    76,    32,    22,     9,    33,    62,
+      77,    63,    26,    27,    23,    41,    11,    79,    42,    80,
+      28,    13,    29,     1,     2,     3,     4,     5,     6,    59,
+      60,    50,    58,   105,    15,    17,    19,    21,    24,    30,
+      31,    34,    52,    35,    36,    48,    37,    38,    39,    40,
+      43,    44,    45,    54,    46,    61,    71,    82,    47,    51,
+      56,    64,    55,    65,    53,    78,    66,    81,    83,    67,
+      68,    84,    69,    70,    86,    72,    87,    88,    73,    74,
+      75,    89,   129,    85,    90,     0,   108,   111,    91,    92,
+      93,    94,    95,     0,    96,   110,    97,    98,   117,   100,
+     101,   118,   102,   127,   103,    99,   128,     0,   130,   132,
+     131,   133,   106,   114,   107,   109,   113,   119,   120,   121,
+     112,   122,   123,   115,   116,   124,   125,   126,   134,   135,
+     136,     0,   145,   150,   152,   158,   137,   160,   138,   139,
+     140,   141,   142,   143,   144,   159,   161,   172,   154,   147,
+     155,   146,   156,   157,   148,   149,   151,   153,   173,   166,
+     162,   163,   179,   164,     0,   165,     0,   170,     0,   171,
+       0,     0,   174,     0,   167,   168,   169,   175,   178,   177,
+     176,   180,     0,     0,   181
 };
 
 static const yytype_int8 yycheck[] =
 {
-      13,    13,    13,     3,    10,     0,     3,    36,    14,    34,
-      39,    11,    12,    10,    10,    34,    12,    17,    34,    19,
-       4,     5,     6,     7,     8,    34,    34,    10,    41,    41,
-      41,    10,     9,    36,    36,    36,    16,    36,    36,    13,
-      -1,    -1,    36,    36,    36,    36,    14,    10,    14,    39,
-      39,    11,    34,    39,    42,    42,    34,    42,    34,    34,
-      17,    34,    34,    34,    34,    34,    14,    34,    11,    11,
-       3,    36,    36,    13,    36,    36,    13,    36,    36,    18,
-      36,    36,    36,    36,    14,    36,    36,    10,    10,    34,
-      42,    11,    10,    42,    -1,    42,    42,    41,    14,    34,
-      34,    42,    34,    34,    42,    34,    42,    34,    34,    34,
-      10,    10,    36,    41,    -1,    36,    13,    36,    13,    36,
-      11,    36,    36,    36,    36,    36,    15,    11,    11,    34,
-      39,    41,    34,    34,    42,    42,    42,    41,    34,    42,
-      10,     3,    36,    36,    36,    11,    36,    -1,    34,    -1,
-      -1,    -1,    34,    41,    -1,    42,    41,    36,    36,    39,
-      41,    34,    36,    -1,    41
+      14,    14,    14,     3,    11,    10,     3,    37,    13,    19,
+      17,    21,    12,    13,    11,    39,    37,    11,    42,    13,
+      20,    37,    22,     4,     5,     6,     7,     8,     9,    15,
+      16,    45,    45,    45,    37,    37,    37,     0,    11,    11,
+      10,    39,    46,    39,    39,    14,    39,    39,    39,    39,
+      39,    39,    39,    19,    39,    15,    17,    11,    42,    42,
+      37,    37,    42,    37,    46,    17,    37,    20,    12,    37,
+      37,    17,    37,    37,    12,    37,    12,    10,    37,    37,
+      37,    10,     3,    39,    39,    -1,    14,    14,    39,    39,
+      39,    39,    39,    -1,    39,    21,    39,    39,    15,    39,
+      39,    15,    39,    11,    39,    46,    11,    -1,    12,    11,
+      17,    17,    46,    37,    46,    46,    46,    37,    37,    37,
+      45,    37,    37,    46,    46,    37,    37,    37,    11,    11,
+      39,    -1,    45,    14,    14,    12,    39,    12,    39,    39,
+      39,    39,    39,    39,    39,    18,    12,    11,    37,    42,
+      37,    45,    37,    37,    46,    46,    46,    45,     3,    45,
+      39,    39,    12,    39,    -1,    39,    -1,    37,    -1,    37,
+      -1,    -1,    39,    -1,    46,    46,    45,    39,    37,    42,
+      45,    39,    -1,    -1,    45
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     4,     5,     6,     7,     8,    50,    51,    34,    52,
-      34,    53,    34,    54,    34,    55,    34,    56,     0,     3,
-      10,    10,     3,    11,    12,    17,    19,    10,     9,    36,
-      36,    36,    36,    36,    36,    36,    36,    39,    36,    36,
-      39,    13,    13,    41,    39,    42,    42,    16,    39,    34,
-      13,    41,    42,    34,    34,    34,    34,    34,    34,    34,
-      14,    34,    34,    10,    14,    14,    10,    12,    17,    10,
-      11,    14,    36,    11,    11,    36,    36,    36,    36,    36,
-      36,    36,    36,    36,    42,    36,    36,    13,    41,    42,
-      42,    13,    42,    18,    13,    41,    42,    34,    42,    42,
-      34,    34,    34,    34,    34,    34,    34,    34,    10,    10,
-       3,    11,    14,    10,    14,    10,    10,    36,    36,    36,
-      36,    36,    36,    36,    36,    36,    41,    41,    39,    42,
-      42,    13,    42,    13,    41,    34,    34,    34,    34,    11,
-      15,    11,    11,    36,    36,    36,    36,    41,    42,    42,
-      41,    34,    34,    10,     3,    36,    36,    41,    39,    34,
-      11,    36,    41
+       0,     4,     5,     6,     7,     8,     9,    54,    55,    37,
+      56,    37,    57,    37,    58,    37,    59,    37,    60,    37,
+      61,     0,     3,    11,    11,     3,    12,    13,    20,    22,
+      11,    10,    10,    13,    39,    39,    39,    39,    39,    39,
+      39,    39,    42,    39,    39,    39,    39,    42,    14,    14,
+      45,    42,    46,    46,    19,    42,    37,    14,    45,    15,
+      16,    15,    19,    21,    37,    37,    37,    37,    37,    37,
+      37,    17,    37,    37,    37,    37,    11,    17,    17,    11,
+      13,    20,    11,    12,    17,    39,    12,    12,    10,    10,
+      39,    39,    39,    39,    39,    39,    39,    39,    39,    46,
+      39,    39,    39,    39,    14,    45,    46,    46,    14,    46,
+      21,    14,    45,    46,    37,    46,    46,    15,    15,    37,
+      37,    37,    37,    37,    37,    37,    37,    11,    11,     3,
+      12,    17,    11,    17,    11,    11,    39,    39,    39,    39,
+      39,    39,    39,    39,    39,    45,    45,    42,    46,    46,
+      14,    46,    14,    45,    37,    37,    37,    37,    12,    18,
+      12,    12,    39,    39,    39,    39,    45,    46,    46,    45,
+      37,    37,    11,     3,    39,    39,    45,    42,    37,    12,
+      39,    45
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    49,    50,    51,    51,    51,    51,    51,    52,    52,
-      52,    52,    53,    53,    54,    54,    54,    54,    54,    54,
-      54,    55,    55,    56
+       0,    53,    54,    55,    55,    55,    55,    55,    55,    56,
+      56,    56,    56,    57,    57,    58,    58,    58,    58,    58,
+      58,    58,    59,    59,    59,    60,    60,    61,    61,    61
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     2,     2,     2,     2,     2,    12,    12,
-       8,     8,     4,     4,    12,    20,    24,    12,    12,    16,
-      15,     8,     8,     4
+       0,     2,     1,     2,     2,     2,     2,     2,     2,    12,
+      12,     8,     8,     4,     4,    12,    20,    24,    12,    12,
+      16,    15,     8,     8,     0,     4,     4,     8,     8,     4
 };
 
 
@@ -1588,56 +1606,51 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 118 "parser.y"
-               { }
-#line 1594 "parser.cpp"
+#line 126 "parser.y"
+    {
+        //cout<< " Hola.. \n";
+    }
+#line 1614 "parser.cpp"
     break;
 
   case 3:
-#line 122 "parser.y"
-{
-    //$2->mostrarDatos($2);//ejecuto el metodo "mostrardatos" del objeto retornado en COMANDOMKDISK
-    //printf("\n ejecutado!!!\n");
-}
-#line 1603 "parser.cpp"
+#line 131 "parser.y"
+                              {}
+#line 1620 "parser.cpp"
     break;
 
   case 4:
-#line 127 "parser.y"
-{
-    //printf("\n >> Ejecutando comando rmdisk");
-}
-#line 1611 "parser.cpp"
+#line 132 "parser.y"
+                        {}
+#line 1626 "parser.cpp"
     break;
 
   case 5:
-#line 131 "parser.y"
-{
-    //printf("\n >> Ejecutando comando fdisk... \n");
-}
-#line 1619 "parser.cpp"
+#line 133 "parser.y"
+                      {}
+#line 1632 "parser.cpp"
     break;
 
   case 6:
-#line 135 "parser.y"
-{
-    //printf("\n >> Ejecutando comando mount... \n");
-}
-#line 1627 "parser.cpp"
+#line 134 "parser.y"
+                      {}
+#line 1638 "parser.cpp"
     break;
 
   case 7:
-#line 139 "parser.y"
-{
-
-
-    //printf("\n >> Ejecutando comando unmount... \n");
-}
-#line 1637 "parser.cpp"
+#line 135 "parser.y"
+                          {}
+#line 1644 "parser.cpp"
     break;
 
   case 8:
-#line 149 "parser.y"
+#line 136 "parser.y"
+                    {}
+#line 1650 "parser.cpp"
+    break;
+
+  case 9:
+#line 142 "parser.y"
     {
         int tam=atoi((yyvsp[-8].TEXT));
         string comilla = "\"";
@@ -1659,11 +1672,11 @@ yyreduce:
         disco->crearDisco(disco);
         (yyval.mkdisk_cmd)=disco;
     }
-#line 1663 "parser.cpp"
+#line 1676 "parser.cpp"
     break;
 
-  case 9:
-#line 172 "parser.y"
+  case 10:
+#line 165 "parser.y"
     {
         int tam=atoi((yyvsp[0].TEXT));
         mkdisk *disco=new mkdisk();
@@ -1677,11 +1690,11 @@ yyreduce:
 
         (yyval.mkdisk_cmd)=disco;
     }
-#line 1681 "parser.cpp"
+#line 1694 "parser.cpp"
     break;
 
-  case 10:
-#line 187 "parser.y"
+  case 11:
+#line 180 "parser.y"
     {
         int tam=atoi((yyvsp[-4].TEXT));
         string comilla = "\"";
@@ -1700,11 +1713,11 @@ yyreduce:
         disco->crearDisco(disco);
         (yyval.mkdisk_cmd)=disco;
     }
-#line 1704 "parser.cpp"
+#line 1717 "parser.cpp"
     break;
 
-  case 11:
-#line 207 "parser.y"
+  case 12:
+#line 200 "parser.y"
     {
         int tam=atoi((yyvsp[-4].TEXT));
         string ruta = (yyvsp[0].TEXT);
@@ -1716,34 +1729,34 @@ yyreduce:
         (yyval.mkdisk_cmd)=disco;
 
     }
-#line 1720 "parser.cpp"
-    break;
-
-  case 12:
-#line 224 "parser.y"
-{
-    std::string rutaBorrar = (yyvsp[0].TEXT);
-    rmdisk *discoBorrar = new rmdisk();
-    discoBorrar->borrarDisco(rutaBorrar);
-    (yyval.rmdisk_cmd)=discoBorrar;
-
-}
-#line 1732 "parser.cpp"
+#line 1733 "parser.cpp"
     break;
 
   case 13:
-#line 232 "parser.y"
+#line 217 "parser.y"
+{
+    std::string rutaBorrar = (yyvsp[0].TEXT);
+    rmdisk *discoBorrar = new rmdisk();
+    discoBorrar->borrarDisco(rutaBorrar);
+    (yyval.rmdisk_cmd)=discoBorrar;
+
+}
+#line 1745 "parser.cpp"
+    break;
+
+  case 14:
+#line 225 "parser.y"
 {
     std::string rutaBorrar = (yyvsp[0].TEXT);
     rmdisk *discoBorrar = new rmdisk();
     discoBorrar->borrarDisco(rutaBorrar);
     (yyval.rmdisk_cmd)=discoBorrar;
 }
-#line 1743 "parser.cpp"
+#line 1756 "parser.cpp"
     break;
 
-  case 14:
-#line 243 "parser.y"
+  case 15:
+#line 236 "parser.y"
     {
         int tamanio = atoi((yyvsp[-8].TEXT));
         string ruta = (yyvsp[-4].TEXT);
@@ -1763,11 +1776,11 @@ yyreduce:
 
 
     }
-#line 1767 "parser.cpp"
+#line 1780 "parser.cpp"
     break;
 
-  case 15:
-#line 264 "parser.y"
+  case 16:
+#line 257 "parser.y"
     {
         string ruta= (yyvsp[-12].TEXT);
         string tipoAjuste = (yyvsp[-16].TEXT);
@@ -1785,19 +1798,19 @@ yyreduce:
         disco->mostrarDatosDisco(ruta);
         (yyval.fdisk_cmd) = disco;
     }
-#line 1789 "parser.cpp"
-    break;
-
-  case 16:
-#line 284 "parser.y"
-    {
-
-    }
-#line 1797 "parser.cpp"
+#line 1802 "parser.cpp"
     break;
 
   case 17:
-#line 289 "parser.y"
+#line 277 "parser.y"
+    {
+
+    }
+#line 1810 "parser.cpp"
+    break;
+
+  case 18:
+#line 282 "parser.y"
     {
         /*
         string nombreParticion = $4;
@@ -1811,11 +1824,11 @@ yyreduce:
         $$ = particion;
         */
 }
-#line 1815 "parser.cpp"
+#line 1828 "parser.cpp"
     break;
 
-  case 18:
-#line 304 "parser.y"
+  case 19:
+#line 297 "parser.y"
     {
         string nombreParticion = (yyvsp[-8].TEXT);
         string tipoBorrado = (yyvsp[-4].TEXT);
@@ -1828,30 +1841,30 @@ yyreduce:
         (yyval.fdisk_cmd) = particion;
 
     }
-#line 1832 "parser.cpp"
-    break;
-
-  case 19:
-#line 318 "parser.y"
-    {
-
-    }
-#line 1840 "parser.cpp"
+#line 1845 "parser.cpp"
     break;
 
   case 20:
-#line 323 "parser.y"
+#line 311 "parser.y"
     {
 
     }
-#line 1848 "parser.cpp"
+#line 1853 "parser.cpp"
     break;
 
   case 21:
-#line 330 "parser.y"
+#line 316 "parser.y"
+    {
+
+    }
+#line 1861 "parser.cpp"
+    break;
+
+  case 22:
+#line 323 "parser.y"
     {
         string ruta = (yyvsp[-4].TEXT);
-        int i = 0;
+        //int i = 0;
         string nombreParticion = (yyvsp[0].TEXT);
         mount *comando_mount = new mount();
 
@@ -1890,16 +1903,19 @@ yyreduce:
                 // encuentro el primer disco inactivo (o libre)
                 if (arregloDiscos[i].estado == 0) {
                     disco discoaMontar = comando_mount->montarDisco(ruta, i);
+                    //arregloDiscos[i] = discoaMontar;
+
                     for (int j = 0; j < 99; j++) {
 
                         //cout << j << '\n';
                         if (arregloDiscos[i].particiones[j].estado == 0) {
-                            cout << " Insertando en disco " << i << "\n";
-                            cout << " Insertando en particion " << j  << "\n";
+                            //cout << " Insertando en disco " << i << "\n";
+                            //cout << " Insertando en particion " << j  << "\n";
                             //particion particionaMontar;
                             string str(1, discoaMontar.letra);
                             discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j, str);
                             arregloDiscos[i] = discoaMontar;
+                            //i++;
                             break;
                         }
 
@@ -1910,17 +1926,18 @@ yyreduce:
 
                 // Si el disco está activo y la ruta es igual
                 }else if((arregloDiscos[i].estado == 1) && strcmp(arregloDiscos[i].ruta, ruta.c_str()) == 0){
-                    disco discoaMontar = comando_mount->montarDisco(ruta, i);
+
+
                     for (int j = 0; j < 99; j++) {
-                        //cout << " - i " <<i << '\n';
-                        //cout << " - j " <<j << '\n';
+
                         // encuentro una particion libre (estado 0)
                         if (arregloDiscos[i].particiones[j].estado == 0) {
-                            cout << " Insertando en disco " << i << "\n";
-                            cout << " Insertando en particion " << j  << "\n";
+
+                            disco discoaMontar = comando_mount->montarDisco(ruta, i);
                             string str(1, discoaMontar.letra);
                             discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j, str);
                             arregloDiscos[i] = discoaMontar;
+                            //i++;
                             break;
                         }
 
@@ -1934,45 +1951,166 @@ yyreduce:
         }
 
 
+        //$$ = comando_mount;
+    }
+#line 1957 "parser.cpp"
+    break;
 
-        for(int i = 0; i < 26; i++){
+  case 23:
+#line 414 "parser.y"
+                                                             {}
+#line 1963 "parser.cpp"
+    break;
 
-            if(arregloDiscos[i].estado != 0){
-                cout << " Letra: " <<arregloDiscos[i].letra << "\n";
-                cout << " Ruta del disco: " <<arregloDiscos[i].ruta << "\n";
-                cout << " \t Particiones montadas : \n";
+  case 24:
+#line 415 "parser.y"
+    {
+        disco discoVacio;
+        discoVacio.letra = ' ';
+        discoVacio.ruta[0] = '\0';
+        discoVacio.estado = 0;
+
+        particion_disco part_vacia;
+        part_vacia.numero = 0;
+        part_vacia.nombre[0] = '\0';
+        part_vacia.estado = 0;
+        part_vacia.id[0] = '\0';
+
+        if (!mountInicializado) {
+
+            for (int i= 0; i < 26; i++) {
+                arregloDiscos[i] = discoVacio;
 
                 for(int j = 0; j < 99; j++){
+                    arregloDiscos[i].particiones[j] = part_vacia;
+                }
+            }
 
-                    if(arregloDiscos[i].particiones[j].estado != 0){
+            mountInicializado = true;
+            cout << " >> Mount inicializado \n";
+        }else {
 
-                        cout << "\t " << j + 1 <<". Nombre particion: " << arregloDiscos[i].particiones[j].nombre << "\n";
-                        cout << "\t  ID particion: " << arregloDiscos[i].particiones[j].id << "\n";
-                        fflush(stdin);
+            cout << " ******* PARTICIONES MONTADAS ******* \n";
+
+            for(int i = 0; i < 26; i++){
+
+                if(arregloDiscos[i].estado != 0){
+                    cout << " Letra: " <<arregloDiscos[i].letra << "\n";
+                    cout << " Ruta del disco: " <<arregloDiscos[i].ruta << "\n";
+                    cout << " \t Particiones montadas : \n";
+
+                    for(int j = 0; j < 99; j++){
+
+                        if(arregloDiscos[i].particiones[j].estado != 0){
+
+                            cout << "\t " << j + 1 <<". Nombre particion: " << arregloDiscos[i].particiones[j].nombre << "\n";
+                            cout << "\t  ID particion: " << arregloDiscos[i].particiones[j].id << "\n";
+                            fflush(stdin);
+                        }
                     }
                 }
             }
         }
 
-        //$$ = comando_mount;
+
     }
-#line 1960 "parser.cpp"
+#line 2018 "parser.cpp"
     break;
 
-  case 22:
-#line 437 "parser.y"
-                                                             {}
-#line 1966 "parser.cpp"
+  case 25:
+#line 470 "parser.y"
+    {
+        string id = (yyvsp[0].TEXT);
+
+        unmount *comando_unmount = new unmount();
+
+        particion_disco part_vacia;
+        part_vacia.numero = 0;
+        part_vacia.nombre[0] = '\0';
+        part_vacia.estado = 0;
+        part_vacia.id[0] = '\0';
+
+        int num = id[2];
+        char letra = id[3];
+
+        cout << letra << "\n";
+
+        for(int i = 0; i <26; i++){
+
+            if(arregloDiscos[i].letra == letra){
+
+                arregloDiscos[i].particiones[num-48] = part_vacia;
+                break;
+            }
+        }
+
+
+        (yyval.unmount_cmd) = comando_unmount;
+        //comando_unmount->desmontarParticion();
+
+
+    }
+#line 2054 "parser.cpp"
     break;
 
-  case 23:
-#line 441 "parser.y"
-                                {}
-#line 1972 "parser.cpp"
+  case 26:
+#line 503 "parser.y"
+    {
+        particion_disco part_vacia;
+        part_vacia.numero = 0;
+        part_vacia.nombre[0] = '\0';
+        part_vacia.estado = 0;
+        part_vacia.id[0] = '\0';
+
+        string id = (yyvsp[0].TEXT);
+        char num[2];
+
+        for(int i = 2; i < 4;i++){
+            num[i-2] = id[i];
+        }
+        //string n = num;
+        char letra = id[4];
+        cout << atoi(num) << "\n";
+        //cout << letra << "\n";
+
+        for(int i = 0; i <26; i++){
+
+            if(arregloDiscos[i].letra == letra){
+
+                for(int j = 0; j < 99; i++){
+                    arregloDiscos[i].particiones[j] = part_vacia;
+                    break;
+                }
+            }
+
+        }
+    }
+#line 2089 "parser.cpp"
+    break;
+
+  case 27:
+#line 539 "parser.y"
+    {
+    }
+#line 2096 "parser.cpp"
+    break;
+
+  case 28:
+#line 543 "parser.y"
+    {
+    }
+#line 2103 "parser.cpp"
+    break;
+
+  case 29:
+#line 547 "parser.y"
+    {
+    }
+#line 2110 "parser.cpp"
     break;
 
 
-#line 1976 "parser.cpp"
+#line 2114 "parser.cpp"
 
       default: break;
     }
