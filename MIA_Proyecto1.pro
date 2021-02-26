@@ -12,7 +12,6 @@ TEMPLATE = app
 SOURCES += main.cpp \
     parser.cpp \
     scanner.cpp \
-    obmkdisk.cpp \
     mkdisk.cpp \
     rmdisk.cpp \
     fdisk.cpp \
@@ -40,7 +39,6 @@ DISTFILES += \
 HEADERS += \
     parser.h \
     scanner.h \
-    obmkdisk.h \
     mkdisk.h \
     rmdisk.h \
     fdisk.h \
