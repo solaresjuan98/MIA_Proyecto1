@@ -56,49 +56,52 @@ extern int yydebug;
     pmount = 262,
     punmount = 263,
     pmkfs = 264,
-    p_id = 265,
-    p_path = 266,
-    p_name = 267,
-    p_type = 268,
-    ruta_sin_espacio = 269,
-    id_particion = 270,
-    id_particionl = 271,
-    p_u = 272,
-    p_f = 273,
-    p_fast = 274,
-    p_delete = 275,
-    p_full = 276,
-    p_add = 277,
-    pmkdir = 278,
-    punto = 279,
-    bracketabre = 280,
-    bracketcierra = 281,
-    corcheteabre = 282,
-    corchetecierra = 283,
-    puntocoma = 284,
-    potencia = 285,
-    coma = 286,
-    parentesisabre = 287,
-    parentesiscierra = 288,
-    llaveabre = 289,
-    llavecierra = 290,
-    mas = 291,
-    menos = 292,
-    multiplicacion = 293,
-    igual = 294,
-    dolar = 295,
-    dospuntos = 296,
-    entero = 297,
-    letra = 298,
-    numnegativo = 299,
-    cadena = 300,
-    identificador = 301,
-    caracter = 302,
-    ruta = 303,
-    rutacualquiera = 304,
-    suma = 305,
-    multi = 306,
-    division = 307
+    p_fs = 265,
+    p_id = 266,
+    p_path = 267,
+    p_name = 268,
+    p_type = 269,
+    ruta_sin_espacio = 270,
+    id_particion = 271,
+    id_particionl = 272,
+    p_u = 273,
+    p_f = 274,
+    p_fast = 275,
+    p_delete = 276,
+    p_full = 277,
+    p_add = 278,
+    pmkdir = 279,
+    p_2fs = 280,
+    p_3fs = 281,
+    punto = 282,
+    bracketabre = 283,
+    bracketcierra = 284,
+    corcheteabre = 285,
+    corchetecierra = 286,
+    puntocoma = 287,
+    potencia = 288,
+    coma = 289,
+    parentesisabre = 290,
+    parentesiscierra = 291,
+    llaveabre = 292,
+    llavecierra = 293,
+    mas = 294,
+    menos = 295,
+    multiplicacion = 296,
+    igual = 297,
+    dolar = 298,
+    dospuntos = 299,
+    entero = 300,
+    letra = 301,
+    numnegativo = 302,
+    cadena = 303,
+    identificador = 304,
+    caracter = 305,
+    ruta = 306,
+    rutacualquiera = 307,
+    suma = 308,
+    multi = 309,
+    division = 310
   };
 #endif
 
@@ -106,7 +109,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 37 "parser.y"
+#line 36 "parser.y"
 
 //se especifican los tipo de valores para los no terminales y lo terminales
 //char TEXT [256];
@@ -121,7 +124,7 @@ class unmount *unmount_cmd;
 class mkfs *mkfs_cmd;
 
 
-#line 125 "parser.h"
+#line 128 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

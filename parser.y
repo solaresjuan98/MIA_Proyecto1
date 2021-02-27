@@ -4,7 +4,6 @@
 #include <string>
 #include "qdebug.h"
 #include <iostream>
-#include "obmkdisk.h"
 // comandos usados
 #include "mkdisk.h"
 #include "rmdisk.h"
@@ -57,6 +56,8 @@ class mkfs *mkfs_cmd;
 %token<TEXT> pmount;
 %token<TEXT> punmount;
 %token<TEXT> pmkfs;
+%token<TEXT> p_fs;
+
 
 %token<TEXT> p_id;
 %token<TEXT> p_path;
@@ -72,6 +73,8 @@ class mkfs *mkfs_cmd;
 %token<TEXT> p_full;
 %token<TEXT> p_add;
 %token<TEXT> pmkdir;
+%token<TEXT> p_2fs;
+%token<TEXT> p_3fs;
 
 
 %token<TEXT> punto;
@@ -153,7 +156,6 @@ menos psize igual entero menos p_u igual identificador menos p_path igual cadena
         string ruta_final;
         while ((pos = ruta.find(comilla)) != std::string::npos) {
             ruta_final = ruta.substr(0, pos);
-            //std::cout << ruta_final << std::endl;
             ruta.erase(0, pos + comilla.length());
         }
         disco->setRuta(ruta_final);
@@ -255,14 +257,15 @@ menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual 
 // -type=E –path=/home/Disco1.disk -U=k –name=Particion1 -size=300
 | menos p_type igual identificador menos p_path igual ruta_sin_espacio menos p_u igual identificador menos p_name igual identificador menos psize igual entero
     {
+        string tipoParticion = $4;
         string ruta= $8;
-        string tipoAjuste = $4;
         string unidad = $12;
         string nombreParticion = $16;
         int tamanio = atoi($20);
 
         fdisk *disco = new fdisk();
-        disco->setAjuste(tipoAjuste);
+        disco->setTipo(tipoParticion);
+        disco->setAjuste("W");
         disco->setRuta(ruta);
         disco->setUnidad(unidad);
         disco->setNombre(nombreParticion);
@@ -303,17 +306,41 @@ menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual 
         particion->setBorrar(tipoBorrado);
         particion->borrarParticion(ruta, particion, nombreParticion);
         particion->mostrarDatosDisco(ruta);
-        $$ = particion;
-
-    }
-// -add=1 -u=M -path="/home/mis discos/Disco4.dk" -name="Particion 4"
-| menos p_add igual entero menos p_u igual identificador menos p_path igual cadena menos p_name igual cadena
-    {
+        //$$ = particion;
 
     }
 // -add=1 -u=M -path="/home/juan/Desktop/Disco.dk" -name="Particion 4"
-| menos p_add entero menos p_u igual identificador menos p_path igual cadena menos p_name igual cadena
+| menos p_add igual entero menos p_u igual identificador menos p_path igual cadena menos p_name igual cadena
     {
+        int cantidadAgregar = atoi($4);
+        string unidad = $8;
+        string ruta = $12;
+        string par_nombre = $16;
+
+        fdisk *comando_fdisk = new fdisk();
+        comando_fdisk->setUnidad(unidad);
+        string comilla = "\"";
+
+        size_t pos = 0;
+        string ruta_final;
+        while ((pos = ruta.find(comilla)) != std::string::npos) {
+            ruta_final = ruta.substr(0, pos);
+            ruta.erase(0, pos + comilla.length());
+        }
+
+        //cout << ruta_final << "\n";
+        size_t posaux = 0;
+        string nombreParticion;
+        while ((posaux = par_nombre.find(comilla)) != std::string::npos) {
+            nombreParticion = par_nombre.substr(0, posaux);
+            par_nombre.erase(0, posaux + comilla.length());
+
+        }
+
+
+        comando_fdisk->setRuta(ruta_final);
+        comando_fdisk->setNombre(nombreParticion);
+        comando_fdisk->extenderParticion(comando_fdisk, cantidadAgregar);
 
     }
 ;
@@ -534,15 +561,23 @@ COMANDOUNMOUNT:
 ;
 
 COMANDOMKFS:
-// mkfs -type=fast -id=581A
-menos p_type igual p_fast  menos p_id igual id_particion
+// mkfs -type=fast -id=581A -fs=2fs
+menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
     {
     }
-// mkfs -type=full -id=581A
-| menos p_type igual p_full  menos p_id igual id_particion
+// mkfs -type=fast -id=581A -fs=3fs
+| menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_3fs
     {
     }
-// mkfs -id=582A
+// mkfs -type=full -id=581A -fs=3fs
+| menos p_type igual p_full  menos p_id igual id_particion menos p_fs igual p_2fs
+    {
+    }
+// mkfs -type=full -id=581A -fs=3fs
+| menos p_type igual p_full  menos p_id igual id_particion menos p_fs igual p_3fs
+    {
+    }
+// mkfs -id=582A (formateo completo)
 | menos p_id igual id_particion
     {
     }

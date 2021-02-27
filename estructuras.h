@@ -31,13 +31,21 @@ typedef struct {
     particion mbr_particions[4];
 } mbr;
 
+// JOURNALING
+typedef struct {
+    char tipo_op[10];
+    char tipo;
+    char path[100];
+    char fecha_operacion[25];
+    int tamanio;
+} journaling;
+
 /*
     PARA COMANDO MOUNT
 */
 
 typedef struct {
-    char id[4];
-    //std::string id;
+    char id[5];
     int numero;
     char nombre[16];
     int estado;
@@ -50,16 +58,4 @@ typedef struct  {
     particion_disco particiones[99];
 }disco;
 
-
-//disco discosmontados[26];
-
-/*
-class estructuras
-{
-public:
-    estructuras();
-
-
-};
-*/
 #endif // ESTRUCTURAS_H

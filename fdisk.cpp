@@ -42,12 +42,12 @@ void fdisk::crearParticion(fdisk *disco){
     mbr mbr_tmp;
     int tamanio_parcicion;
     int fin_particion;
-    std::cout << disco->getRuta() << "\n";
+    //std::cout << disco->getRuta() << "\n";
     archivo = fopen(disco->getRuta().c_str(), "rb+");
 
 
     if(archivo == NULL) {
-        std::cout << " >> Archivo no encontrado<\n";
+        std::cout << " >> Archivo no encontrado. \n";
         return;
     }
 
@@ -55,9 +55,9 @@ void fdisk::crearParticion(fdisk *disco){
     fread(&mbr_tmp, sizeof(mbr), 1, archivo);
 
     // Tamaño total del archivo (en bytes)
-    fseek(archivo, 0L, SEEK_END);
-    long int res = ftell(archivo);
-    std::cout << res << "\n";
+    //fseek(archivo, 0L, SEEK_END);
+    //long int res = ftell(archivo);
+    //std::cout << res << "\n"; // imprimir tamaño del archivo que está siendo leído
 
     if(disco->getUnidad() == "k" || disco->getUnidad().empty() == true) {
         tamanio_parcicion = disco->getTamanio() * 1024;
@@ -110,7 +110,7 @@ void fdisk::crearParticion(fdisk *disco){
 
             } else if (disco->getTipo() == "E") {
                 // creando una parcicion extendida
-                std::cout << " >> Creando una particion extendida... \n";
+                cout << " >> Creando una particion extendida... \n";
                 mbr_tmp.mbr_particions[i].part_type = 'E';
 
                 ebr ebr_aux;
@@ -200,7 +200,7 @@ void fdisk::mostrarDatosDisco(string ruta){
 
 }
 
-//Borrar particion
+// Borrar particion
 void fdisk::borrarParticion(string ruta, fdisk *disco, string nombreParticion) {
 
     FILE *archivo;
@@ -236,13 +236,13 @@ void fdisk::borrarParticion(string ruta, fdisk *disco, string nombreParticion) {
             if(strcmp(mbr_.mbr_particions[i].part_name, nombreParticion.c_str()) == 0){
                //cout << " >> Borrando... \n";
                mbr_.mbr_particions[i] = particion_vacia;
-               std::cout << " Estado de particion: " << mbr_.mbr_particions[i].part_status <<std::endl;
-               std::cout << " Tipo de particion: " << mbr_.mbr_particions[i].part_type <<std::endl;
-               std::cout << " Ajuste de particion: " << mbr_.mbr_particions[i].part_fit <<std::endl;
-               std::cout << " Inicio de particion: " << mbr_.mbr_particions[i].part_start <<std::endl;
-               std::cout << " Tamanio de particion: " << mbr_.mbr_particions[i].part_size <<std::endl;
-               std::cout << " Nombre de particion: " << mbr_.mbr_particions[i].part_name <<std::endl;
-               std::cout << "\n\n";
+               cout << " Estado de particion: " << mbr_.mbr_particions[i].part_status <<std::endl;
+               cout << " Tipo de particion: " << mbr_.mbr_particions[i].part_type <<std::endl;
+               cout << " Ajuste de particion: " << mbr_.mbr_particions[i].part_fit <<std::endl;
+               cout << " Inicio de particion: " << mbr_.mbr_particions[i].part_start <<std::endl;
+               cout << " Tamanio de particion: " << mbr_.mbr_particions[i].part_size <<std::endl;
+               cout << " Nombre de particion: " << mbr_.mbr_particions[i].part_name <<std::endl;
+               cout << "\n\n";
 
                fseek(archivo, 0, SEEK_SET);
                fwrite(&mbr_, sizeof(mbr), 1, archivo);
@@ -252,7 +252,55 @@ void fdisk::borrarParticion(string ruta, fdisk *disco, string nombreParticion) {
         std::cout << " >> Modo de borrado incorrecto. \n";
     }
 
-    //fwrite(&mbr_, mbr_.mbr_particions[i], 1, archivo);
     fclose(archivo);
+
+}
+
+// Extender particion
+void fdisk::extenderParticion(fdisk *disco, int cantidad) {
+
+    //int tam_extension;
+    FILE *archivo;
+    archivo = fopen(disco->getRuta().c_str(), "rb+");
+
+    if(archivo == NULL){
+        cout << " >> Archivo no encontrado. \n";
+    }
+
+    // Tamaño del disco
+    fseek(archivo, 0L, SEEK_END);
+    long int tamanioArchivo = ftell(archivo);
+
+    mbr mbr_tmp;
+    fseek(archivo, 0, SEEK_SET);
+    fread(&mbr_tmp, sizeof(mbr), 1, archivo);
+
+
+    // la cantidad a extender es mayor a la del disco
+    if(cantidad >= tamanioArchivo){
+        cout << " >> La particion no se puede extender, la cantidad a extender es superior al tamanio del disco. \n";
+    } else {
+        for(int i = 0; i < 4; i++){
+            if(strcmp(mbr_tmp.mbr_particions[i].part_name, disco->getNombre().c_str()) == 0){
+
+                if(disco->getUnidad() == "m" || disco->getUnidad() == "M"){
+                    cantidad = cantidad*1024*1024;
+                }else if(disco->getUnidad() == "k" || disco->getUnidad()  == "K"){
+                    cantidad = cantidad*1024;
+                }else if(disco->getUnidad() == "b" || disco->getUnidad() == "B"){
+
+                }
+                int tamanioActual = mbr_tmp.mbr_particions[i].part_size;
+                mbr_tmp.mbr_particions[i].part_size = tamanioActual + cantidad;
+                cout <<  mbr_tmp.mbr_particions[i].part_size << "\n";
+                fseek(archivo, 0, SEEK_SET);
+                fwrite(&mbr_tmp, sizeof(mbr), 1, archivo);
+                cout << " >> La particion ha sido extendida. \n";
+            }
+        }
+    }
+
+    fclose(archivo);
+
 
 }
