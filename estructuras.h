@@ -31,21 +31,13 @@ typedef struct {
     particion mbr_particions[4];
 } mbr;
 
-// JOURNALING
-typedef struct {
-    char tipo_op[10];
-    char tipo;
-    char path[100];
-    char fecha_operacion[25];
-    int tamanio;
-} journaling;
-
 /*
     PARA COMANDO MOUNT
 */
 
 typedef struct {
-    char id[5];
+    //char id[5];
+    std::string id;
     int numero;
     char nombre[16];
     int estado;
@@ -57,5 +49,51 @@ typedef struct  {
     int estado;
     particion_disco particiones[99];
 }disco;
+
+// **********
+
+// JOURNALING
+typedef struct {
+    char tipo_op[10];
+    char tipo;
+    char path[100];
+    char fecha_op[25];
+    int tamanio;
+} journaling;
+
+// SUPERBLOQUE
+typedef struct {
+    int s_filesystem_type;
+    int s_inodes_count;
+    int s_blocks_count;
+    int s_free_blocks_count;
+    int s_free_inodes_count;
+    int s_mtime;
+    int s_umtine;
+    int s_mnt_count;
+    int s_magic;
+    int s_inode_size;
+    int s_block_size;
+    int s_first_ino;
+    int s_first_block;
+    int s_bm_inode_start;
+    int s_bm_block_start;
+    int s_inode_start;
+    int s_block_start;
+}superBloque;
+
+typedef struct {
+    int i_uid;
+    int i_gid;
+    int i_size;
+    int i_atime;
+    int i_ctime;
+    int i_mtime;
+    int i_block;
+    int i_type;
+    int i_perm;
+}tablaInodo;
+
+
 
 #endif // ESTRUCTURAS_H

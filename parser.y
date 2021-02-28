@@ -394,13 +394,12 @@ menos p_path igual ruta_sin_espacio menos p_name igual identificador
 
                         //cout << j << '\n';
                         if (arregloDiscos[i].particiones[j].estado == 0) {
-                            //cout << " Insertando en disco " << i << "\n";
-                            //cout << " Insertando en particion " << j  << "\n";
+
                             //particion particionaMontar;
                             string str(1, discoaMontar.letra);
                             discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j, str);
                             arregloDiscos[i] = discoaMontar;
-                            //i++;
+
                             break;
                         }
 
@@ -561,13 +560,47 @@ COMANDOUNMOUNT:
 ;
 
 COMANDOMKFS:
+ /*
+    fast para 2fs y 3fs
+    full para 2fs y 3fs
+ */
 // mkfs -type=fast -id=581A -fs=2fs
 menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
     {
+
     }
 // mkfs -type=fast -id=581A -fs=3fs
 | menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_3fs
     {
+        string ruta;
+        char nombreParticion[16];
+        string id = $8;
+
+        mkfs *cmd_mkfs = new mkfs();
+        //cout << id << "\n";
+        /*
+
+        */
+        for(int i = 0; i < 26; i++){
+
+            for(int j = 0; j < 99; j++){
+
+                // encuentra el id de la partición a la que se tiene que formatear
+                if(arregloDiscos[i].particiones[j].id == id){
+                    ruta = arregloDiscos[i].ruta;
+                    strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
+
+                    cout << " >> Formateando particion " << arregloDiscos[i].particiones[j].id <<"("
+                         << arregloDiscos[i].particiones[j].nombre <<")"<< "\n";
+
+                    cmd_mkfs->formatearEXT3(ruta, nombreParticion);
+                    break;
+                }
+
+            }
+
+        }
+
     }
 // mkfs -type=full -id=581A -fs=3fs
 | menos p_type igual p_full  menos p_id igual id_particion menos p_fs igual p_2fs

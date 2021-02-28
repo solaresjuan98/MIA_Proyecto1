@@ -1,6 +1,6 @@
 #include "mount.h"
 #include "estructuras.h"
-disco discos_montados[26];
+
 
 mount::mount()
 {
@@ -167,19 +167,20 @@ particion_disco mount::montarParticion(string nombreParticion, int pos, string l
     cout << letra << " --- \n";
     string l = letra;
 
-    string st = num + letra;
+    string id_ = num + letra;
 
-    cout << st  << "\n";
+    cout << " ---> " <<  id_  << "\n";
 
-    char id[st.length()];
+    char id[id_.length()];
 
     for(int i = 0; i< sizeof(id);i++){
-        id[i] = st[i];
+        id[i] = id_[i];
     }
 
-
     particion_disco part;
-    strcpy(part.id, id);
+
+    //strcpy(part.id, id_);
+    part.id = id_;
     part.numero = pos;
     part.estado = 1;
     strcpy(part.nombre, nombreParticion.c_str());

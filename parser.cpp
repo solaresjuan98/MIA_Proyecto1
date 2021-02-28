@@ -620,8 +620,8 @@ static const yytype_int16 yyrline[] =
 {
        0,   128,   128,   134,   135,   136,   137,   138,   139,   144,
      166,   181,   201,   218,   226,   237,   258,   278,   284,   299,
-     313,   349,   441,   442,   496,   529,   565,   569,   573,   577,
-     581
+     313,   349,   440,   441,   495,   528,   568,   573,   606,   610,
+     614
 };
 #endif
 
@@ -1933,13 +1933,12 @@ yyreduce:
 
                         //cout << j << '\n';
                         if (arregloDiscos[i].particiones[j].estado == 0) {
-                            //cout << " Insertando en disco " << i << "\n";
-                            //cout << " Insertando en particion " << j  << "\n";
+
                             //particion particionaMontar;
                             string str(1, discoaMontar.letra);
                             discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j, str);
                             arregloDiscos[i] = discoaMontar;
-                            //i++;
+
                             break;
                         }
 
@@ -1977,17 +1976,17 @@ yyreduce:
 
         //$$ = comando_mount;
     }
-#line 1981 "parser.cpp"
+#line 1980 "parser.cpp"
     break;
 
   case 22:
-#line 441 "parser.y"
+#line 440 "parser.y"
                                                              {}
-#line 1987 "parser.cpp"
+#line 1986 "parser.cpp"
     break;
 
   case 23:
-#line 442 "parser.y"
+#line 441 "parser.y"
     {
         disco discoVacio;
         discoVacio.letra = ' ';
@@ -2038,11 +2037,11 @@ yyreduce:
 
 
     }
-#line 2042 "parser.cpp"
+#line 2041 "parser.cpp"
     break;
 
   case 24:
-#line 497 "parser.y"
+#line 496 "parser.y"
     {
         string id = (yyvsp[0].TEXT);
 
@@ -2074,11 +2073,11 @@ yyreduce:
 
 
     }
-#line 2078 "parser.cpp"
+#line 2077 "parser.cpp"
     break;
 
   case 25:
-#line 530 "parser.y"
+#line 529 "parser.y"
     {
         particion_disco part_vacia;
         part_vacia.numero = 0;
@@ -2109,46 +2108,76 @@ yyreduce:
 
         }
     }
-#line 2113 "parser.cpp"
+#line 2112 "parser.cpp"
     break;
 
   case 26:
-#line 566 "parser.y"
+#line 569 "parser.y"
     {
+
     }
 #line 2120 "parser.cpp"
     break;
 
   case 27:
-#line 570 "parser.y"
+#line 574 "parser.y"
     {
+        string ruta;
+        char nombreParticion[16];
+        string id = (yyvsp[-4].TEXT);
+
+        mkfs *cmd_mkfs = new mkfs();
+        //cout << id << "\n";
+        /*
+
+        */
+        for(int i = 0; i < 26; i++){
+
+            for(int j = 0; j < 99; j++){
+
+                // encuentra el id de la partición a la que se tiene que formatear
+                if(arregloDiscos[i].particiones[j].id == id){
+                    ruta = arregloDiscos[i].ruta;
+                    strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
+
+                    cout << " >> Formateando particion " << arregloDiscos[i].particiones[j].id <<"("
+                         << arregloDiscos[i].particiones[j].nombre <<")"<< "\n";
+
+                    cmd_mkfs->formatearEXT3(ruta, nombreParticion);
+                    break;
+                }
+
+            }
+
+        }
+
     }
-#line 2127 "parser.cpp"
+#line 2156 "parser.cpp"
     break;
 
   case 28:
-#line 574 "parser.y"
+#line 607 "parser.y"
     {
     }
-#line 2134 "parser.cpp"
+#line 2163 "parser.cpp"
     break;
 
   case 29:
-#line 578 "parser.y"
+#line 611 "parser.y"
     {
     }
-#line 2141 "parser.cpp"
+#line 2170 "parser.cpp"
     break;
 
   case 30:
-#line 582 "parser.y"
+#line 615 "parser.y"
     {
     }
-#line 2148 "parser.cpp"
+#line 2177 "parser.cpp"
     break;
 
 
-#line 2152 "parser.cpp"
+#line 2181 "parser.cpp"
 
       default: break;
     }
