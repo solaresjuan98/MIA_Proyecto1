@@ -68,7 +68,7 @@
 /* First part of user prologue.  */
 #line 1 "parser.y"
 
-#include "scanner.h"//se importa el header del analisis sintactico
+#include "scanner.h"
 #include <QString>
 #include <string>
 #include "qdebug.h"
@@ -620,8 +620,8 @@ static const yytype_int16 yyrline[] =
 {
        0,   128,   128,   134,   135,   136,   137,   138,   139,   144,
      166,   181,   201,   218,   226,   237,   258,   278,   284,   299,
-     313,   349,   440,   441,   495,   528,   568,   573,   606,   610,
-     614
+     313,   349,   440,   441,   495,   528,   568,   593,   626,   640,
+     644
 };
 #endif
 
@@ -2114,13 +2114,33 @@ yyreduce:
   case 26:
 #line 569 "parser.y"
     {
+        string ruta;
+        char nombreParticion[16];
+        string id = (yyvsp[-4].TEXT);
+
+        mkfs *cmd_mkfs = new mkfs();
+
+        for(int i = 0; i < 26; i++){
+
+            for(int j = 0; j < 99; j++){
+
+                if(arregloDiscos[i].particiones[j].id == id){
+                    ruta = arregloDiscos[i].ruta;
+                    strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
+                    cmd_mkfs->formatearEXT2(ruta, nombreParticion);
+                    break;
+                }
+
+            }
+        }
+
 
     }
-#line 2120 "parser.cpp"
+#line 2140 "parser.cpp"
     break;
 
   case 27:
-#line 574 "parser.y"
+#line 594 "parser.y"
     {
         string ruta;
         char nombreParticion[16];
@@ -2140,8 +2160,8 @@ yyreduce:
                     ruta = arregloDiscos[i].ruta;
                     strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
 
-                    cout << " >> Formateando particion " << arregloDiscos[i].particiones[j].id <<"("
-                         << arregloDiscos[i].particiones[j].nombre <<")"<< "\n";
+                    /*cout << " >> Formateando particion " << arregloDiscos[i].particiones[j].id <<"("
+                         << arregloDiscos[i].particiones[j].nombre <<")"<< "\n";*/
 
                     cmd_mkfs->formatearEXT3(ruta, nombreParticion);
                     break;
@@ -2152,32 +2172,42 @@ yyreduce:
         }
 
     }
-#line 2156 "parser.cpp"
+#line 2176 "parser.cpp"
     break;
 
   case 28:
-#line 607 "parser.y"
+#line 627 "parser.y"
     {
+        /*string ruta;
+        char nombreParticion[16];
+        string id = $8;
+
+        mkfs *cmd_mkfs = new mkfs();
+        */
+
+
+
+
     }
-#line 2163 "parser.cpp"
+#line 2193 "parser.cpp"
     break;
 
   case 29:
-#line 611 "parser.y"
+#line 641 "parser.y"
     {
     }
-#line 2170 "parser.cpp"
+#line 2200 "parser.cpp"
     break;
 
   case 30:
-#line 615 "parser.y"
+#line 645 "parser.y"
     {
     }
-#line 2177 "parser.cpp"
+#line 2207 "parser.cpp"
     break;
 
 
-#line 2181 "parser.cpp"
+#line 2211 "parser.cpp"
 
       default: break;
     }

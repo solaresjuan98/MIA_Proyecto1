@@ -12,8 +12,8 @@ public:
     mkfs();
 
     // métodos de formateo
-    void formatearEXT3(string rutaDisco, char nombreParticion[16]);
-    void formatearEXT2(string rutaDisco, char nombreParticion[16]);
+    void formatearEXT3(string rutaDisco, string nombreParticion);
+    void formatearEXT2(string rutaDisco, string nombreParticion);
 };
 
 #endif // MKFS_H

@@ -89,7 +89,7 @@ typedef struct {
     int i_atime;
     int i_ctime;
     int i_mtime;
-    int i_block;
+    int i_block[15];
     int i_type;
     int i_perm;
 }tablaInodo;
