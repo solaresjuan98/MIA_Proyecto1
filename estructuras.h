@@ -68,8 +68,8 @@ typedef struct {
     int s_blocks_count;
     int s_free_blocks_count;
     int s_free_inodes_count;
-    int s_mtime;
-    int s_umtine;
+    char s_mtime[16];
+    char s_umtine[16];
     int s_mnt_count;
     int s_magic;
     int s_inode_size;

@@ -180,11 +180,11 @@ void fdisk::mostrarDatosDisco(string ruta){
             particionesInactivas++;
             //std::cout << " Hay un rango vacío en [" << mbr_.mbr_particions[i-1].part_start + mbr_.mbr_particions[i-1].part_size<< ",";
                       //<< mbr_.mbr_particions[i+1].part_start << std::endl;
-            if(i == 3){ // la ultima particion está sin ocupar
+           /*if(i == 3){ // la ultima particion está sin ocupar
                 std::cout << mbr_.mbr_particions[i-1].part_start + mbr_.mbr_particions[i-1].part_size <<"] "<<std::endl;
             }else{
                 std::cout << mbr_.mbr_particions[i+1].part_start <<"] "<< std::endl;
-            }
+            }*/
         }
     }
 

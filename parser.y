@@ -597,10 +597,7 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
         string id = $8;
 
         mkfs *cmd_mkfs = new mkfs();
-        //cout << id << "\n";
-        /*
 
-        */
         for(int i = 0; i < 26; i++){
 
             for(int j = 0; j < 99; j++){
@@ -609,10 +606,6 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
                 if(arregloDiscos[i].particiones[j].id == id){
                     ruta = arregloDiscos[i].ruta;
                     strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
-
-                    /*cout << " >> Formateando particion " << arregloDiscos[i].particiones[j].id <<"("
-                         << arregloDiscos[i].particiones[j].nombre <<")"<< "\n";*/
-
                     cmd_mkfs->formatearEXT3(ruta, nombreParticion);
                     break;
                 }
@@ -625,15 +618,6 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
 // mkfs -type=full -id=581A -fs=3fs
 | menos p_type igual p_full  menos p_id igual id_particion menos p_fs igual p_2fs
     {
-        /*string ruta;
-        char nombreParticion[16];
-        string id = $8;
-
-        mkfs *cmd_mkfs = new mkfs();
-        */
-
-
-
 
     }
 // mkfs -type=full -id=581A -fs=3fs
