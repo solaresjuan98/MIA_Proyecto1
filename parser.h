@@ -73,35 +73,38 @@ extern int yydebug;
     pmkdir = 279,
     p_2fs = 280,
     p_3fs = 281,
-    punto = 282,
-    bracketabre = 283,
-    bracketcierra = 284,
-    corcheteabre = 285,
-    corchetecierra = 286,
-    puntocoma = 287,
-    potencia = 288,
-    coma = 289,
-    parentesisabre = 290,
-    parentesiscierra = 291,
-    llaveabre = 292,
-    llavecierra = 293,
-    mas = 294,
-    menos = 295,
-    multiplicacion = 296,
-    igual = 297,
-    dolar = 298,
-    dospuntos = 299,
-    entero = 300,
-    letra = 301,
-    numnegativo = 302,
-    cadena = 303,
-    identificador = 304,
-    caracter = 305,
-    ruta = 306,
-    rutacualquiera = 307,
-    suma = 308,
-    multi = 309,
-    division = 310
+    p_login = 282,
+    p_usr = 283,
+    p_pwd = 284,
+    punto = 285,
+    bracketabre = 286,
+    bracketcierra = 287,
+    corcheteabre = 288,
+    corchetecierra = 289,
+    puntocoma = 290,
+    potencia = 291,
+    coma = 292,
+    parentesisabre = 293,
+    parentesiscierra = 294,
+    llaveabre = 295,
+    llavecierra = 296,
+    mas = 297,
+    menos = 298,
+    multiplicacion = 299,
+    igual = 300,
+    dolar = 301,
+    dospuntos = 302,
+    entero = 303,
+    letra = 304,
+    numnegativo = 305,
+    cadena = 306,
+    identificador = 307,
+    caracter = 308,
+    ruta = 309,
+    rutacualquiera = 310,
+    suma = 311,
+    multi = 312,
+    division = 313
   };
 #endif
 
@@ -124,7 +127,7 @@ class unmount *unmount_cmd;
 class mkfs *mkfs_cmd;
 
 
-#line 128 "parser.h"
+#line 131 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

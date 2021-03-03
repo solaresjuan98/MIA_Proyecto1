@@ -75,7 +75,9 @@ class mkfs *mkfs_cmd;
 %token<TEXT> pmkdir;
 %token<TEXT> p_2fs;
 %token<TEXT> p_3fs;
-
+%token<TEXT> p_login;
+%token<TEXT> p_usr;
+%token<TEXT> p_pwd;
 
 %token<TEXT> punto;
 %token<TEXT> bracketabre;
@@ -127,7 +129,7 @@ class mkfs *mkfs_cmd;
 
 INICIO : LEXPA
     {
-        //cout<< " Hola.. \n";
+
     }
 ;
 
@@ -278,6 +280,43 @@ menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual 
 | menos psize igual entero menos p_type igual identificador menos p_u igual identificador menos p_f igual identificador
   menos p_path igual cadena menos p_name igual cadena
     {
+        int tamanio = atoi($4);
+        string tipoParticion = $8;
+        string unidad = $12;
+        string ajusteParticion = $16;
+        string r = $20;
+        string n = $24;
+        string comilla = "\"";
+
+
+        fdisk *disco = new fdisk();
+        disco->setTipo(tipoParticion);
+        size_t pos = 0;
+
+        // Remover las comillas dobles
+        string nombreParticion;
+        while ((pos = n.find(comilla)) != std::string::npos) {
+            nombreParticion = n.substr(0, pos);
+            n.erase(0, pos + comilla.length());
+        }
+
+        pos = 0;
+        string ruta;
+        while ((pos = r.find(comilla)) != std::string::npos) {
+            ruta = r.substr(0, pos);
+            r.erase(0, pos + comilla.length());
+        }
+
+        disco->setRuta(ruta);
+        disco->setAjuste(ajusteParticion);
+        disco->setUnidad(unidad);
+        disco->setNombre(nombreParticion);
+        disco->setTamanio(tamanio);
+        //cout << disco->getAjuste() <<  "\n";
+        disco->crearParticion(disco);
+        disco->mostrarDatosDisco(ruta);
+
+        $$ = disco;
 
     }
 // -delete=fast -name="Particion1" -path=/home/Disco1.dk
@@ -294,7 +333,7 @@ menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual 
         particion->mostrarDatosDisco(ruta);
         $$ = particion;
         */
-}
+    }
 // -name=Particion1 -delete=full -path=/home/Disco1.disk
 | menos p_name igual identificador menos p_delete igual p_full menos p_path igual ruta_sin_espacio
     {

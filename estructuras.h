@@ -95,5 +95,24 @@ typedef struct {
 }tablaInodo;
 
 
+// *** bloques ***
+typedef struct{
+    char b_name[12];
+    int b_inodo;
+}content;
+
+
+typedef struct {
+    content b_content[4];
+}bloque_carpeta;
+
+typedef struct {
+    char b_content[64];
+}bloque_archivo;
+
+typedef struct {
+    int b_pointers[16];
+}bloque_apuntadores;
+
 
 #endif // ESTRUCTURAS_H

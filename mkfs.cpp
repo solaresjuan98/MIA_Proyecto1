@@ -147,24 +147,7 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion){
 
     // Escribir bloques
 
-    /*
-     * codigo anterior
-     * for(int i = 0; i < 4; i++){
-
-        if(strcmp(mbr_.mbr_particions[i].part_name, nombreParticion.c_str()) == 0){
-            // Escribiendo el superbloque
-            fseek(archivo, mbr_.mbr_particions[i].part_start, SEEK_SET);
-            fwrite(&super_b, sizeof(superBloque), 1, archivo);
-            cout << " xd \n";
-            // Escribiendo el journaling
-            fseek(archivo, mbr_.mbr_particions[i].part_start + sizeof(superBloque), SEEK_SET);
-            fwrite(&journal, sizeof(journaling), 1, archivo);
-            break;
-        }
-
-    }*/
-
-    //cout << " >> Particion formateada en EXT3. \n";
+    cout << " >> Particion formateada en EXT3. \n";
     fclose(archivo);
 
 
@@ -191,7 +174,7 @@ void mkfs::formatearEXT2(string rutaDisco, string nombreParticion){
     for(int i = 0; i < 4; i++){
 
         if(strcmp(mbr_.mbr_particions[i].part_name, nombreParticion.c_str()) == 0){
-            cout << " >> Size: " << mbr_.mbr_particions[i].part_size << " \n";
+            //cout << " >> Size: " << mbr_.mbr_particions[i].part_size << " \n";
             inicio_particion = mbr_.mbr_particions[i].part_start;
             tam_particion = mbr_.mbr_particions[i].part_size;
             break;
@@ -199,11 +182,10 @@ void mkfs::formatearEXT2(string rutaDisco, string nombreParticion){
 
     }
 
-    int n2 = 0;
-    cout << tam_particion << "\n";
-    n2 = (tam_particion - sizeof(superBloque))/(4+sizeof(tablaInodo)+3*64);
+    int n = 0;
+    cout << " >> Formateando " <<tam_particion << "bytes...\n";
+    n = (tam_particion - sizeof(superBloque))/(4+sizeof(tablaInodo)+3*64);
 
-    int n = sqrt(n2);
     int numeroEstructuras = n;
     int numeroInodos = n;
     int numeroBloques = 3*n;
@@ -251,9 +233,25 @@ void mkfs::formatearEXT2(string rutaDisco, string nombreParticion){
 
     // posicionarme en el lugar donde quiero escribir el bitmap de bloques
     fseek(archivo, sizeof(superBloque)+bitmapInodos*sizeof(char), SEEK_SET);
+    // Escribir el bitmap de bloques
     for(int i = 0; i < bitmapBloques; i++){
         fseek(archivo, sizeof(superBloque)+bitmapInodos*sizeof(char)+i*sizeof(bitmapBloques), SEEK_SET);
         fwrite(&bitCero, sizeof(char), 1, archivo);
+    }
+
+    bloque_carpeta bl_carpeta;
+
+    for(int i = 0; i < 4; i++){
+        bl_carpeta.b_content[i].b_inodo = 0;
+        bl_carpeta.b_content[i].b_name[0] = '0';
+    }
+
+    // posicionarme en el lugar donde quiero escribir los bloques
+    fseek(archivo, sizeof(superBloque)+bitmapInodos*sizeof(char)+bitmapBloques*sizeof(bitmapBloques) , SEEK_SET);
+
+    for(int i = 0; i < numeroBloques; i++){
+        fseek(archivo, sizeof(superBloque)+bitmapInodos*sizeof(char)+bitmapBloques*sizeof(bitmapBloques)+i*64, SEEK_SET);
+        fwrite(&bl_carpeta, sizeof(bloque_carpeta), 1, archivo);
     }
 
     // TABLA DE INODOS
@@ -282,21 +280,6 @@ void mkfs::formatearEXT2(string rutaDisco, string nombreParticion){
         fseek(archivo, sizeof(superBloque)+bitmapInodos*sizeof(char)+ bitmapBloques*sizeof(char)+i*sizeof(tInodo), SEEK_SET);
         fwrite(&tInodo, sizeof(tablaInodo), 1, archivo);
     }
-
-
-    /*
-     * codigo anterior
-     * for(int i = 0; i < 4; i++){
-
-        if(strcmp(mbr_.mbr_particions[i].part_name, nombreParticion.c_str()) == 0){
-            // Escribiendo el superbloque
-            fseek(archivo, mbr_.mbr_particions[i].part_start, SEEK_SET);
-            fwrite(&super_b, sizeof(superBloque), 1, archivo);
-
-            break;
-        }
-
-    }*/
 
 
     cout << " >> Particion formateada en EXT2. \n";

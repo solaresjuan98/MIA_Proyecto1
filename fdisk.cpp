@@ -69,7 +69,7 @@ void fdisk::crearParticion(fdisk *disco){
 
     for(int i = 0; i < 4; i++){
 
-        // me ubico en una particion inactiva
+        // me ubico en una particion inactiva (Crear una particion en un espacio inactivo)
         if(mbr_tmp.mbr_particions[i].part_status == '0'){
             std::cout << " Aqui tengo que crear la particion. \n";
 
@@ -79,11 +79,6 @@ void fdisk::crearParticion(fdisk *disco){
                 mbr_tmp.mbr_particions[i].part_fit = 'F';
             }else if (disco->getAjuste() == "W") {
                 mbr_tmp.mbr_particions[i].part_fit = 'W';
-
-                /*
-                    int inicioParticion = calcularAjusteW();
-                    USAR RANGOS PARA LOS AJUSTES
-                */
             }
 
             strcpy(mbr_tmp.mbr_particions[i].part_name, disco->getNombre().c_str());
@@ -101,7 +96,7 @@ void fdisk::crearParticion(fdisk *disco){
             }
 
             fin_particion = tamanio_parcicion + sizeof(mbr);
-            std::cout << " >> La particion va de " << sizeof(mbr) << " a " << fin_particion;
+            //std::cout << " >> La particion va de " << sizeof(mbr) << " a " << fin_particion;
             mbr_tmp.mbr_particions[i].part_status ='1';
 
             if(disco->getTipo() == "P" || disco->getTipo().empty() == true){
@@ -110,23 +105,85 @@ void fdisk::crearParticion(fdisk *disco){
 
             } else if (disco->getTipo() == "E") {
                 // creando una parcicion extendida
-                cout << " >> Creando una particion extendida... \n";
+                //cout << " >> Creando una particion extendida... \n";
                 mbr_tmp.mbr_particions[i].part_type = 'E';
 
                 ebr ebr_aux;
                 ebr_aux.part_fit = '-';
                 ebr_aux.part_name[i] = '\0';
                 ebr_aux.part_next = -1;
-                ebr_aux.part_size = -1;
+                ebr_aux.part_size = sizeof(ebr);
                 ebr_aux.part_status = '0';
-
+                ebr_aux.part_start  = mbr_tmp.mbr_particions[i].part_start;
 
                 fseek(archivo, mbr_tmp.mbr_particions[i].part_start, SEEK_SET);
                 fwrite(&ebr_aux, sizeof(ebr_aux),1, archivo);
 
-            }
+                // Crear arreglo con particiones (no forma parte del struct, ni lo altera)
+                particion arreglo_particiones_ext[4];
+                particion particion_vacia;
+                particion_vacia.part_status = '0';
+                particion_vacia.part_type = '-';
+                particion_vacia.part_start = -1;
+                particion_vacia.part_size = -1;
+                particion_vacia.part_name[0] = '\0';
 
+
+                fseek(archivo, mbr_tmp.mbr_particions[i].part_start + sizeof(ebr_aux), SEEK_SET);
+
+                for(int i = 0; i < 4; i++){
+                    arreglo_particiones_ext[i] = particion_vacia;
+                    //(&arreglo_particiones_ext, sizeof(arreglo_particiones_ext), 1, archivo);
+                }
+
+                fwrite(&arreglo_particiones_ext, sizeof(arreglo_particiones_ext), 1, archivo);
+
+                cout << " >> EBR creado con exito. \n";
+
+            }
             break;
+        }
+
+        // (Para crear particiones logicas) - estas van dentro de una particion extendida
+        if(mbr_tmp.mbr_particions[i].part_status == '1' && mbr_tmp.mbr_particions[i].part_type == 'E'){
+            ebr ebr_;
+            particion arr[4];
+
+
+            if(mbr_tmp.mbr_particions[i].part_size > tamanio_parcicion){
+                cout << " XDdXd \n";
+                if(disco->getTipo() == "L"){
+                    fseek(archivo, mbr_tmp.mbr_particions[i].part_start + sizeof(ebr), SEEK_SET);
+
+                    //cout << ebr_.part_start << "--- \n";
+                    cout << " Escribiendo a partir del espacio " << mbr_tmp.mbr_particions[i].part_start + sizeof(ebr) << " <-\n";
+
+                    // crear particion logica
+                    particion particion_logica;
+                    particion_logica.part_status = '1';
+                    particion_logica.part_type = 'L';
+                    strcpy(particion_logica.part_name, disco->getAjuste().c_str());
+                    particion_logica.part_start = mbr_tmp.mbr_particions[i].part_start + sizeof(ebr);
+                    //particion_logica.part_fit = disco->getAjuste().c_str();
+                    if(disco->getAjuste() == "W"){
+                        particion_logica.part_fit = 'W';
+                    }else if(disco->getAjuste() == "B"){
+                        particion_logica.part_fit = 'B';
+                    }else if(disco->getAjuste() == "F"){
+                        particion_logica.part_fit = 'F';
+                    }
+
+                    particion_logica.part_size = tamanio_parcicion;
+                    fwrite(&particion_logica, sizeof(particion_logica), 1, archivo);
+
+                }
+
+
+                break;
+            }else{
+                cout << " >> La particion a agregar sobrepasa el tamanio permitido. \n";
+                break;
+            }
         }
     }
 
@@ -193,11 +250,6 @@ void fdisk::mostrarDatosDisco(string ruta){
         std::cout << " >> (No hay particiones). Hay espacio libre en el rango ["<<sizeof(mbr) << "," <<tamanioArchivo<<"]\n";
     }
 
-
-
-
-
-
 }
 
 // Borrar particion
@@ -217,6 +269,7 @@ void fdisk::borrarParticion(string ruta, fdisk *disco, string nombreParticion) {
     // Particion vacia
     particion particion_vacia;
     particion_vacia.part_status = '0';
+    particion_vacia.part_fit = ' ';
     particion_vacia.part_type = '-';
     particion_vacia.part_start = -1;
     particion_vacia.part_size = -1;
