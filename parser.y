@@ -14,12 +14,13 @@
 // estructuras
 #include "estructuras.h"
 disco arregloDiscos[26];
+bool estaLogeado = false;
 //int numeros[5];
 
 using namespace std;
-extern int yylineno; //linea actual donde se encuentra el parser (analisis lexico) lo maneja BISON
-extern int columna; //columna actual donde se encuentra el parser (analisis lexico) lo maneja BISON
-extern char *yytext; //lexema actual donde esta el parser (analisis lexico) lo maneja BISON
+extern int yylineno;
+extern int columna;
+extern char *yytext;
 bool mountInicializado = false;
 
 int yyerror(const char* mens)
@@ -663,8 +664,27 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
 | menos p_type igual p_full  menos p_id igual id_particion menos p_fs igual p_3fs
     {
     }
-// mkfs -id=582A (formateo completo)
+// mkfs -id=582A (No manda parametros, así que será el EXT2)
 | menos p_id igual id_particion
     {
+        string ruta;
+        char nombreParticion[16];
+        string id = $4;
+
+        mkfs *cmd_mkfs = new mkfs();
+
+        for(int i = 0; i < 26; i++){
+
+            for(int j = 0; j < 99; j++){
+
+                if(arregloDiscos[i].particiones[j].id == id){
+                    ruta = arregloDiscos[i].ruta;
+                    strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
+                    cmd_mkfs->formatearEXT2(ruta, nombreParticion);
+                    break;
+                }
+
+            }
+        }
     }
 ;

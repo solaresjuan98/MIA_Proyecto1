@@ -1842,7 +1842,7 @@ yyreduce:
         disco->setUnidad(unidad);
         disco->setNombre(nombreParticion);
         disco->setTamanio(tamanio);
-        cout << disco->getAjuste() <<  "\n";
+        //cout << disco->getAjuste() <<  "\n";
         disco->crearParticion(disco);
         disco->mostrarDatosDisco(ruta);
 
@@ -2226,12 +2226,31 @@ yyreduce:
   case 30:
 #line 668 "parser.y"
     {
+        string ruta;
+        char nombreParticion[16];
+        string id = (yyvsp[0].TEXT);
+
+        mkfs *cmd_mkfs = new mkfs();
+
+        for(int i = 0; i < 26; i++){
+
+            for(int j = 0; j < 99; j++){
+
+                if(arregloDiscos[i].particiones[j].id == id){
+                    ruta = arregloDiscos[i].ruta;
+                    strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
+                    cmd_mkfs->formatearEXT2(ruta, nombreParticion);
+                    break;
+                }
+
+            }
+        }
     }
-#line 2231 "parser.cpp"
+#line 2250 "parser.cpp"
     break;
 
 
-#line 2235 "parser.cpp"
+#line 2254 "parser.cpp"
 
       default: break;
     }

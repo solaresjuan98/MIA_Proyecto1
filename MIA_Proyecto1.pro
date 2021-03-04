@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     mount.cpp \
     unmount.cpp \
     estructuras.cpp \
-    mkfs.cpp
+    mkfs.cpp \
+    user.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -45,4 +46,5 @@ HEADERS += \
     mount.h \
     unmount.h \
     estructuras.h \
-    mkfs.h
+    mkfs.h \
+    user.h

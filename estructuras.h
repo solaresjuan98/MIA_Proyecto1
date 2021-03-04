@@ -2,6 +2,7 @@
 #define ESTRUCTURAS_H
 #include "time.h"
 #include<iostream>
+
 // extended boot record
 typedef struct {
     char part_status;
@@ -100,7 +101,6 @@ typedef struct{
     char b_name[12];
     int b_inodo;
 }content;
-
 
 typedef struct {
     content b_content[4];

@@ -74,15 +74,21 @@ void mkdisk::crearDisco(mkdisk *disco) {
       fclose(archivo);
     }
   }
-  // **** Etiqueta única para el disco ****
 
+  time_t tiempo = time(0);
+  struct tm *tlocal = localtime(&tiempo);
+  char fechaCreacionDisco[16];
+  strftime(fechaCreacionDisco,16,"%d/%m/%y %H:%M:%S",tlocal);
+
+  cout << fechaCreacionDisco << "\n";
   string fechaPrueba = "15/02/2020 21:38";
   disco->setFechaCreacion(fechaPrueba);
 
+    // **** Etiqueta única para el disco ****
   prueba_mbr.mbr_disk_signature = (rand() % 100);
   prueba_mbr.mbr_tamanio = sizeof(mbr);
-  cout << prueba_mbr.mbr_disk_signature << "\n";
-  strcpy(prueba_mbr.mbr_fecha_creacion, fechaPrueba.c_str());
+  //cout << prueba_mbr.mbr_disk_signature << "\n";
+  strcpy(prueba_mbr.mbr_fecha_creacion, fechaCreacionDisco); // fecha y hora de creacion del disco
 
   if (disco->getAjuste().empty()) {
     strcpy(&prueba_mbr.disk_fit, "F");
