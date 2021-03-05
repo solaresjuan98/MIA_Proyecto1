@@ -11,9 +11,14 @@
 #include "mount.h"
 #include "unmount.h"
 #include "mkfs.h"
+#include "user.h"
 // estructuras
 #include "estructuras.h"
 disco arregloDiscos[26];
+
+//*** para login/logout
+string usrname;
+string pwd;
 bool estaLogeado = false;
 //int numeros[5];
 
@@ -46,6 +51,7 @@ class fdisk *fdisk_cmd;
 class mount *mount_cmd;
 class unmount *unmount_cmd;
 class mkfs *mkfs_cmd;
+class user *usr_login;
 
 }
 //TERMINALES DE TIPO TEXT, SON STRINGS
@@ -120,7 +126,7 @@ class mkfs *mkfs_cmd;
 %type<mount_cmd> COMANDOMOUNT;
 %type<unmount_cmd> COMANDOUNMOUNT;
 %type<mkfs_cmd> COMANDOMKFS;
-
+%type<usr_login> COMANDOLOGIN;
 
 %left suma menos
 %left multi division
@@ -140,6 +146,7 @@ LEXPA:  pmkdisk COMANDOMKDISK {}
 | pmount COMANDOMOUNT {}
 | punmount COMANDOUNMOUNT {}
 | pmkfs COMANDOMKFS {}
+| p_login COMANDOLOGIN {}
 ;
 
 COMANDOMKDISK:
@@ -620,7 +627,7 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
                 if(arregloDiscos[i].particiones[j].id == id){
                     ruta = arregloDiscos[i].ruta;
                     strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
-                    cmd_mkfs->formatearEXT2(ruta, nombreParticion);
+                    cmd_mkfs->formatearEXT2(ruta, nombreParticion, "fast");
                     break;
                 }
 
@@ -646,7 +653,7 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
                 if(arregloDiscos[i].particiones[j].id == id){
                     ruta = arregloDiscos[i].ruta;
                     strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
-                    cmd_mkfs->formatearEXT3(ruta, nombreParticion);
+                    cmd_mkfs->formatearEXT3(ruta, nombreParticion, "fast");
                     break;
                 }
 
@@ -680,11 +687,20 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
                 if(arregloDiscos[i].particiones[j].id == id){
                     ruta = arregloDiscos[i].ruta;
                     strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
-                    cmd_mkfs->formatearEXT2(ruta, nombreParticion);
+                    cmd_mkfs->formatearEXT2(ruta, nombreParticion, "full");
                     break;
                 }
 
             }
         }
     }
+;
+
+
+COMANDOLOGIN:
+// login -usr=root -pwd=123 -id=582A
+menos p_usr igual identificador menos p_pwd igual entero menos p_id igual id_particion
+{
+
+}
 ;

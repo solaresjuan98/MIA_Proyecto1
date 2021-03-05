@@ -59,6 +59,8 @@ typedef struct {
     char tipo;
     char path[100];
     char fecha_op[25];
+    char contenido[100];
+    char id_propietario;
     int tamanio;
 } journaling;
 
@@ -87,11 +89,11 @@ typedef struct {
     int i_uid;
     int i_gid;
     int i_size;
-    int i_atime;
-    int i_ctime;
-    int i_mtime;
+    char i_atime[16];
+    char i_ctime[16];
+    char i_mtime[16];
     int i_block[15];
-    int i_type;
+    char i_type;
     int i_perm;
 }tablaInodo;
 
