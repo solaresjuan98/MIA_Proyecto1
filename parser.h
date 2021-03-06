@@ -74,37 +74,39 @@ extern int yydebug;
     p_2fs = 280,
     p_3fs = 281,
     p_login = 282,
-    p_usr = 283,
-    p_pwd = 284,
-    punto = 285,
-    bracketabre = 286,
-    bracketcierra = 287,
-    corcheteabre = 288,
-    corchetecierra = 289,
-    puntocoma = 290,
-    potencia = 291,
-    coma = 292,
-    parentesisabre = 293,
-    parentesiscierra = 294,
-    llaveabre = 295,
-    llavecierra = 296,
-    mas = 297,
-    menos = 298,
-    multiplicacion = 299,
-    igual = 300,
-    dolar = 301,
-    dospuntos = 302,
-    entero = 303,
-    letra = 304,
-    numnegativo = 305,
-    cadena = 306,
-    identificador = 307,
-    caracter = 308,
-    ruta = 309,
-    rutacualquiera = 310,
-    suma = 311,
-    multi = 312,
-    division = 313
+    p_logout = 283,
+    p_usr = 284,
+    p_pwd = 285,
+    p_mkgrp = 286,
+    punto = 287,
+    bracketabre = 288,
+    bracketcierra = 289,
+    corcheteabre = 290,
+    corchetecierra = 291,
+    puntocoma = 292,
+    potencia = 293,
+    coma = 294,
+    parentesisabre = 295,
+    parentesiscierra = 296,
+    llaveabre = 297,
+    llavecierra = 298,
+    mas = 299,
+    menos = 300,
+    multiplicacion = 301,
+    igual = 302,
+    dolar = 303,
+    dospuntos = 304,
+    entero = 305,
+    letra = 306,
+    numnegativo = 307,
+    cadena = 308,
+    identificador = 309,
+    caracter = 310,
+    ruta = 311,
+    rutacualquiera = 312,
+    suma = 313,
+    multi = 314,
+    division = 315
   };
 #endif
 
@@ -112,7 +114,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 42 "parser.y"
+#line 46 "parser.y"
 
 //se especifican los tipo de valores para los no terminales y lo terminales
 //char TEXT [256];
@@ -126,9 +128,10 @@ class mount *mount_cmd;
 class unmount *unmount_cmd;
 class mkfs *mkfs_cmd;
 class user *usr_login;
+class mkgrp *mkgrp_cmd;
 
 
-#line 132 "parser.h"
+#line 135 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

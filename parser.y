@@ -12,6 +12,7 @@
 #include "unmount.h"
 #include "mkfs.h"
 #include "user.h"
+#include "mkgrp.h"
 // estructuras
 #include "estructuras.h"
 disco arregloDiscos[26];
@@ -19,8 +20,11 @@ disco arregloDiscos[26];
 //*** para login/logout
 string usrname;
 string pwd;
-bool estaLogeado = false;
-//int numeros[5];
+
+// ** Datos de la particion actual montado **
+string nombreParticion;
+string rutaParticionActual;
+bool yaInicioSesion = false;
 
 using namespace std;
 extern int yylineno;
@@ -52,6 +56,7 @@ class mount *mount_cmd;
 class unmount *unmount_cmd;
 class mkfs *mkfs_cmd;
 class user *usr_login;
+class mkgrp *mkgrp_cmd;
 
 }
 //TERMINALES DE TIPO TEXT, SON STRINGS
@@ -83,8 +88,10 @@ class user *usr_login;
 %token<TEXT> p_2fs;
 %token<TEXT> p_3fs;
 %token<TEXT> p_login;
+%token<TEXT> p_logout;
 %token<TEXT> p_usr;
 %token<TEXT> p_pwd;
+%token<TEXT> p_mkgrp;
 
 %token<TEXT> punto;
 %token<TEXT> bracketabre;
@@ -127,6 +134,9 @@ class user *usr_login;
 %type<unmount_cmd> COMANDOUNMOUNT;
 %type<mkfs_cmd> COMANDOMKFS;
 %type<usr_login> COMANDOLOGIN;
+%type<usr_login> COMANDOLOGOUT;
+%type<mkgrp_cmd> COMANDOMKGRP;
+
 
 %left suma menos
 %left multi division
@@ -147,6 +157,8 @@ LEXPA:  pmkdisk COMANDOMKDISK {}
 | punmount COMANDOUNMOUNT {}
 | pmkfs COMANDOMKFS {}
 | p_login COMANDOLOGIN {}
+| p_logout COMANDOLOGOUT {}
+| p_mkgrp COMANDOMKGRP {}
 ;
 
 COMANDOMKDISK:
@@ -698,9 +710,127 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
 
 
 COMANDOLOGIN:
-// login -usr=root -pwd=123 -id=582A
+// -usr=root -pwd=123 -id=582A (iniciando sesion como usuario root)
 menos p_usr igual identificador menos p_pwd igual entero menos p_id igual id_particion
 {
+    string usr = $4;
+    int pass = atoi($8);
+    string id = $12;
+
+    // Iniciando sesión como usuario root
+    if(usr == "root" && pass == 123){
+
+        // procedo a buscar mi particion montada
+        for(int i = 0; i < 26; i++){
+
+            for(int j = 0; j < 99; j++){
+                if(arregloDiscos[i].particiones[j].id == id){
+
+                    cout << " >> Particion encontrada. \n";
+                    nombreParticion = arregloDiscos[i].particiones[j].nombre;
+                    rutaParticionActual = arregloDiscos[i].ruta;
+                    break;
+                }
+            }
+        }
+
+        yaInicioSesion = true;
+        usrname = usr;
+        cout << " >> Has iniciado sesión. \n";
+
+    }else{
+        cout << " Datos incorrectos";
+    }
+
 
 }
+// -usr="mi usuario" -pwd="contraseña" -id=582A
+| menos p_usr igual cadena menos p_pwd igual cadena menos p_id igual id_particion
+    {
+        string u_ = $4;
+        string p_ = $8;
+        string id = $12;
+        string rutaParticion;
+
+        string comilla = "\"";
+        size_t pos = 0;
+        // Remover las comillas dobles
+        string nombreUsuario;
+        while ((pos = u_.find(comilla)) != std::string::npos) {
+            nombreUsuario = u_.substr(0, pos);
+            u_.erase(0, pos + comilla.length());
+        }
+
+        pos = 0;
+        string contrasenia;
+        while ((pos = p_.find(comilla)) != std::string::npos) {
+            contrasenia = p_.substr(0, pos);
+            p_.erase(0, pos + comilla.length());
+        }
+
+        /*
+            Buscar si la particion está montada o no
+            si no está montada, tiene que tirar error y no dejar iniciar sesion
+            tambien si el usuario ingresa los datos incorrectos debe de lanzar error
+
+            Si encuentro la particion (y su archivo)
+            leer el archivo y validar los datos de inicio de sesion
+
+        */
+
+        for(int i = 0; i < 26; i++){
+            for(int j = 0; j < 99; j++){
+
+                if(arregloDiscos[i].particiones[j].id == id){
+
+                    cout << " >> Particion encontrada \n";
+                    // * poner metodo que valide mis datos en la particion *
+                    break;
+                }
+            }
+        }
+
+        //cout << nombreUsuario <<  "\n";
+        //cout << contrasenia << "\n";
+    }
+;
+
+COMANDOLOGOUT:
+//
+{
+   if(yaInicioSesion){
+
+        cout << " >> Has cerrado la sesion. \n";
+        usrname = "";
+        yaInicioSesion = false;
+
+    }else{
+
+        cout << " >> No tienes ninguna sesion iniciada. \n";
+
+    }
+
+
+
+}
+;
+
+
+COMANDOMKGRP:
+ // mkgrp -name=usuarios
+ menos p_name igual identificador
+    {
+
+        mkgrp *cmd_mkgrp = new mkgrp();
+
+        if(yaInicioSesion && usrname == "root"){
+            //cout << " >> Particion actual: " << nombreParticion << endl;
+            //cout << " >> Ruta particion: " << rutaParticionActual << endl;
+            cmd_mkgrp->crearGrupo(nombreParticion, rutaParticionActual);
+        }else{
+            cout << " >> Comando no permitido.\n";
+        }
+    }
+ // mkgrp -name="grupo 1"
+ | menos p_name igual cadena {}
 ;
