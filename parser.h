@@ -77,36 +77,40 @@ extern int yydebug;
     p_logout = 283,
     p_usr = 284,
     p_pwd = 285,
-    p_mkgrp = 286,
-    punto = 287,
-    bracketabre = 288,
-    bracketcierra = 289,
-    corcheteabre = 290,
-    corchetecierra = 291,
-    puntocoma = 292,
-    potencia = 293,
-    coma = 294,
-    parentesisabre = 295,
-    parentesiscierra = 296,
-    llaveabre = 297,
-    llavecierra = 298,
-    mas = 299,
-    menos = 300,
-    multiplicacion = 301,
-    igual = 302,
-    dolar = 303,
-    dospuntos = 304,
-    entero = 305,
-    letra = 306,
-    numnegativo = 307,
-    cadena = 308,
-    identificador = 309,
-    caracter = 310,
-    ruta = 311,
-    rutacualquiera = 312,
-    suma = 313,
-    multi = 314,
-    division = 315
+    p_grp = 286,
+    p_mkgrp = 287,
+    p_rmgrp = 288,
+    p_mkusr = 289,
+    p_rmusr = 290,
+    punto = 291,
+    bracketabre = 292,
+    bracketcierra = 293,
+    corcheteabre = 294,
+    corchetecierra = 295,
+    puntocoma = 296,
+    potencia = 297,
+    coma = 298,
+    parentesisabre = 299,
+    parentesiscierra = 300,
+    llaveabre = 301,
+    llavecierra = 302,
+    mas = 303,
+    menos = 304,
+    multiplicacion = 305,
+    igual = 306,
+    dolar = 307,
+    dospuntos = 308,
+    entero = 309,
+    letra = 310,
+    numnegativo = 311,
+    cadena = 312,
+    identificador = 313,
+    caracter = 314,
+    ruta = 315,
+    rutacualquiera = 316,
+    suma = 317,
+    multi = 318,
+    division = 319
   };
 #endif
 
@@ -114,13 +118,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 46 "parser.y"
+#line 50 "parser.y"
 
 //se especifican los tipo de valores para los no terminales y lo terminales
 //char TEXT [256];
 //QString TEXT;
 char TEXT[256];
-//class obmkdisk *mdisk;
 class mkdisk *mkdisk_cmd;
 class rmdisk *rmdisk_cmd;
 class fdisk *fdisk_cmd;
@@ -129,9 +132,12 @@ class unmount *unmount_cmd;
 class mkfs *mkfs_cmd;
 class user *usr_login;
 class mkgrp *mkgrp_cmd;
+class rmgrp *rmgrp_cmd;
+class mkusr *mkusr_cmd;
+class rmusr *rmusr_cmd;
 
 
-#line 135 "parser.h"
+#line 141 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

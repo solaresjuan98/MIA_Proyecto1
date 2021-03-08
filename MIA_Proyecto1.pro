@@ -20,7 +20,10 @@ SOURCES += main.cpp \
     estructuras.cpp \
     mkfs.cpp \
     user.cpp \
-    mkgrp.cpp
+    mkgrp.cpp \
+    rmgrp.cpp \
+    mkusr.cpp \
+    rmusr.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -49,4 +52,7 @@ HEADERS += \
     estructuras.h \
     mkfs.h \
     user.h \
-    mkgrp.h
+    mkgrp.h \
+    rmgrp.h \
+    mkusr.h \
+    rmusr.h

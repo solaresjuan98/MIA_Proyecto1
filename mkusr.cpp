@@ -1,16 +1,16 @@
-#include "mkgrp.h"
+#include "mkusr.h"
 #include "estructuras.h"
-mkgrp::mkgrp()
+#include "user.h"
+mkusr::mkusr()
 {
 
 }
 
-
-void mkgrp::crearGrupo(string nombreParticion, string ruta, string nombreGrupo){
+void mkusr::crearUsuario(string nombreParticion, string rutaParticion, user *usuario){
 
     FILE *archivo;
 
-    archivo = fopen(ruta.c_str(), "rb+");
+    archivo = fopen(rutaParticion.c_str(), "rb+");
 
     if(archivo == NULL){
         cout << " >> El archivo no existe. \n";
@@ -34,7 +34,6 @@ void mkgrp::crearGrupo(string nombreParticion, string ruta, string nombreGrupo){
 
     }
 
-
     // BUSCAR EN QUE LUGAR TENGO ESCRITO EL USERS.TXT
 
     // superbloque auxiliar
@@ -53,23 +52,24 @@ void mkgrp::crearGrupo(string nombreParticion, string ruta, string nombreGrupo){
     fread(&bloque_arch, sizeof(bloque_archivo), 1, archivo);
     cout << bloque_arch.b_content <<  "\n";
 
-    int numero_grupo = 0;// cantidad de grupos que hay en el archivo users.txt
+
+    int numero_usuario = 0;// cantidad de usuarios que hay en el archivo users.txt
     for(int i = 0; i < 64;i++){
 
-        if(bloque_arch.b_content[i] == 'G' || bloque_arch.b_content[i] == 'g'){
-            numero_grupo++;
+        if(bloque_arch.b_content[i] == 'U' || bloque_arch.b_content[i] == 'u'){
+            numero_usuario++;
         }
     }
 
-    string str_grupo = to_string(numero_grupo + 1) + ",G," + nombreGrupo +"\n";
-    strcat(bloque_arch.b_content, str_grupo.c_str());
+    string str_usuario = to_string(numero_usuario + 1) + ",U," + usuario->getGrupo() +
+            ","+usuario->getNombreUsuario()+","+usuario->getContrasenia()+"\n";
+    strcat(bloque_arch.b_content, str_usuario.c_str());
 
     // guardar los cambios
     fseek(archivo, sb_aux.s_block_start + 64, SEEK_SET);
     fwrite(&bloque_arch, 64, 1, archivo);
 
     fclose(archivo);
-
 
 }
 

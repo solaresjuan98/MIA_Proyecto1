@@ -11,8 +11,12 @@
 #include "mount.h"
 #include "unmount.h"
 #include "mkfs.h"
+// administracion de usuario
 #include "user.h"
 #include "mkgrp.h"
+#include "rmgrp.h"
+#include "mkusr.h"
+#include "rmusr.h"
 // estructuras
 #include "estructuras.h"
 disco arregloDiscos[26];
@@ -48,7 +52,6 @@ return 0;
 //char TEXT [256];
 //QString TEXT;
 char TEXT[256];
-//class obmkdisk *mdisk;
 class mkdisk *mkdisk_cmd;
 class rmdisk *rmdisk_cmd;
 class fdisk *fdisk_cmd;
@@ -57,6 +60,9 @@ class unmount *unmount_cmd;
 class mkfs *mkfs_cmd;
 class user *usr_login;
 class mkgrp *mkgrp_cmd;
+class rmgrp *rmgrp_cmd;
+class mkusr *mkusr_cmd;
+class rmusr *rmusr_cmd;
 
 }
 //TERMINALES DE TIPO TEXT, SON STRINGS
@@ -91,7 +97,11 @@ class mkgrp *mkgrp_cmd;
 %token<TEXT> p_logout;
 %token<TEXT> p_usr;
 %token<TEXT> p_pwd;
+%token<TEXT> p_grp;
 %token<TEXT> p_mkgrp;
+%token<TEXT> p_rmgrp;
+%token<TEXT> p_mkusr;
+%token<TEXT> p_rmusr;
 
 %token<TEXT> punto;
 %token<TEXT> bracketabre;
@@ -136,7 +146,9 @@ class mkgrp *mkgrp_cmd;
 %type<usr_login> COMANDOLOGIN;
 %type<usr_login> COMANDOLOGOUT;
 %type<mkgrp_cmd> COMANDOMKGRP;
-
+%type<rmgrp_cmd> COMANDORMGRP;
+%type<mkusr_cmd> COMANDOMKUSR;
+%type<rmusr_cmd> COMANDORMUSR;
 
 %left suma menos
 %left multi division
@@ -159,6 +171,9 @@ LEXPA:  pmkdisk COMANDOMKDISK {}
 | p_login COMANDOLOGIN {}
 | p_logout COMANDOLOGOUT {}
 | p_mkgrp COMANDOMKGRP {}
+| p_rmgrp COMANDORMGRP {}
+| p_mkusr COMANDOMKUSR {}
+| p_rmusr COMANDORMUSR {}
 ;
 
 COMANDOMKDISK:
@@ -820,17 +835,54 @@ COMANDOMKGRP:
  // mkgrp -name=usuarios
  menos p_name igual identificador
     {
-
+        string nombreGrupo  = $4;
         mkgrp *cmd_mkgrp = new mkgrp();
 
         if(yaInicioSesion && usrname == "root"){
-            //cout << " >> Particion actual: " << nombreParticion << endl;
-            //cout << " >> Ruta particion: " << rutaParticionActual << endl;
-            cmd_mkgrp->crearGrupo(nombreParticion, rutaParticionActual);
+            cmd_mkgrp->crearGrupo(nombreParticion, rutaParticionActual, nombreGrupo);
         }else{
             cout << " >> Comando no permitido.\n";
         }
     }
  // mkgrp -name="grupo 1"
  | menos p_name igual cadena {}
+;
+
+
+COMANDORMGRP:
+// rmgrp -name=usuarios
+menos p_name igual identificador
+    {
+
+    }
+;
+
+COMANDOMKUSR:
+// mkusr -usr=user1 -pwd=pass -grp=usuarios
+menos p_usr igual identificador menos p_pwd igual identificador menos p_grp igual identificador
+    {
+
+        string usr = $4;
+        string pass = $8;
+        string grp = $12;
+        mkusr *cmd_mkusr = new mkusr();
+        user *usuario = new user();
+        usuario->setNombreUsuario(usr);
+        usuario->setContrasenia(pass);
+        usuario->setGrupo(grp);
+        if(yaInicioSesion && usrname == "root"){
+            cmd_mkusr->crearUsuario(nombreParticion, rutaParticionActual, usuario);
+        }else{
+            cout << " >> Comando no permitido \n";
+        }
+
+    }
+;
+
+COMANDORMUSR:
+// rmusr -usr=user1
+menos p_usr igual identificador
+    {
+
+    }
 ;

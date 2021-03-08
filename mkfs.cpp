@@ -282,7 +282,7 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
 
     //
     string contenido = "1,G,root\n1,U,root,root,123\n";
-    tablaInodo archivo_usuarios;
+    tablaInodo archivo_usuarios;// inodo del archivo de usuarios
     archivo_usuarios.i_gid = 1;
     archivo_usuarios.i_uid = 1;
     archivo_usuarios.i_size = sizeof(contenido);
