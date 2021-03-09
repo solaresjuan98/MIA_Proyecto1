@@ -55,6 +55,7 @@ typedef struct  {
 
 // JOURNALING
 typedef struct {
+    char estado;
     char tipo_op[10];
     char tipo;
     char path[100];

@@ -76,7 +76,8 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     super_b.s_filesystem_type = 3;
     super_b.s_inodes_count = numeroInodos;
     super_b.s_blocks_count = numeroBloques;
-    super_b.s_free_blocks_count = 0;
+    super_b.s_free_blocks_count = 3*n;
+    super_b.s_free_inodes_count = numeroInodos;
     strcpy(super_b.s_mtime, fechaActual);
     strcpy(super_b.s_umtine, "");
     super_b.s_umtine[0] = '0';
