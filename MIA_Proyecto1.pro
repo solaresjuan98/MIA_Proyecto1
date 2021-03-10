@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     mkusr.cpp \
     rmusr.cpp \
     mkfile.cpp \
-    rep.cpp
+    rep.cpp \
+    file.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -59,4 +60,5 @@ HEADERS += \
     mkusr.h \
     rmusr.h \
     mkfile.h \
-    rep.h
+    rep.h \
+    file.h

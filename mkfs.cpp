@@ -89,8 +89,8 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     super_b.s_first_block = 2;
     super_b.s_bm_inode_start = inicio_particion + sizeof(superBloque) + n*sizeof(journaling);
     super_b.s_bm_block_start = super_b.s_bm_inode_start + n;
-    super_b.s_inode_start = super_b.s_block_start + 3*n;
     super_b.s_block_start = super_b.s_bm_inode_start+n*sizeof(tablaInodo);
+    super_b.s_inode_start = super_b.s_block_start + 3*n;
 
     journaling journal;
     journal.fecha_op[0] ='\0';
@@ -204,7 +204,7 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     strcpy(tInodo.i_atime, fechaActual);
     strcpy(tInodo.i_mtime, fechaActual);
     for(int i = 0; i < 15; i++){
-        tInodo.i_block[i] = 0;
+        tInodo.i_block[i] = -1;
         if(i == 14){
             tInodo.i_block[i] = -1;
         }
@@ -275,10 +275,14 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
 
     fseek(archivo, sb_aux.s_inode_start, SEEK_SET);
     fwrite(&tInodo, sizeof(tablaInodo), 1, archivo);
-    super_b.s_free_inodes_count--;
+    //super_b.s_free_inodes_count--;
     fseek(archivo, sb_aux.s_block_start, SEEK_SET);
     fwrite(&bloque_root, 64,1, archivo);
+    fseek(archivo, inicio_particion, SEEK_SET);
+    // restar la cantidad de bloques e inodos libres
     sb_aux.s_free_blocks_count--;
+    sb_aux.s_free_inodes_count--;
+    fwrite(&sb_aux, sizeof(superBloque), 1, archivo);
 
 
     //

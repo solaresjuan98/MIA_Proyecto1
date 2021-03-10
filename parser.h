@@ -65,52 +65,54 @@ extern int yydebug;
     id_particion = 271,
     id_particionl = 272,
     p_u = 273,
-    p_f = 274,
-    p_fast = 275,
-    p_delete = 276,
-    p_full = 277,
-    p_add = 278,
-    pmkdir = 279,
-    p_2fs = 280,
-    p_3fs = 281,
-    p_login = 282,
-    p_logout = 283,
-    p_usr = 284,
-    p_pwd = 285,
-    p_grp = 286,
-    p_mkgrp = 287,
-    p_rmgrp = 288,
-    p_mkusr = 289,
-    p_rmusr = 290,
-    punto = 291,
-    bracketabre = 292,
-    bracketcierra = 293,
-    corcheteabre = 294,
-    corchetecierra = 295,
-    puntocoma = 296,
-    potencia = 297,
-    coma = 298,
-    parentesisabre = 299,
-    parentesiscierra = 300,
-    llaveabre = 301,
-    llavecierra = 302,
-    mas = 303,
-    menos = 304,
-    multiplicacion = 305,
-    igual = 306,
-    dolar = 307,
-    dospuntos = 308,
-    entero = 309,
-    letra = 310,
-    numnegativo = 311,
-    cadena = 312,
-    identificador = 313,
-    caracter = 314,
-    ruta = 315,
-    rutacualquiera = 316,
-    suma = 317,
-    multi = 318,
-    division = 319
+    p_r = 274,
+    p_f = 275,
+    p_fast = 276,
+    p_delete = 277,
+    p_full = 278,
+    p_add = 279,
+    pmkdir = 280,
+    p_2fs = 281,
+    p_3fs = 282,
+    p_login = 283,
+    p_logout = 284,
+    p_usr = 285,
+    p_pwd = 286,
+    p_grp = 287,
+    p_mkgrp = 288,
+    p_rmgrp = 289,
+    p_mkusr = 290,
+    p_rmusr = 291,
+    p_mkfile = 292,
+    punto = 293,
+    bracketabre = 294,
+    bracketcierra = 295,
+    corcheteabre = 296,
+    corchetecierra = 297,
+    puntocoma = 298,
+    potencia = 299,
+    coma = 300,
+    parentesisabre = 301,
+    parentesiscierra = 302,
+    llaveabre = 303,
+    llavecierra = 304,
+    mas = 305,
+    menos = 306,
+    multiplicacion = 307,
+    igual = 308,
+    dolar = 309,
+    dospuntos = 310,
+    entero = 311,
+    letra = 312,
+    numnegativo = 313,
+    cadena = 314,
+    identificador = 315,
+    caracter = 316,
+    ruta = 317,
+    rutacualquiera = 318,
+    suma = 319,
+    multi = 320,
+    division = 321
   };
 #endif
 
@@ -118,7 +120,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 50 "parser.y"
+#line 54 "parser.y"
 
 //se especifican los tipo de valores para los no terminales y lo terminales
 //char TEXT [256];
@@ -135,9 +137,10 @@ class mkgrp *mkgrp_cmd;
 class rmgrp *rmgrp_cmd;
 class mkusr *mkusr_cmd;
 class rmusr *rmusr_cmd;
+class mkfile *mkfile_cmd;
 
 
-#line 141 "parser.h"
+#line 144 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

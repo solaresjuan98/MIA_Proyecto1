@@ -17,8 +17,12 @@
 #include "rmgrp.h"
 #include "mkusr.h"
 #include "rmusr.h"
+// administracion de archivos
+#include "mkfile.h"
 // estructuras
 #include "estructuras.h"
+// otras
+#include "file.h"
 disco arregloDiscos[26];
 
 //*** para login/logout
@@ -63,6 +67,7 @@ class mkgrp *mkgrp_cmd;
 class rmgrp *rmgrp_cmd;
 class mkusr *mkusr_cmd;
 class rmusr *rmusr_cmd;
+class mkfile *mkfile_cmd;
 
 }
 //TERMINALES DE TIPO TEXT, SON STRINGS
@@ -85,6 +90,7 @@ class rmusr *rmusr_cmd;
 %token<TEXT> id_particion;
 %token<TEXT> id_particionl;
 %token<TEXT> p_u;
+%token<TEXT> p_r;
 %token<TEXT> p_f;
 %token<TEXT> p_fast;
 %token<TEXT> p_delete;
@@ -102,6 +108,7 @@ class rmusr *rmusr_cmd;
 %token<TEXT> p_rmgrp;
 %token<TEXT> p_mkusr;
 %token<TEXT> p_rmusr;
+%token<TEXT> p_mkfile;
 
 %token<TEXT> punto;
 %token<TEXT> bracketabre;
@@ -149,6 +156,7 @@ class rmusr *rmusr_cmd;
 %type<rmgrp_cmd> COMANDORMGRP;
 %type<mkusr_cmd> COMANDOMKUSR;
 %type<rmusr_cmd> COMANDORMUSR;
+%type<mkfile_cmd> COMANDOMKFILE;
 
 %left suma menos
 %left multi division
@@ -174,6 +182,7 @@ LEXPA:  pmkdisk COMANDOMKDISK {}
 | p_rmgrp COMANDORMGRP {}
 | p_mkusr COMANDOMKUSR {}
 | p_rmusr COMANDORMUSR {}
+| p_mkfile COMANDOMKFILE {}
 ;
 
 COMANDOMKDISK:
@@ -624,6 +633,8 @@ COMANDOUNMOUNT:
 
                 for(int j = 0; j < 99; i++){
                     arregloDiscos[i].particiones[j] = part_vacia;
+                    nombreParticion = "";
+                    rutaParticionActual = "";
                     break;
                 }
             }
@@ -885,4 +896,33 @@ menos p_usr igual identificador
     {
 
     }
+;
+
+
+COMANDOMKFILE:
+// -SIZE=15 -PatH=/home/user/docs/a.txt –r
+menos psize igual entero  menos p_path igual ruta_sin_espacio menos p_r
+    {
+
+        string ruta = $8;
+        int tamanio = atoi($4);
+
+        if(yaInicioSesion){
+
+            user *usuario = new user();
+            usuario->setNombreUsuario(usrname);
+            usuario->setGrupo("1");
+
+            file *archivo_crear = new file();
+            archivo_crear->setRuta(ruta);
+            archivo_crear->setTienePadre(false);
+            mkfile *cmd_mkfile = new mkfile();
+            cmd_mkfile->crearArchivo(nombreParticion, rutaParticionActual, usuario, archivo_crear);
+
+        }else{
+            cout << " >> Debes iniciar sesion para ejecutar este comando \n";
+        }
+
+    }
+//
 ;
