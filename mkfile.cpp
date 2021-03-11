@@ -1,6 +1,7 @@
 #include "mkfile.h"
 #include "estructuras.h"
-
+#include "carpeta.h"
+#include "mkdir.h"
 mkfile::mkfile()
 {
 
@@ -47,10 +48,37 @@ void mkfile::crearArchivo(string nombreParticion, string ruta, user *usuario, fi
     int inodos_usados = sb_aux.s_inodes_count - sb_aux.s_free_inodes_count;
     int bloques_usados = sb_aux.s_blocks_count - sb_aux.s_free_blocks_count;
 
+
     cout <<" >> "<< sb_aux.s_inode_start << endl;
 
     tablaInodo inodo_aux;
-    bloque_carpeta bl_carpeta_aux;
+
+
+    cout << " >> Ruta de archivo a crear: " << archivo_nuevo->getRuta() << "\n";
+
+    string str = archivo_nuevo->getRuta();
+    string delimitador = "/";
+    size_t pos = 0;
+    string subdir;
+
+    // Ver si tiene carpetas que la contienen
+    while ((pos = str.find(delimitador)) != std::string::npos) {
+        subdir = str.substr(0, pos);
+
+        if(!subdir.empty()){
+            //cout << " >> Carpeta: " <<subdir << endl;
+            carpeta *nueva_carpeta = new carpeta();
+            nueva_carpeta->setNombreCarpeta(subdir);
+
+            // Crear nueva carpeta con un mkdir
+            mkdir *cmd_mkdir = new mkdir();
+            cmd_mkdir->crearCarpeta(nombreParticion, ruta, usuario, nueva_carpeta);
+        }
+
+        str.erase(0, pos + delimitador.length());
+    }
+
+    cout << " >> Archivo a crear " << str << endl;
     // intentar recorrer un inodo
     for(int i = 0; i < inodos_usados; i++){
 
@@ -58,14 +86,16 @@ void mkfile::crearArchivo(string nombreParticion, string ruta, user *usuario, fi
         fread(&inodo_aux, sizeof(tablaInodo), 1, archivo);
         cout << inodo_aux.i_gid << "\n";
 
-        for(int j = 0; j <15; j++){
-            if(inodo_aux.i_block[j] != -1){
-                cout << inodo_aux.i_block[j] << "\n";
+    }
 
 
-            }
-        }
+    // intentar recorrer un bloque
+    bloque_archivo bl_archivo_aux;
+    for(int i = 0; i < bloques_usados; i++){
+        fseek(archivo, sb_aux.s_block_start + i*64, SEEK_SET);
+        fread(&bl_archivo_aux, 64, 1, archivo);
 
+        cout << bl_archivo_aux.b_content << "\n";
 
     }
 

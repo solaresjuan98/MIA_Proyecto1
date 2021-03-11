@@ -26,7 +26,9 @@ SOURCES += main.cpp \
     rmusr.cpp \
     mkfile.cpp \
     rep.cpp \
-    file.cpp
+    file.cpp \
+    carpeta.cpp \
+    mkdir.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -61,4 +63,6 @@ HEADERS += \
     rmusr.h \
     mkfile.h \
     rep.h \
-    file.h
+    file.h \
+    carpeta.h \
+    mkdir.h

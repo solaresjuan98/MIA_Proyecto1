@@ -278,6 +278,7 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     //super_b.s_free_inodes_count--;
     fseek(archivo, sb_aux.s_block_start, SEEK_SET);
     fwrite(&bloque_root, 64,1, archivo);
+    // posicionarme al inicio de la particion
     fseek(archivo, inicio_particion, SEEK_SET);
     // restar la cantidad de bloques e inodos libres
     sb_aux.s_free_blocks_count--;
