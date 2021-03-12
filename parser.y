@@ -19,6 +19,8 @@
 #include "rmusr.h"
 // administracion de archivos
 #include "mkfile.h"
+// reportes
+#include "rep.h"
 // estructuras
 #include "estructuras.h"
 // otras
@@ -68,6 +70,7 @@ class rmgrp *rmgrp_cmd;
 class mkusr *mkusr_cmd;
 class rmusr *rmusr_cmd;
 class mkfile *mkfile_cmd;
+class rep *rep_cmd;
 
 }
 //TERMINALES DE TIPO TEXT, SON STRINGS
@@ -109,6 +112,7 @@ class mkfile *mkfile_cmd;
 %token<TEXT> p_mkusr;
 %token<TEXT> p_rmusr;
 %token<TEXT> p_mkfile;
+%token<TEXT> p_rep;
 
 %token<TEXT> punto;
 %token<TEXT> bracketabre;
@@ -129,7 +133,6 @@ class mkfile *mkfile_cmd;
 %token<TEXT> igual;
 %token<TEXT> dolar;
 %token<TEXT> dospuntos;
-//%token<TEXT> barra;
 
 %token<TEXT> entero;
 %token<TEXT> letra;
@@ -139,7 +142,6 @@ class mkfile *mkfile_cmd;
 %token<TEXT> caracter;
 %token<TEXT> ruta;
 %token<TEXT> rutacualquiera;
-//%token<TEXT> pdisk;
 
 
 
@@ -157,6 +159,7 @@ class mkfile *mkfile_cmd;
 %type<mkusr_cmd> COMANDOMKUSR;
 %type<rmusr_cmd> COMANDORMUSR;
 %type<mkfile_cmd> COMANDOMKFILE;
+%type<rep_cmd> COMANDOREP;
 
 %left suma menos
 %left multi division
@@ -183,6 +186,7 @@ LEXPA:  pmkdisk COMANDOMKDISK {}
 | p_mkusr COMANDOMKUSR {}
 | p_rmusr COMANDORMUSR {}
 | p_mkfile COMANDOMKFILE {}
+| p_rep COMANDOREP {}
 ;
 
 COMANDOMKDISK:
@@ -925,4 +929,85 @@ menos psize igual entero  menos p_path igual ruta_sin_espacio menos p_r
 
     }
 //
+;
+
+
+COMANDOREP:
+// –id=561A -Path=/home/user/reports/reporte1.jpg -name=mbr
+menos p_id igual id_particion menos p_path igual ruta_sin_espacio menos p_name igual identificador
+    {
+        string id = $4;
+        string rutaDestinoReporte = $8;// ruta fisica en donde se guardar al reporte
+        string tipoReporte = $12;
+        string nombreParticionReporte; // id de la particion que usaré para el reporte
+        string rutaParticionReporte; // ruta ubicada en el disco
+        if(yaInicioSesion){
+
+
+            for(int i = 0; i < 26; i++){
+
+                for(int j = 0; j <99;j++){
+                    if(arregloDiscos[i].particiones[j].id == id){
+                        nombreParticionReporte = arregloDiscos[i].particiones[j].nombre;
+                        rutaParticionReporte = arregloDiscos[i].ruta;
+                        break;
+                    }
+                }
+            }
+
+
+
+            rep *reporte = new rep();
+
+            if(tipoReporte == "sb"){
+                reporte->sb(rutaParticionReporte, nombreParticionReporte, rutaDestinoReporte);
+                cout << " >> Generando reporte de superbloque... \n";
+            }else if(tipoReporte == "mbr"){
+                reporte->repmbr(rutaParticionReporte, nombreParticionReporte, rutaDestinoReporte);
+                cout << " >> Generando reporte de mbr... \n";
+            }else if(tipoReporte == "disk"){
+                reporte->disk(rutaParticionActual, rutaDestinoReporte);
+                cout << " >> Generando reporte de disco... \n";
+            }
+            else{
+                cout << " >> Tipo de reporte incorrecto. \n";
+            }
+
+            /*
+            switch(tipoReporte) {
+            case "mbr":
+                reporte->sb(rutaParticionReporte, nombreParticionReporte);
+                break;
+            case "disk":
+                break;
+            case "inode":
+                break;
+            case "journaling":
+                break;
+            case "block":
+                break;
+            case "bm_inode":
+                break;
+            case "bm_block":
+                break;
+            case "tree":
+                break;
+            case "sb":
+                break;
+            case "file":
+                break;
+            case "ls":
+                break;
+            default:
+                cout << " >> Tipo de reporte incorrecto. \n";
+                break;
+            }
+            */
+
+        }else{
+            cout << " >> Inicia sesion para generar reportes. \n";
+        }
+
+    }
+
 ;
