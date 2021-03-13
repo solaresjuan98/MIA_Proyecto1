@@ -31,6 +31,7 @@ cadena [\"][^\"\n]*[\"\n]
 ruta_sin_espacio ("/"({letra}|{entero}|"_"|"-"|".")*)+
 id_particion {entero}{entero}{entero}{letra}
 id_particionl {entero}{entero}{entero}{entero}{letra}
+comentario ("#")+[^\]*[\n]
 %x COM
 
 
@@ -67,7 +68,7 @@ id_particionl {entero}{entero}{entero}{entero}{letra}
 "MKFILE" {columna=columna+ anterior;  anterior = strlen(yytext); strcpy(yylval.TEXT, yytext);return p_mkfile;}
 "R" {columna=columna+ anterior;  anterior = strlen(yytext); strcpy(yylval.TEXT, yytext);return p_r;}
 "REP" {columna=columna+ anterior;  anterior = strlen(yytext); strcpy(yylval.TEXT, yytext);return p_rep;}
-
+"PAUSE" {columna=columna+ anterior;  anterior = strlen(yytext); strcpy(yylval.TEXT, yytext);return p_pause;}
 
 {entero} {columna=columna+ anterior;  anterior = strlen(yytext);strcpy(yylval.TEXT, yytext); return entero;}
 {cadena} {columna=columna+ anterior;  anterior = strlen(yytext);strcpy(yylval.TEXT, yytext); return cadena;}

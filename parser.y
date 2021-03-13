@@ -35,7 +35,6 @@ string pwd;
 string nombreParticion;
 string rutaParticionActual;
 bool yaInicioSesion = false;
-
 using namespace std;
 extern int yylineno;
 extern int columna;
@@ -113,6 +112,7 @@ class rep *rep_cmd;
 %token<TEXT> p_rmusr;
 %token<TEXT> p_mkfile;
 %token<TEXT> p_rep;
+%token<TEXT> p_pause;
 
 %token<TEXT> punto;
 %token<TEXT> bracketabre;
@@ -142,6 +142,7 @@ class rep *rep_cmd;
 %token<TEXT> caracter;
 %token<TEXT> ruta;
 %token<TEXT> rutacualquiera;
+%token<TEXT> comentario;
 
 
 
@@ -187,7 +188,11 @@ LEXPA:  pmkdisk COMANDOMKDISK {}
 | p_rmusr COMANDORMUSR {}
 | p_mkfile COMANDOMKFILE {}
 | p_rep COMANDOREP {}
+| p_pause COMANDOPAUSE {}
+| comentario COMENTARIO {}
 ;
+
+COMENTARIO: comentario { };
 
 COMANDOMKDISK:
 // –size=5 –u=m –path="/home/juan/Desktop"
@@ -259,6 +264,56 @@ menos psize igual entero menos p_u igual identificador menos p_path igual cadena
         disco->crearDisco(disco);
         $$=disco;
 
+    }
+// -size=75 -u=M -path=/home/archivos/fase2/Disco1.dk -f=FF
+| menos psize igual entero menos p_u igual identificador menos p_path igual ruta_sin_espacio menos p_f igual identificador
+    {
+        int tam=atoi($4);
+        string unidad = $8;
+        string archivo = $12;
+        string ajuste = $16;
+
+        string delimitador = "/";
+        size_t pos = 0;
+        string subdir;
+        string dir;
+        string cmd = "sudo mkdir ";
+        string ruta_creacion;
+        // Ver si tiene carpetas que la contienen
+        while ((pos = archivo.find(delimitador)) != std::string::npos) {
+            subdir = archivo.substr(0, pos);
+
+            if(!subdir.empty()){
+                cout << " >> Carpeta: " <<subdir << endl;
+
+                if(subdir == "home"){
+                    cmd += "/home";
+                    ruta_creacion += "/home";
+                }else{
+                    string aux = "/" + subdir;
+                    ruta_creacion += aux;
+                    //dir += "/" + subdir;
+                    cmd += aux;
+                    cout << cmd << endl;
+                    system(cmd.c_str());
+                }
+
+            }
+
+            archivo.erase(0, pos + delimitador.length());
+
+        }
+
+
+        ruta_creacion += "/" + archivo;
+        cout << " >> Archivo a crear " << ruta_creacion << endl;
+        mkdisk *cmd_mkdisk =new mkdisk();
+        cmd_mkdisk->setTamanio(tam);
+        cmd_mkdisk->setRuta(ruta_creacion);
+        cmd_mkdisk->setUnidad(unidad);
+        cmd_mkdisk->setAjuste(ajuste);
+        cmd_mkdisk->crearDisco(cmd_mkdisk);
+        //$$=disco;
     }
 
 ;
@@ -1011,3 +1066,11 @@ menos p_id igual id_particion menos p_path igual ruta_sin_espacio menos p_name i
     }
 
 ;
+
+
+COMANDOPAUSE: {
+
+    cout << " >> Presiona cualquier tecla para continuar... \n";
+    cin.get();
+
+}

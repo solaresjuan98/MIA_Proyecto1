@@ -85,35 +85,37 @@ extern int yydebug;
     p_rmusr = 291,
     p_mkfile = 292,
     p_rep = 293,
-    punto = 294,
-    bracketabre = 295,
-    bracketcierra = 296,
-    corcheteabre = 297,
-    corchetecierra = 298,
-    puntocoma = 299,
-    potencia = 300,
-    coma = 301,
-    parentesisabre = 302,
-    parentesiscierra = 303,
-    llaveabre = 304,
-    llavecierra = 305,
-    mas = 306,
-    menos = 307,
-    multiplicacion = 308,
-    igual = 309,
-    dolar = 310,
-    dospuntos = 311,
-    entero = 312,
-    letra = 313,
-    numnegativo = 314,
-    cadena = 315,
-    identificador = 316,
-    caracter = 317,
-    ruta = 318,
-    rutacualquiera = 319,
-    suma = 320,
-    multi = 321,
-    division = 322
+    p_pause = 294,
+    punto = 295,
+    bracketabre = 296,
+    bracketcierra = 297,
+    corcheteabre = 298,
+    corchetecierra = 299,
+    puntocoma = 300,
+    potencia = 301,
+    coma = 302,
+    parentesisabre = 303,
+    parentesiscierra = 304,
+    llaveabre = 305,
+    llavecierra = 306,
+    mas = 307,
+    menos = 308,
+    multiplicacion = 309,
+    igual = 310,
+    dolar = 311,
+    dospuntos = 312,
+    entero = 313,
+    letra = 314,
+    numnegativo = 315,
+    cadena = 316,
+    identificador = 317,
+    caracter = 318,
+    ruta = 319,
+    rutacualquiera = 320,
+    comentario = 321,
+    suma = 322,
+    multi = 323,
+    division = 324
   };
 #endif
 
@@ -121,7 +123,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 56 "parser.y"
+#line 55 "parser.y"
 
 //se especifican los tipo de valores para los no terminales y lo terminales
 //char TEXT [256];
@@ -142,7 +144,7 @@ class mkfile *mkfile_cmd;
 class rep *rep_cmd;
 
 
-#line 146 "parser.h"
+#line 148 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
