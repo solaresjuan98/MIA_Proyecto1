@@ -37,8 +37,8 @@ typedef struct {
 */
 
 typedef struct {
-    //char id[5];
-    std::string id;
+    char id[4];
+    //std::string id;
     int numero;
     char nombre[16];
     int estado;

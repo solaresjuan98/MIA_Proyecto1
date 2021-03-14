@@ -42,7 +42,7 @@ void fdisk::crearParticion(fdisk *disco){
     mbr mbr_tmp;
     int tamanio_parcicion;
     int fin_particion;
-    //std::cout << disco->getRuta() << "\n";
+    cout << disco->getRuta() << "\n";
     archivo = fopen(disco->getRuta().c_str(), "rb+");
 
 
@@ -59,11 +59,11 @@ void fdisk::crearParticion(fdisk *disco){
     //long int res = ftell(archivo);
     //std::cout << res << "\n"; // imprimir tamaño del archivo que está siendo leído
 
-    if(disco->getUnidad() == "k" || disco->getUnidad().empty() == true) {
+    if(disco->getUnidad() == "k" || disco->getUnidad() == "K" || disco->getUnidad().empty() == true) {
         tamanio_parcicion = disco->getTamanio() * 1024;
-    } else if (disco->getUnidad() == "mb") {
+    } else if (disco->getUnidad() == "M" || disco->getUnidad() == "m") {
         tamanio_parcicion = disco->getTamanio() * 1024 * 1024;
-    } else if (disco->getUnidad() == "b") {
+    } else if (disco->getUnidad() == "b" || disco->getUnidad() == "B" ) {
         tamanio_parcicion = disco->getTamanio();
     }
 
@@ -73,11 +73,11 @@ void fdisk::crearParticion(fdisk *disco){
         if(mbr_tmp.mbr_particions[i].part_status == '0'){
             std::cout << " Aqui tengo que crear la particion. \n";
 
-            if(disco->getAjuste() == "B"){
+            if(disco->getAjuste() == "B"  || disco->getAjuste() == "BF"){
                 mbr_tmp.mbr_particions[i].part_fit = 'B';
-            }else if (disco->getAjuste() == "F") {
+            }else if (disco->getAjuste() == "F" || disco->getAjuste() == "FF") {
                 mbr_tmp.mbr_particions[i].part_fit = 'F';
-            }else if (disco->getAjuste() == "W") {
+            }else if (disco->getAjuste() == "W" || disco->getAjuste() == "WF") {
                 mbr_tmp.mbr_particions[i].part_fit = 'W';
             }
 

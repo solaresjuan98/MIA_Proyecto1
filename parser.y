@@ -4,6 +4,9 @@
 #include <string>
 #include "qdebug.h"
 #include <iostream>
+//#include <bits/stdc++.h>
+//#include <sys/stat.h>
+//#include <sys/types.h>
 // comandos usados
 #include "mkdisk.h"
 #include "rmdisk.h"
@@ -19,10 +22,13 @@
 #include "rmusr.h"
 // administracion de archivos
 #include "mkfile.h"
+#include "mkdir.h"
 // reportes
 #include "rep.h"
 // estructuras
 #include "estructuras.h"
+// simulacion de perdida del sistema
+#include "loss.h"
 // otras
 #include "file.h"
 disco arregloDiscos[26];
@@ -70,6 +76,9 @@ class mkusr *mkusr_cmd;
 class rmusr *rmusr_cmd;
 class mkfile *mkfile_cmd;
 class rep *rep_cmd;
+class mkdir *mkdir_cmd;
+class loss *loss_cmd;
+
 
 }
 //TERMINALES DE TIPO TEXT, SON STRINGS
@@ -111,8 +120,11 @@ class rep *rep_cmd;
 %token<TEXT> p_mkusr;
 %token<TEXT> p_rmusr;
 %token<TEXT> p_mkfile;
+%token<TEXT> p_mkdir;
 %token<TEXT> p_rep;
 %token<TEXT> p_pause;
+%token<TEXT> p_loss;
+
 
 %token<TEXT> punto;
 %token<TEXT> bracketabre;
@@ -160,7 +172,9 @@ class rep *rep_cmd;
 %type<mkusr_cmd> COMANDOMKUSR;
 %type<rmusr_cmd> COMANDORMUSR;
 %type<mkfile_cmd> COMANDOMKFILE;
+%type<mkdir_cmd> COMANDOMKDIR;
 %type<rep_cmd> COMANDOREP;
+%type<loss_cmd> COMANDOLOSS;
 
 %left suma menos
 %left multi division
@@ -190,9 +204,12 @@ LEXPA:  pmkdisk COMANDOMKDISK {}
 | p_rep COMANDOREP {}
 | p_pause COMANDOPAUSE {}
 | comentario COMENTARIO {}
+| p_mkdir COMANDOMKDIR {}
+| p_loss COMANDOLOSS {}
+| COMENTARIO {}
 ;
 
-COMENTARIO: comentario { };
+COMENTARIO: comentario {};
 
 COMANDOMKDISK:
 // –size=5 –u=m –path="/home/juan/Desktop"
@@ -277,7 +294,67 @@ menos psize igual entero menos p_u igual identificador menos p_path igual cadena
         size_t pos = 0;
         string subdir;
         string dir;
-        string cmd = "sudo mkdir ";
+        string cmd = "mkdir ";
+        string ruta_creacion;
+        // Ver si tiene carpetas que la contienen
+        while ((pos = archivo.find(delimitador)) != std::string::npos) {
+            subdir = archivo.substr(0, pos);
+
+            if(!subdir.empty()){
+                cout << " >> Carpeta: " <<subdir << endl;
+
+                if(subdir == "home"){
+                    cmd += "/home";
+                    ruta_creacion += "/home";
+                }else{
+                    string aux = "/" + subdir;
+                    ruta_creacion += aux;
+                    //dir += "/" + subdir;
+                    cmd += aux;
+                    cout << cmd << endl;
+
+                    /*if(mkdir(cmd.c_str(), 0777) == -1){
+                        cout << " >> f \n";
+                        //cerr << " >> Error: " << strerror(errno) << endl;
+                    }else{
+                        cout << " >> Directorio creado \n.";
+                    }*/
+
+
+                    system(cmd.c_str());
+                }
+
+            }
+
+            archivo.erase(0, pos + delimitador.length());
+
+        }
+
+
+        ruta_creacion += "/" + archivo;
+        cout << " >> Archivo a crear " << ruta_creacion << endl;
+        mkdisk *cmd_mkdisk =new mkdisk();
+        cmd_mkdisk->setTamanio(tam);
+        cmd_mkdisk->setRuta(ruta_creacion);
+        cmd_mkdisk->setUnidad(unidad);
+        cmd_mkdisk->setAjuste(ajuste);
+        cmd_mkdisk->crearDisco(cmd_mkdisk);
+        //$$=disco;
+    }
+// -u=K size=51200 -path=/home/juan/Documents/fase2/Disco2.dk -f=FF
+| menos p_u igual identificador menos psize igual entero
+menos p_path igual ruta_sin_espacio menos p_f igual identificador
+    {
+        int tam=atoi($8);
+        string unidad = $4;
+        string archivo = $12;
+        string ajuste = $16;
+
+        string delimitador = "/";
+        size_t pos = 0;
+        string subdir;
+        string dir;
+        string cmd = "mkdir ";
         string ruta_creacion;
         // Ver si tiene carpetas que la contienen
         while ((pos = archivo.find(delimitador)) != std::string::npos) {
@@ -313,8 +390,8 @@ menos psize igual entero menos p_u igual identificador menos p_path igual cadena
         cmd_mkdisk->setUnidad(unidad);
         cmd_mkdisk->setAjuste(ajuste);
         cmd_mkdisk->crearDisco(cmd_mkdisk);
-        //$$=disco;
     }
+
 
 ;
 
@@ -420,6 +497,31 @@ menos psize igual entero menos p_path igual ruta_sin_espacio menos p_name igual 
         disco->mostrarDatosDisco(ruta);
 
         $$ = disco;
+
+    }
+// fdisk -type=P -u=M -name=Part1 -size=20 -path=/home/archivos/fase2/Disco1.dk -f=BF
+| menos p_type igual identificador menos p_u igual identificador
+menos p_name igual identificador menos psize igual entero
+menos p_path igual ruta_sin_espacio
+menos p_f igual identificador
+    {
+        string tipoParticion = $4;
+        string unidad = $8;
+        string nParticion = $12;
+        int tamanio = atoi($16);
+        string ruta = $20;
+        string ajuste =$24;
+
+        fdisk *disco = new fdisk();
+        disco->setNombre(nParticion);
+        disco->setTamanio(tamanio);
+        disco->setTipo(tipoParticion);
+        disco->setAjuste(ajuste);
+        disco->setRuta(ruta);
+        disco->setUnidad(unidad);
+        disco->crearParticion(disco);
+        disco->mostrarDatosDisco(ruta);
+
 
     }
 // -delete=fast -name="Particion1" -path=/home/Disco1.dk
@@ -540,6 +642,7 @@ menos p_path igual ruta_sin_espacio menos p_name igual identificador
                             //particion particionaMontar;
                             string str(1, discoaMontar.letra);
                             discoaMontar.particiones[j] = comando_mount->montarParticion(nombreParticion, j, str);
+                            cout << "*******" << discoaMontar.particiones[j].id << "\n";
                             arregloDiscos[i] = discoaMontar;
 
                             break;
@@ -621,6 +724,7 @@ menos p_path igual ruta_sin_espacio menos p_name igual identificador
 
                             cout << "\t " << j + 1 <<". Nombre particion: " << arregloDiscos[i].particiones[j].nombre << "\n";
                             cout << "\t  ID particion: " << arregloDiscos[i].particiones[j].id << "\n";
+                            cout << "\t  Ruta de la particion: " << arregloDiscos[i].ruta << "\n";
                             fflush(stdin);
                         }
                     }
@@ -803,13 +907,13 @@ menos p_usr igual identificador menos p_pwd igual entero menos p_id igual id_par
     string id = $12;
 
     // Iniciando sesión como usuario root
-    if(usr == "root" && pass == 123){
+    if(usr == "root" && pass == 123 && yaInicioSesion == false){
 
         // procedo a buscar mi particion montada
         for(int i = 0; i < 26; i++){
 
             for(int j = 0; j < 99; j++){
-                if(arregloDiscos[i].particiones[j].id == id){
+                if(strcmp(arregloDiscos[i].particiones[j].id, id.c_str())== -1){
 
                     cout << " >> Particion encontrada. \n";
                     nombreParticion = arregloDiscos[i].particiones[j].nombre;
@@ -824,7 +928,7 @@ menos p_usr igual identificador menos p_pwd igual entero menos p_id igual id_par
         cout << " >> Has iniciado sesión. \n";
 
     }else{
-        cout << " Datos incorrectos";
+        cout << " Error al iniciar sesion. \n";
     }
 
 
@@ -959,7 +1063,7 @@ menos p_usr igual identificador
 
 
 COMANDOMKFILE:
-// -SIZE=15 -PatH=/home/user/docs/a.txt –r
+// -SIZE=15 -PatH=/home/user/docs/a.txt –r (este es el complicado)
 menos psize igual entero  menos p_path igual ruta_sin_espacio menos p_r
     {
 
@@ -983,9 +1087,82 @@ menos psize igual entero  menos p_path igual ruta_sin_espacio menos p_r
         }
 
     }
-//
+// mkfile -path="/home/mis documentos/archivo 1.txt"
+| menos psize igual entero  menos p_path igual cadena menos
+    {
+        string ruta = $8;
+        int tamanio = atoi($4);
+
+        if(yaInicioSesion){
+
+            user *usuario = new user();
+            usuario->setNombreUsuario(usrname);
+            usuario->setGrupo("1");
+
+            string comilla = "\"";
+            size_t pos = 0;
+            string r_;
+            // Remover las comillas dobles
+            string ruta;
+            while ((pos = ruta.find(comilla)) != std::string::npos) {
+                r_ = ruta.substr(0, pos);
+                ruta.erase(0, pos + comilla.length());
+            }
+
+            cout << r_ << endl;
+
+            file *archivo_crear = new file();
+            archivo_crear->setRuta(r_);
+            archivo_crear->setTienePadre(false);
+            mkfile *cmd_mkfile = new mkfile();
+            cmd_mkfile->crearArchivo(nombreParticion, rutaParticionActual, usuario, archivo_crear);
+
+        }else{
+            cout << " >> Debes iniciar sesion para ejecutar este comando \n";
+        }
+    }
 ;
 
+
+COMANDOMKDIR:
+// –P -path=/home/user/docs/usac
+menos identificador menos p_path igual ruta_sin_espacio
+    {
+        string ruta = $6;
+        if(yaInicioSesion){
+
+            user *usuario = new user();
+            usuario->setNombreUsuario(usrname);
+            usuario->setGrupo("1");
+
+            // separar cada uno de los subdirectorios
+
+            string delimitador = "/";
+            size_t pos = 0;
+            string subdir;
+
+            // Ver si tiene carpetas que la contienen
+            while ((pos = ruta.find(delimitador)) != std::string::npos) {
+                subdir = ruta.substr(0, pos);
+
+                if(!subdir.empty()){
+                    cout << " >> Carpeta: " <<subdir << endl;
+                    carpeta *nueva_carpeta = new carpeta();
+                    nueva_carpeta->setNombreCarpeta(subdir);
+                    cout << " Ruta particion -- " << rutaParticionActual << endl;
+                    // Crear nueva carpeta con un mkdir
+                    mkdir *cmd_mkdir = new mkdir();
+                    cmd_mkdir->crearCarpeta(nombreParticion, rutaParticionActual, usuario, nueva_carpeta);
+                }
+
+                ruta.erase(0, pos + delimitador.length());
+            }
+            //mkdir_cmd->crearCarpeta(nombreParticion, rutaParticionActual, usuario,);
+        }else{
+            cout << " >> Inicia sesion para ejecutar este comando. \n";
+        }
+    }
+;
 
 COMANDOREP:
 // –id=561A -Path=/home/user/reports/reporte1.jpg -name=mbr
@@ -1064,7 +1241,71 @@ menos p_id igual id_particion menos p_path igual ruta_sin_espacio menos p_name i
         }
 
     }
+// –id=561A -Path="/home/user/reports/reporte1.jpg" -name=mbr
+|menos p_id igual id_particion menos p_path igual cadena menos p_name igual identificador
+    {
+        string id = $4;
+        string rutaDestinoReporte = $8;// ruta fisica en donde se guardar al reporte
+        string tipoReporte = $12;
+        string nombreParticionReporte; // id de la particion que usaré para el reporte
+        string rutaParticionReporte; // ruta ubicada en el disco
 
+        string comilla = "\"";
+        size_t pos = 0;
+        // Remover las comillas dobles
+        string ruta;
+        while ((pos = rutaDestinoReporte.find(comilla)) != std::string::npos) {
+            ruta = rutaDestinoReporte.substr(0, pos);
+            rutaDestinoReporte.erase(0, pos + comilla.length());
+        }
+
+        //cout << ruta << "\n";
+        cout << " >> Id: " << id << "\n";
+
+            for(int i = 0; i < 26; i++){
+
+                for(int j = 0; j <99;j++){
+                    //cout << strcmp(arregloDiscos[i].particiones[j].id, id.c_str()) << " ---- \n";
+                    if(strcmp(arregloDiscos[i].particiones[j].id, id.c_str())== -1){
+                        nombreParticionReporte = arregloDiscos[i].particiones[j].nombre;
+                        rutaParticionReporte = arregloDiscos[i].ruta;
+                        cout << " >> Particion encontrada \n";
+                        break;
+                    }
+                }
+            }
+
+
+            cout << " >> " << ruta << "\n";
+            rep *reporte = new rep();
+
+            if(tipoReporte == "sb"){
+                reporte->sb(rutaParticionReporte, nombreParticionReporte, ruta);
+                cout << " >> Generando reporte de superbloque... \n";
+            }
+            else if(tipoReporte == "mbr"){
+                reporte->repmbr(rutaParticionReporte, nombreParticionReporte, ruta);
+                cout << " >> Generando reporte de mbr... \n";
+            }
+            else if(tipoReporte == "disk"){
+                reporte->disk(rutaParticionReporte, ruta);
+                cout << " >> Generando reporte de disco... \n";
+            }
+            else if(tipoReporte == "bm_inode"){
+                reporte->bm_inode(rutaParticionReporte, nombreParticionReporte, ruta);
+                cout << " >> Generando reporte de bitmap de inodos... \n";
+            }
+            else if(tipoReporte == "bm_block"){
+                reporte->bm_inode(rutaParticionReporte, nombreParticionReporte, ruta);
+                cout << " >> Generando reporte de bitmap de bloques... \n";
+            }
+            else{
+                cout << " >> Tipo de reporte incorrecto. \n";
+            }
+
+
+
+    }
 ;
 
 
@@ -1073,4 +1314,26 @@ COMANDOPAUSE: {
     cout << " >> Presiona cualquier tecla para continuar... \n";
     cin.get();
 
-}
+};
+
+COMANDOLOSS:
+// –id=521A
+menos p_id igual id_particion
+    {
+        string id = $4;
+
+        for(int i = 0; i < 26; i++){
+
+            for(int j = 0; j <99;j++){
+                if(strcmp(arregloDiscos[i].particiones[j].id, id.c_str())== -1){
+
+                    cout << " >> Particion encontrada \n";
+
+                    loss *cmd_loss = new loss();
+                    cmd_loss->simularPerdida(arregloDiscos[i].particiones[j].nombre, arregloDiscos[i].ruta);
+
+                    break;
+                }
+            }
+        }
+    };

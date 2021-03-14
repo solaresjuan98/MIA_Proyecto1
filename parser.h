@@ -84,38 +84,40 @@ extern int yydebug;
     p_mkusr = 290,
     p_rmusr = 291,
     p_mkfile = 292,
-    p_rep = 293,
-    p_pause = 294,
-    punto = 295,
-    bracketabre = 296,
-    bracketcierra = 297,
-    corcheteabre = 298,
-    corchetecierra = 299,
-    puntocoma = 300,
-    potencia = 301,
-    coma = 302,
-    parentesisabre = 303,
-    parentesiscierra = 304,
-    llaveabre = 305,
-    llavecierra = 306,
-    mas = 307,
-    menos = 308,
-    multiplicacion = 309,
-    igual = 310,
-    dolar = 311,
-    dospuntos = 312,
-    entero = 313,
-    letra = 314,
-    numnegativo = 315,
-    cadena = 316,
-    identificador = 317,
-    caracter = 318,
-    ruta = 319,
-    rutacualquiera = 320,
-    comentario = 321,
-    suma = 322,
-    multi = 323,
-    division = 324
+    p_mkdir = 293,
+    p_rep = 294,
+    p_pause = 295,
+    p_loss = 296,
+    punto = 297,
+    bracketabre = 298,
+    bracketcierra = 299,
+    corcheteabre = 300,
+    corchetecierra = 301,
+    puntocoma = 302,
+    potencia = 303,
+    coma = 304,
+    parentesisabre = 305,
+    parentesiscierra = 306,
+    llaveabre = 307,
+    llavecierra = 308,
+    mas = 309,
+    menos = 310,
+    multiplicacion = 311,
+    igual = 312,
+    dolar = 313,
+    dospuntos = 314,
+    entero = 315,
+    letra = 316,
+    numnegativo = 317,
+    cadena = 318,
+    identificador = 319,
+    caracter = 320,
+    ruta = 321,
+    rutacualquiera = 322,
+    comentario = 323,
+    suma = 324,
+    multi = 325,
+    division = 326
   };
 #endif
 
@@ -123,7 +125,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 55 "parser.y"
+#line 61 "parser.y"
 
 //se especifican los tipo de valores para los no terminales y lo terminales
 //char TEXT [256];
@@ -142,9 +144,12 @@ class mkusr *mkusr_cmd;
 class rmusr *rmusr_cmd;
 class mkfile *mkfile_cmd;
 class rep *rep_cmd;
+class mkdir *mkdir_cmd;
+class loss *loss_cmd;
 
 
-#line 148 "parser.h"
+
+#line 153 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

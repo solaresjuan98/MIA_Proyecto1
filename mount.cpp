@@ -179,8 +179,8 @@ particion_disco mount::montarParticion(string nombreParticion, int pos, string l
 
     particion_disco part;
 
-    //strcpy(part.id, id_);
-    part.id = id_;
+    strcpy(part.id, id_.c_str());
+    //part.id = id_;
     part.numero = pos;
     part.estado = 1;
     strcpy(part.nombre, nombreParticion.c_str());

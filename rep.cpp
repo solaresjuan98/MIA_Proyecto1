@@ -308,10 +308,10 @@ void rep::disk(string rutaParticion, string rutaDestino){
 
             // Estoy graficando una primaria
             if(mbr_.mbr_particions[i].part_type == 'P'){
-                porcentaje = (mbr_.mbr_particions[i].part_size/tamanioArchivo)*100;
+                //porcentaje = (mbr_.mbr_particions[i].part_size/tamanioArchivo)*100;
                 //cout << porcentaje << endl;
                 reporte <<  " Primaria \\n "
-                        << (mbr_.mbr_particions[i].part_size/tamanioArchivo)*100 << " % | ";
+                        << mbr_.mbr_particions[i].part_size << " bytes | ";
             }
             // Estoy graficando una particion extendida
             else if(mbr_.mbr_particions[i].part_type == 'E'){
@@ -331,6 +331,247 @@ void rep::disk(string rutaParticion, string rutaDestino){
     fclose(archivo);
     string comando = "dot -Tpng /home/juan/Desktop/disk.txt -o " + rutaDestino;
     system(comando.c_str());
+
+
+}
+
+void rep::bm_inode(string rutaParticion, string nombreParticion, string rutaDestino){
+
+    FILE *archivo;
+
+    archivo = fopen(rutaParticion.c_str(), "rb+");
+
+    if(archivo == NULL){
+        cout << " >> El disco no existe. \n";
+    }
+
+    int inicio_particion = 0;
+
+    mbr mbr_;
+    fseek(archivo, 0, SEEK_SET);
+    fread(&mbr_, sizeof(mbr), 1, archivo);
+
+    for(int i = 0; i < 4; i++){
+        if(strcmp(mbr_.mbr_particions[i].part_name, nombreParticion.c_str()) == 0){
+            //cout << " >> Size: " << mbr_.mbr_particions[i].part_size << " \n";
+            inicio_particion = mbr_.mbr_particions[i].part_start;
+            //tam_particion = mbr_.mbr_particions[i].part_size;
+            break;
+        }
+
+    }
+
+    // superbloque auxiliar
+    superBloque sb_aux;
+    fseek(archivo, inicio_particion, SEEK_SET);
+
+    // Escribir el reporte del bitmap de inodos
+    ofstream reporte;
+
+    reporte.open(rutaDestino, ios::out);
+
+    if(reporte.fail()){
+        cout << " >> No se pudo abrir \n";
+    }
+
+    // Empiezo a leer el superbloque
+    fread(&sb_aux, sizeof(superBloque), 1, archivo);
+
+    fseek(archivo, sb_aux.s_bm_inode_start, SEEK_SET);
+
+    // Escribo el bitmap de inodos en el txt
+    char bitchar[sb_aux.s_inodes_count];
+
+    for(int i = 0; i < sb_aux.s_inodes_count; i++){
+
+        fseek(archivo, sb_aux.s_bm_inode_start + i*sizeof(char), SEEK_SET);
+        reporte << "  " << bitchar[i] << "  |  ";
+
+        //cout << "  " <<bitchar[i] << "  |  ";
+        if(i%20 == 0){
+            reporte << "  +  \n";
+            //cout << "  +  \n";
+        }
+    }
+
+    reporte.close();
+    fclose(archivo);
+
+
+
+}
+
+void rep::bm_block(string rutaParticion, string nombreParticion, string rutaDestino){
+
+    FILE *archivo;
+
+    archivo = fopen(rutaParticion.c_str(), "rb+");
+
+    if(archivo == NULL){
+        cout << " >> El disco no existe. \n";
+    }
+
+    int inicio_particion = 0;
+
+    mbr mbr_;
+    fseek(archivo, 0, SEEK_SET);
+    fread(&mbr_, sizeof(mbr), 1, archivo);
+
+    for(int i = 0; i < 4; i++){
+        if(strcmp(mbr_.mbr_particions[i].part_name, nombreParticion.c_str()) == 0){
+            //cout << " >> Size: " << mbr_.mbr_particions[i].part_size << " \n";
+            inicio_particion = mbr_.mbr_particions[i].part_start;
+            //tam_particion = mbr_.mbr_particions[i].part_size;
+            break;
+        }
+
+    }
+
+    // superbloque auxiliar
+    superBloque sb_aux;
+    fseek(archivo, inicio_particion, SEEK_SET);
+
+    // Escribir el reporte del bitmap de inodos
+    ofstream reporte;
+
+    reporte.open(rutaDestino, ios::out);
+
+    if(reporte.fail()){
+        cout << " >> No se pudo abrir \n";
+    }
+
+    // Empiezo a leer el superbloque
+    fread(&sb_aux, sizeof(superBloque), 1, archivo);
+
+    fseek(archivo, sb_aux.s_bm_block_start, SEEK_SET);
+
+    // Escribo el bitmap de inodos en el txt
+    char bitchar[sb_aux.s_blocks_count];
+
+    for(int i = 0; i < sb_aux.s_blocks_count; i++){
+
+        fseek(archivo, sb_aux.s_bm_block_start + i*sizeof(char), SEEK_SET);
+        reporte << "  " << bitchar[i] << "  |  ";
+
+        //cout << "  " <<bitchar[i] << "  |  ";
+        if(i%20 == 0){
+            reporte << "  +  \n";
+            //cout << "  +  \n";
+        }
+    }
+
+    reporte.close();
+    fclose(archivo);
+
+
+}
+
+void rep::rep_journaling(string rutaParticion, string nombreParticion, string rutaDestino){
+
+    FILE *archivo;
+
+    archivo = fopen(rutaParticion.c_str(), "rb+");
+
+    if(archivo == NULL){
+        cout << " >> El disco no existe. \n";
+    }
+
+    int inicio_particion = 0;
+
+    mbr mbr_;
+    fseek(archivo, 0, SEEK_SET);
+    fread(&mbr_, sizeof(mbr), 1, archivo);
+
+    for(int i = 0; i < 4; i++){
+        if(strcmp(mbr_.mbr_particions[i].part_name, nombreParticion.c_str()) == 0){
+            //cout << " >> Size: " << mbr_.mbr_particions[i].part_size << " \n";
+            inicio_particion = mbr_.mbr_particions[i].part_start;
+            //tam_particion = mbr_.mbr_particions[i].part_size;
+            break;
+        }
+
+    }
+
+    // superbloque auxiliar
+    superBloque sb_aux;
+    fseek(archivo, inicio_particion, SEEK_SET);
+
+    // Escribir el reporte del superbloque
+    ofstream reporte;
+
+    reporte.open("/home/juan/Desktop/superbloque.txt", ios::out);
+
+    if(reporte.fail()){
+        cout << " >> No se pudo abrir \n";
+    }
+
+    int inicio_journaling = inicio_particion + sizeof(superBloque);
+
+    //fseek(archivo, inicio_journaling + sizeof(journaling), SEEK_SET);
+    //fwrite(&journalArchivo, sizeof(journaling), 1, archivo);
+    /*
+
+            digraph G {
+            node [shape=plaintext]
+            nodo [
+             label =<
+                <table border="0" cellborder="1" cellspacing="0">
+                    <tr>
+                        <td bgcolor="#30A6BB">No. </td> <td bgcolor="#30A6BB"> Tipo operacion </td>
+                        <td bgcolor="#30A6BB">Fecha operación </td> <td bgcolor="#30A6BB"> path </td>
+                        <td bgcolor="#30A6BB">Tamanio </td> <td bgcolor="#30A6BB"> Id propiertario </td>
+                        <td bgcolor="#30A6BB">Contenido </td> <td bgcolor="#30A6BB"> Tipo </td>
+                    </tr>
+                    <tr>
+                       <td bgcolor="#C7F6FF">No. </td> <td bgcolor="#C7F6FF"> Tipo </td>
+                        <td bgcolor="#C7F6FF">Fecha operación </td> <td bgcolor="#C7F6FF"> path </td>
+                        <td bgcolor="#C7F6FF">Tamanio </td> <td bgcolor="#C7F6FF"> Id propiertario </td>
+                        <td bgcolor="#C7F6FF">Tamanio </td> <td bgcolor="#C7F6FF"> Id propiertario </td>
+                    </tr>
+
+                </table>
+
+
+            >
+
+            ];
+
+            nodo1 [
+             label =<
+                <table border="0" cellborder="1" cellspacing="0">
+                    <tr>
+                        <td bgcolor="#30A6BB">No. </td> <td bgcolor="#30A6BB"> Tipo operacion </td>
+                        <td bgcolor="#30A6BB">Fecha operación </td> <td bgcolor="#30A6BB"> path </td>
+                        <td bgcolor="#30A6BB">Tamanio </td> <td bgcolor="#30A6BB"> Id propiertario </td>
+                        <td bgcolor="#30A6BB">Contenido </td> <td bgcolor="#30A6BB"> Tipo </td>
+                    </tr>
+                    <tr>
+                       <td bgcolor="#C7F6FF">No. </td> <td bgcolor="#C7F6FF"> Tipo </td>
+                        <td bgcolor="#C7F6FF">Fecha operación </td> <td bgcolor="#C7F6FF"> path </td>
+                        <td bgcolor="#C7F6FF">Tamanio </td> <td bgcolor="#C7F6FF"> Id propiertario </td>
+                        <td bgcolor="#C7F6FF">Tamanio </td> <td bgcolor="#C7F6FF"> Id propiertario </td>
+                    </tr>
+
+                </table>
+
+
+            >
+
+            ];
+
+            nodo->nodo1 [style=invis]
+            }
+    */
+
+    journaling journaling_aux;
+    fseek(archivo, inicio_journaling + sizeof(journaling), SEEK_SET);
+    fread(&journaling_aux, sizeof(journaling), 1, archivo);
+
+    reporte << "digraph Journaling { \n"
+            << "node [shape=plaintext] \n"
+            << "nodo [\n";
+    // aqui me quede
+    //fwrite(&journalArchivo, sizeof(journaling), 1, archivo);
 
 
 }

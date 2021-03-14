@@ -144,7 +144,9 @@ void mkdir::buscarCarpeta(string nombreParticion, string ruta, string nombre_car
         fread(&bl_carpeta_aux, 64, 1, archivo);
         for(int j = 0; j < 4; j++){
             if(strcmp(bl_carpeta_aux.b_content[j].b_name, nombre_carpeta.c_str()) == 0){
-                cout << " La carpeta ya existe \n";
+                cout << " >> La carpeta ya existe \n";
+            }else{
+                cout << " >> La carpeta no existe \n";
             }
         }
     }

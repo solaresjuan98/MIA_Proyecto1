@@ -66,13 +66,14 @@ void mkdisk::crearDisco(mkdisk *disco) {
   } else if (disco->getUnidad() == "m" || disco->getUnidad() == "M" ||
              disco->getUnidad().empty() == 1) {
 
-    for (int i = 0; i < 1024; i++) {
-      buffer[i] = '\0';
-      for (int j = 0; j < (disco->getTamanio() * 1024); i++) {
-        fwrite(&buffer, 1024, 1, archivo);
-      }
-      fclose(archivo);
-    }
+        for (int i = 0; i < 1024; i++) {
+            buffer[i] = '\0';
+        }
+        for (int j = 0; j < (disco->getTamanio() * 1024); j++) {
+            fwrite(&buffer, 1024, 1, archivo);
+        }
+      //fclose(archivo);
+
   }
 
   time_t tiempo = time(0);

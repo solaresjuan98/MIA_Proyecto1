@@ -4,27 +4,27 @@
 
 #include <QString>
 
-#include <parser.h>  // Nuestro parser
+#include <parser.h>
 
-#include <scanner.h>  // Nuestro scanner
+#include <scanner.h>
 
 #include <QTextStream>
 
 #include <fstream>
 
 using namespace std;
-extern int yyparse(); //
-//static QList<discosmontados> discosenmemoria;
+extern int yyparse();
+
 int p;
-extern int linea; // Linea del token
-extern int columna; // Columna de los tokens
+extern int linea;
+extern int columna;
 extern int yylineno;
 
 string partirComando(string cmd);
 void ejecutarComando(QString comando);
 
 int main() {
-  // exec -path=/home/juan/Desktop/discos.txt
+  // exec -path=/home/juan/Desktop/ent2.txt
   QTextStream qtin(stdin);
   QString line;
 
