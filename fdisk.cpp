@@ -54,11 +54,6 @@ void fdisk::crearParticion(fdisk *disco){
     fseek(archivo, 0, SEEK_SET);
     fread(&mbr_tmp, sizeof(mbr), 1, archivo);
 
-    // Tamaño total del archivo (en bytes)
-    //fseek(archivo, 0L, SEEK_END);
-    //long int res = ftell(archivo);
-    //std::cout << res << "\n"; // imprimir tamaño del archivo que está siendo leído
-
     if(disco->getUnidad() == "k" || disco->getUnidad() == "K" || disco->getUnidad().empty() == true) {
         tamanio_parcicion = disco->getTamanio() * 1024;
     } else if (disco->getUnidad() == "M" || disco->getUnidad() == "m") {
@@ -279,7 +274,10 @@ void fdisk::borrarParticion(string ruta, fdisk *disco, string nombreParticion) {
 
         for(int i = 0; i < 4; i++){
             if(mbr_.mbr_particions[i].part_name == nombreParticion.c_str()){
-                //cout << " << Aqui tengo que borrar \n";
+                mbr_.mbr_particions[i].part_status = '0';
+                mbr_.mbr_particions[i].part_fit = '-';
+                strcpy(mbr_.mbr_particions[i].part_name, "--");
+                mbr_.mbr_particions[i].part_type = ' ';
             }
         }
     }else if(disco->getBorrar() =="full"){ // borrar en modo "full"

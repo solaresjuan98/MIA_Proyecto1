@@ -7,6 +7,7 @@ rep::rep()
 }
 
 void rep::repmbr(string rutaParticion, string nombreParticion, string rutaDestino){
+
     FILE *archivo;
 
     archivo = fopen(rutaParticion.c_str(), "rb+");
@@ -315,7 +316,7 @@ void rep::disk(string rutaParticion, string rutaDestino){
             }
             // Estoy graficando una particion extendida
             else if(mbr_.mbr_particions[i].part_type == 'E'){
-                reporte << " { extendidas } | { 1 | 2 | 3 } |";
+                reporte << " { extendidas  | { 1 | 2 | 3 } } |";
             }
 
         }else{
@@ -495,11 +496,13 @@ void rep::rep_journaling(string rutaParticion, string nombreParticion, string ru
     // superbloque auxiliar
     superBloque sb_aux;
     fseek(archivo, inicio_particion, SEEK_SET);
+    fread(&sb_aux, sizeof(superBloque), 1, archivo);
+    int num_journaling = sb_aux.s_inodes_count;
 
     // Escribir el reporte del superbloque
     ofstream reporte;
 
-    reporte.open("/home/juan/Desktop/superbloque.txt", ios::out);
+    reporte.open("/home/juan/Desktop/journaling.txt", ios::out);
 
     if(reporte.fail()){
         cout << " >> No se pudo abrir \n";
@@ -523,7 +526,7 @@ void rep::rep_journaling(string rutaParticion, string nombreParticion, string ru
                         <td bgcolor="#30A6BB">Contenido </td> <td bgcolor="#30A6BB"> Tipo </td>
                     </tr>
                     <tr>
-                       <td bgcolor="#C7F6FF">No. </td> <td bgcolor="#C7F6FF"> Tipo </td>
+                        <td bgcolor="#C7F6FF">No. </td> <td bgcolor="#C7F6FF"> Tipo </td>
                         <td bgcolor="#C7F6FF">Fecha operación </td> <td bgcolor="#C7F6FF"> path </td>
                         <td bgcolor="#C7F6FF">Tamanio </td> <td bgcolor="#C7F6FF"> Id propiertario </td>
                         <td bgcolor="#C7F6FF">Tamanio </td> <td bgcolor="#C7F6FF"> Id propiertario </td>
@@ -568,10 +571,271 @@ void rep::rep_journaling(string rutaParticion, string nombreParticion, string ru
     fread(&journaling_aux, sizeof(journaling), 1, archivo);
 
     reporte << "digraph Journaling { \n"
-            << "node [shape=plaintext] \n"
-            << "nodo [\n";
-    // aqui me quede
+            << "node [shape=plaintext] \n";
+
+    for(int i = 0; i < sb_aux.s_inodes_count; i++){
+
+        fseek(archivo, inicio_journaling + sizeof(journaling)*i, SEEK_SET);
+
+        if(journaling_aux.estado == 1){
+            fread(&journaling_aux, sizeof(journaling), 1 , archivo);
+            cout << " Esta activo \n";
+
+            reporte << "nodo"<< i <<"[\n";
+            reporte << "\t label =< \n"
+                    << "\t\t <table border=\"0\" cellborder=\"1\" cellspacing=\"0\"> \n"
+                    << "\t\t\t <tr> \n"
+                    << "\t\t\t\t <td bgcolor=\"#30A6BB\">No. </td> <td bgcolor=\"#30A6BB\"> Tipo operacion </td> \n"
+                    << "\t\t\t\t <td bgcolor=\"#30A6BB\">Fecha operacion </td> <td bgcolor=\"#30A6BB\"> path </td> \n"
+                    << "\t\t\t\t <td bgcolor=\"#30A6BB\">Tamanio </td> <td bgcolor=\"#30A6BB\"> Id propiertario </td> \n"
+                    << "\t\t\t\t <td bgcolor=\"#30A6BB\">Contenido </td> <td bgcolor=\"#30A6BB\"> Tipo </td> \n"
+                    << "\t\t\t </tr> \n";
+
+            reporte << "\t\t\t <tr> \n"
+                    << "\t\t\t\t <td bgcolor=\"#C7F6FF\"> " << i + 1 << "</td> <td bgcolor=\"#C7F6FF\"> " << journaling_aux.tipo <<" </td> \n"
+                    << "\t\t\t\t <td bgcolor=\"#C7F6FF\"> " << journaling_aux.fecha_op << "</td> <td bgcolor=\"#C7F6FF\">" << journaling_aux.path <<" </td> \n"
+                    << "\t\t\t\t <td bgcolor=\"#C7F6FF\"> " << journaling_aux.tamanio << "</td> <td bgcolor=\"#C7F6FF\">" << journaling_aux.id_propietario <<" </td> \n"
+                    << "\t\t\t\t <td bgcolor=\"#C7F6FF\"> " << journaling_aux.contenido << "</td> <td bgcolor=\"#C7F6FF\">" << journaling_aux.tipo_op <<" </td> \n"
+                    << "\t\t\t </tr> \n"
+                    << "\t\t </table> \n"
+                    << "\t > \n"
+                    << "]; \n";
+
+            // enlazando invisiblemente las tablas
+            reporte << "nodo" << i << "->nodo" << i+1 << "[style=invis]\n";
+
+        }
+    }
+
+    reporte << "}\n";
+
+    reporte.close();
+    fclose(archivo);
+    string comando = "dot -Tpng /home/juan/Desktop/journaling.txt -o " + rutaDestino;
+    system(comando.c_str());
     //fwrite(&journalArchivo, sizeof(journaling), 1, archivo);
+
+
+}
+
+void rep::rep_inodos(string rutaParticion, string nombreParticion, string rutaDestino){
+
+    FILE *archivo;
+
+    archivo = fopen(rutaParticion.c_str(), "rb+");
+
+    if(archivo == NULL){
+        cout << " >> El disco no existe. \n";
+    }
+
+    int inicio_particion = 0;
+
+    mbr mbr_;
+    fseek(archivo, 0, SEEK_SET);
+    fread(&mbr_, sizeof(mbr), 1, archivo);
+
+    for(int i = 0; i < 4; i++){
+        if(strcmp(mbr_.mbr_particions[i].part_name, nombreParticion.c_str()) == 0){
+            //cout << " >> Size: " << mbr_.mbr_particions[i].part_size << " \n";
+            inicio_particion = mbr_.mbr_particions[i].part_start;
+            //tam_particion = mbr_.mbr_particions[i].part_size;
+            break;
+        }
+
+    }
+
+    // superbloque auxiliar
+    superBloque sb_aux;
+    fseek(archivo, inicio_particion, SEEK_SET);
+    fread(&sb_aux, sizeof(superBloque), 1, archivo);
+    int inicio_inodos = sb_aux.s_inode_start;
+
+    // Escribir el reporte del superbloque
+    ofstream reporte;
+
+    reporte.open("/home/juan/Desktop/inode.txt", ios::out);
+
+    if(reporte.fail()){
+        cout << " >> No se pudo abrir \n";
+    }
+
+
+    tablaInodo inodo_aux;
+    int inodos_ocupados = sb_aux.s_inodes_count - sb_aux.s_free_inodes_count;
+
+    reporte << "digraph Inode {\n"
+            << "node [shape=plaintext] \n";
+
+
+
+
+    for(int i = 0; i < inodos_ocupados; i++){
+        fseek(archivo, inicio_inodos, SEEK_SET);
+        fread(&inodo_aux, sizeof(tablaInodo), 1, archivo);
+        reporte << "nodo"<< i <<" [\n"
+                << "label =< \n";
+
+        reporte << "<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">"
+                << "<tr> <td bgcolor=\"#30A6BB\">Nombre</td> <td bgcolor=\"#30A6BB\"> Valor </td> </tr>";
+
+        reporte << "<tr>\n";
+        reporte << "<td bgcolor=\"#89D8E7\"> i_uid </td>";
+        reporte << "<td bgcolor=\"#C7F6FF\">" << inodo_aux.i_uid << " </td> \n";
+        reporte << "</tr>";
+
+        reporte << "<tr>\n";
+        reporte << "<td bgcolor=\"#89D8E7\"> i_gid </td>";
+        reporte << "<td bgcolor=\"#C7F6FF\">" << inodo_aux.i_gid << " </td> \n";
+        reporte << "</tr>";
+
+        reporte << "<tr>\n";
+        reporte << "<td bgcolor=\"#89D8E7\"> i_atime </td>";
+        reporte << "<td bgcolor=\"#C7F6FF\">" << inodo_aux.i_atime << " </td> \n";
+        reporte << "</tr>";
+
+
+        for(int j = 0; j < 15; j++){
+
+            if(inodo_aux.i_block[j] != -1){
+                reporte << "<tr>\n";
+                reporte << "<td bgcolor=\"#89D8E7\"> i_block_" << j << " </td>";
+                reporte << "<td bgcolor=\"#C7F6FF\">" << inodo_aux.i_block[j] << " </td> \n";
+                reporte << "</tr>";
+            }
+        }
+
+        reporte << "<tr>\n";
+        reporte << "<td bgcolor=\"#89D8E7\"> i_perm </td>";
+        reporte << "<td bgcolor=\"#C7F6FF\">" << inodo_aux.i_perm << " </td> \n";
+        reporte << "</tr>";
+
+        reporte << "<tr>\n";
+        reporte << "<td bgcolor=\"#89D8E7\"> i_type </td>";
+        reporte << "<td bgcolor=\"#C7F6FF\">" << inodo_aux.i_type << " </td> \n";
+        reporte << "</tr>";
+
+        reporte << "</table>\n";
+        reporte << ">\n";
+        reporte << "];\n";
+
+    }
+
+    reporte << "}";
+
+    reporte.close();
+    fclose(archivo);
+    string comando = "dot -Tpng /home/juan/Desktop/inode.txt -o " + rutaDestino;
+    system(comando.c_str());
+
+}
+
+void rep::rep_bloques(string rutaParticion, string nombreParticion, string rutaDestino){
+    FILE *archivo;
+
+    archivo = fopen(rutaParticion.c_str(), "rb+");
+
+    if(archivo == NULL){
+        cout << " >> El disco no existe. \n";
+    }
+
+
+    int inicio_particion = 0;
+
+    mbr mbr_;
+    fseek(archivo, 0, SEEK_SET);
+    fread(&mbr_, sizeof(mbr), 1, archivo);
+
+    for(int i = 0; i < 4; i++){
+        if(strcmp(mbr_.mbr_particions[i].part_name, nombreParticion.c_str()) == 0){
+            //cout << " >> Size: " << mbr_.mbr_particions[i].part_size << " \n";
+            inicio_particion = mbr_.mbr_particions[i].part_start;
+            //tam_particion = mbr_.mbr_particions[i].part_size;
+            break;
+        }
+
+    }
+
+    // superbloque auxiliar
+    superBloque sb_aux;
+    fseek(archivo, inicio_particion, SEEK_SET);
+    fread(&sb_aux, sizeof(superBloque), 1, archivo);
+    int inicio_bloques = sb_aux.s_block_start;
+    int bloques_usados = sb_aux.s_blocks_count - sb_aux.s_free_blocks_count;
+
+    ofstream reporte;
+
+    reporte.open("/home/juan/Desktop/blocks.txt", ios::out);
+
+    if(reporte.fail()){
+        cout << " >> No se pudo abrir \n";
+    }
+
+    reporte << "digraph Journaling { \n"
+            << "node [shape=plaintext] \n";
+
+    bloque_carpeta bl_carpeta_aux;
+
+    for(int i = 0; i < bloques_usados; i++){
+
+        fseek(archivo, inicio_bloques + i*64, SEEK_SET);
+        fread(&bl_carpeta_aux, 64, 1, archivo);
+        reporte << "nodo"<< i <<"[\n";
+
+        reporte << "\t label =< \n"
+                << "\t\t <table border=\"0\" cellborder=\"1\" cellspacing=\"0\"> \n"
+                << "\t\t\t <tr> \n"
+                << "\t\t\t\t <td bgcolor=\"#30A6BB\">No. Bloque </td> <td bgcolor=\"#30A6BB\"> "<< i <<"  </td> \n"
+                << "\t\t\t </tr> \n";
+
+        reporte << "\t\t\t <tr> \n"
+                << "\t\t\t\t <td bgcolor=\"#C7F6FF\"> b_name </td> <td bgcolor=\"#C7F6FF\"> b_inodo </td> \n"
+                << "\t\t\t </tr> \n";
+
+        for(int j = 0; j < 4; j++){
+            reporte << "\t\t\t <tr> \n"
+                    << "\t\t\t\t <td bgcolor=\"#C7F6FF\"> "<< bl_carpeta_aux.b_content[j].b_inodo << " </td> <td bgcolor=\"#C7F6FF\"> "<< bl_carpeta_aux.b_content[j].b_name <<" </td> \n"
+                    << "\t\t\t </tr> \n";
+        }
+
+        reporte << "\t\t </table> \n"
+                << "\t > \n"
+                << "]; \n";
+
+    }
+
+    bloque_archivo bl_archivo_aux;
+
+    for(int i = 0; i < bloques_usados; i++){
+
+        fseek(archivo, inicio_bloques + i*64, SEEK_SET);
+        fread(&bl_archivo_aux, 64, 1, archivo);
+        reporte << "nodoaux"<< i <<"[\n";
+
+        reporte << "\t label =< \n"
+                << "\t\t <table border=\"0\" cellborder=\"1\" cellspacing=\"0\"> \n"
+                << "\t\t\t <tr> \n"
+                << "\t\t\t\t <td bgcolor=\"#30A6BB\">No. Bloque </td> <td bgcolor=\"#30A6BB\"> "<< i <<"  </td> \n"
+                << "\t\t\t </tr> \n";
+
+        reporte << "\t\t\t <tr> \n"
+                << "\t\t\t\t <td bgcolor=\"#C7F6FF\"> content </td> <td bgcolor=\"#C7F6FF\"> " << bl_archivo_aux.b_content <<" </td> \n"
+                << "\t\t\t </tr> \n";
+
+
+        reporte << "\t\t </table> \n"
+                << "\t > \n"
+                << "]; \n";
+
+    }
+
+
+
+    reporte << "}\n";
+
+    reporte.close();
+    fclose(archivo);
+    string comando = "dot -Tpng /home/juan/Desktop/blocks.txt -o " + rutaDestino;
+    system(comando.c_str());
 
 
 }

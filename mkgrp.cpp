@@ -21,6 +21,7 @@ void mkgrp::crearGrupo(string nombreParticion, string ruta, string nombreGrupo){
 
     if(archivo == NULL){
         cout << " >> El archivo no existe. \n";
+        return;
     }
 
 
@@ -53,12 +54,6 @@ void mkgrp::crearGrupo(string nombreParticion, string ruta, string nombreGrupo){
     // BUSCAR EN QUE PARTE TENGO EL INODO DEL ARCHIVO USERS.TXT
     fseek(archivo, sb_aux.s_bm_inode_start+sizeof(tablaInodo), SEEK_SET);
     fread(&inodoUserstxt, sizeof(tablaInodo), 1, archivo);
-    /*
-    prueba de que si lee el inodo y sus bloques
-    for(int i = 0; i < 15; i++){
-        cout << inodoUserstxt.i_block[i] << "\n";
-    }
-    */
 
     bloque_carpeta bloque_root;
 
@@ -128,8 +123,7 @@ void mkgrp::crearGrupo(string nombreParticion, string ruta, string nombreGrupo){
                 sb_aux.s_free_blocks_count--;
                 fseek(archivo, inicio_particion, SEEK_SET);
                 fwrite(&sb_aux, sizeof(superBloque), 1, archivo);
-                cout << sb_aux.s_free_blocks_count << endl;
-
+                //cout << sb_aux.s_free_blocks_count << endl;
                 // modificar el bitmap de inodos
                 //fseek(archivo, );
                 break;
@@ -144,31 +138,50 @@ void mkgrp::crearGrupo(string nombreParticion, string ruta, string nombreGrupo){
         // modificar el bitmap de inodos
         fseek(archivo, sb_aux.s_bm_block_start, SEEK_SET);
         int fin_bloques = sb_aux.s_bm_block_start + sb_aux.s_blocks_count;
-        char bl_actual;
+        //char bl_actual;
         for(int i = sb_aux.s_block_start; i < fin_bloques; i++){
             // aqui me quede :(
             //fread(,);
         }
 
-        // Escribir en el journaling el cambio que hice
-        // validar si la particion está formateada en EXT3 para escribir en el journaling
-        /*if(sb_aux.s_filesystem_type == 3){
-            journaling journal_usuario;
-            strcpy(journal_usuario.tipo_op, "mkgrp");
-            strcpy(journal_usuario.fecha_op, fechaActual);
-            strcpy(journal_usuario.path, "/users.txt");
-            journal_usuario.id_propietario = '1';
-            strcpy(journal_usuario.contenido, str_grupo.c_str());
-            journal_usuario.tipo = '1';
 
-            fseek(archivo, inicio_particion + sizeof(superBloque), SEEK_SET);
+        int inicio_journaling = inicio_particion + sizeof(superBloque);
+        int num_journalings = 0;
+
+        if(sb_aux.s_filesystem_type == 3){
+
+            journaling journalGrupo;
+            journalGrupo.estado = 1;
+            strcpy(journalGrupo.tipo_op, "mkgrp");
+            strcpy(journalGrupo.fecha_op, fechaActual);
+            strcpy(journalGrupo.path, "users.txt");
+            journalGrupo.id_propietario = '1';
+            journalGrupo.tamanio = sizeof(str_grupo);
+            strcpy(journalGrupo.contenido,  str_grupo.c_str());
+            journalGrupo.tipo = '1';
+            fseek(archivo, inicio_journaling + sizeof(journaling)*num_journalings, SEEK_SET);
+            fwrite(&journalGrupo, sizeof(journaling), 1, archivo);
+            cout << " >> Journaling escrito \n";
 
 
-        }*/
+        }
 
     }
 
+    // modificar el bitmap de bloques
+    char bloques[sb_aux.s_blocks_count];
+    //fseek(archivo, sb_aux.s_bm_block_start, SEEK_SET);
+    for(int i = 0; i < sb_aux.s_blocks_count; i++){
 
+        fseek(archivo, sb_aux.s_bm_block_start+ i*sizeof(char), SEEK_SET);
+        if(bloques[i] == '0'){
+
+            bloques[i] = '1';
+            fwrite(&bloques, sizeof(char), 1, archivo);
+            break;
+        }
+
+    }
 
     // cerrar el archivo
     fclose(archivo);

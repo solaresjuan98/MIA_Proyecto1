@@ -22,7 +22,10 @@ public:
     void bm_block(string rutaParticion, string nombreParticion, string rutaDestino);
     // REPORTE DE JOURNALING
     void rep_journaling(string rutaParticion, string nombreParticion, string rutaDestino);
-
+    // REPORTE DE INODOS
+    void rep_inodos(string rutaParticion, string nombreParticion, string rutaDestino);
+    // REPORTE DE BLOQUES
+    void rep_bloques(string rutaParticion, string nombreParticion, string rutaDestino);
 };
 
 #endif // REP_H

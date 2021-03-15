@@ -4,9 +4,6 @@
 #include <string>
 #include "qdebug.h"
 #include <iostream>
-//#include <bits/stdc++.h>
-//#include <sys/stat.h>
-//#include <sys/types.h>
 // comandos usados
 #include "mkdisk.h"
 #include "rmdisk.h"
@@ -581,7 +578,7 @@ menos p_f igual identificador
 
         }
 
-
+        //cout << ruta_final << endl;
         comando_fdisk->setRuta(ruta_final);
         comando_fdisk->setNombre(nombreParticion);
         comando_fdisk->extenderParticion(comando_fdisk, cantidadAgregar);
@@ -813,9 +810,10 @@ COMANDOMKFS:
     full para 2fs y 3fs
  */
 // mkfs -type=fast -id=581A -fs=2fs
-menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
+menos p_type igual identificador  menos p_id igual id_particion menos p_fs igual p_2fs
     {
         string ruta;
+        string tipoFormateo = $4;
         char nombreParticion[16];
         string id = $8;
 
@@ -828,7 +826,7 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
                 if(arregloDiscos[i].particiones[j].id == id){
                     ruta = arregloDiscos[i].ruta;
                     strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
-                    cmd_mkfs->formatearEXT2(ruta, nombreParticion, "fast");
+                    cmd_mkfs->formatearEXT2(ruta, nombreParticion, tipoFormateo);
                     break;
                 }
 
@@ -838,9 +836,10 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
 
     }
 // mkfs -type=fast -id=581A -fs=3fs
-| menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_3fs
+| menos p_type igual identificador  menos p_id igual id_particion menos p_fs igual p_3fs
     {
         string ruta;
+        string tipoFormateo = $4;
         char nombreParticion[16];
         string id = $8;
 
@@ -854,7 +853,7 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
                 if(arregloDiscos[i].particiones[j].id == id){
                     ruta = arregloDiscos[i].ruta;
                     strcpy(nombreParticion, arregloDiscos[i].particiones[j].nombre);
-                    cmd_mkfs->formatearEXT3(ruta, nombreParticion, "fast");
+                    cmd_mkfs->formatearEXT3(ruta, nombreParticion, tipoFormateo);
                     break;
                 }
 
@@ -862,15 +861,6 @@ menos p_type igual p_fast  menos p_id igual id_particion menos p_fs igual p_2fs
 
         }
 
-    }
-// mkfs -type=full -id=581A -fs=3fs
-| menos p_type igual p_full  menos p_id igual id_particion menos p_fs igual p_2fs
-    {
-
-    }
-// mkfs -type=full -id=581A -fs=3fs
-| menos p_type igual p_full  menos p_id igual id_particion menos p_fs igual p_3fs
-    {
     }
 // mkfs -id=582A (No manda parametros, así que será el EXT2)
 | menos p_id igual id_particion
@@ -913,7 +903,7 @@ menos p_usr igual identificador menos p_pwd igual entero menos p_id igual id_par
         for(int i = 0; i < 26; i++){
 
             for(int j = 0; j < 99; j++){
-                if(strcmp(arregloDiscos[i].particiones[j].id, id.c_str())== -1){
+                if(strcmp(arregloDiscos[i].particiones[j].id, id.c_str())== 0){
 
                     cout << " >> Particion encontrada. \n";
                     nombreParticion = arregloDiscos[i].particiones[j].nombre;
@@ -1179,7 +1169,8 @@ menos p_id igual id_particion menos p_path igual ruta_sin_espacio menos p_name i
             for(int i = 0; i < 26; i++){
 
                 for(int j = 0; j <99;j++){
-                    if(arregloDiscos[i].particiones[j].id == id){
+                    if(strcmp(arregloDiscos[i].particiones[j].id, id.c_str())== -1){
+                        cout << " :) \n";
                         nombreParticionReporte = arregloDiscos[i].particiones[j].nombre;
                         rutaParticionReporte = arregloDiscos[i].ruta;
                         break;
@@ -1194,47 +1185,39 @@ menos p_id igual id_particion menos p_path igual ruta_sin_espacio menos p_name i
             if(tipoReporte == "sb"){
                 reporte->sb(rutaParticionReporte, nombreParticionReporte, rutaDestinoReporte);
                 cout << " >> Generando reporte de superbloque... \n";
-            }else if(tipoReporte == "mbr"){
+            }
+            else if(tipoReporte == "mbr"){
                 reporte->repmbr(rutaParticionReporte, nombreParticionReporte, rutaDestinoReporte);
                 cout << " >> Generando reporte de mbr... \n";
-            }else if(tipoReporte == "disk"){
-                reporte->disk(rutaParticionActual, rutaDestinoReporte);
+            }
+            else if(tipoReporte == "disk"){
+                reporte->disk(rutaParticionReporte, rutaDestinoReporte);
                 cout << " >> Generando reporte de disco... \n";
+            }
+            else if(tipoReporte == "bm_inode"){
+                reporte->bm_inode(rutaParticionReporte, nombreParticionReporte, rutaDestinoReporte);
+                cout << " >> Generando reporte de bitmap de inodos... \n";
+            }
+            else if(tipoReporte == "bm_block"){
+                reporte->bm_inode(rutaParticionReporte, nombreParticionReporte, rutaDestinoReporte);
+                cout << " >> Generando reporte de bitmap de bloques... \n";
+            }
+            else if(tipoReporte == "journaling"){
+                reporte->rep_journaling(rutaParticionReporte, nombreParticionReporte, rutaDestinoReporte);
+                cout << " >> Generando reporte de journaling... \n";
+            }
+            else if(tipoReporte == "inode"){
+                reporte->rep_inodos(rutaParticionReporte, nombreParticionReporte, rutaDestinoReporte);
+                cout << " >> Generando reporte de inodos... \n";
+            }
+            else if(tipoReporte == "block"){
+                reporte->rep_bloques(rutaParticionReporte, nombreParticionReporte, rutaDestinoReporte);
+                cout << " >> Generando reporte de bloques... \n";
             }
             else{
                 cout << " >> Tipo de reporte incorrecto. \n";
             }
 
-            /*
-            switch(tipoReporte) {
-            case "mbr":
-                reporte->sb(rutaParticionReporte, nombreParticionReporte);
-                break;
-            case "disk":
-                break;
-            case "inode":
-                break;
-            case "journaling":
-                break;
-            case "block":
-                break;
-            case "bm_inode":
-                break;
-            case "bm_block":
-                break;
-            case "tree":
-                break;
-            case "sb":
-                break;
-            case "file":
-                break;
-            case "ls":
-                break;
-            default:
-                cout << " >> Tipo de reporte incorrecto. \n";
-                break;
-            }
-            */
 
         }else{
             cout << " >> Inicia sesion para generar reportes. \n";
@@ -1265,8 +1248,9 @@ menos p_id igual id_particion menos p_path igual ruta_sin_espacio menos p_name i
             for(int i = 0; i < 26; i++){
 
                 for(int j = 0; j <99;j++){
-                    //cout << strcmp(arregloDiscos[i].particiones[j].id, id.c_str()) << " ---- \n";
+
                     if(strcmp(arregloDiscos[i].particiones[j].id, id.c_str())== -1){
+                        ruta = arregloDiscos[i].ruta;
                         nombreParticionReporte = arregloDiscos[i].particiones[j].nombre;
                         rutaParticionReporte = arregloDiscos[i].ruta;
                         cout << " >> Particion encontrada \n";
@@ -1298,6 +1282,18 @@ menos p_id igual id_particion menos p_path igual ruta_sin_espacio menos p_name i
             else if(tipoReporte == "bm_block"){
                 reporte->bm_inode(rutaParticionReporte, nombreParticionReporte, ruta);
                 cout << " >> Generando reporte de bitmap de bloques... \n";
+            }
+            else if(tipoReporte == "journaling"){
+                reporte->rep_journaling(rutaParticionReporte, nombreParticionReporte, ruta);
+                cout << " >> Generando reporte de journaling... \n";
+            }
+            else if(tipoReporte == "inode"){
+                reporte->rep_inodos(rutaParticionReporte, nombreParticionReporte, ruta);
+                cout << " >> Generando reporte de inodos... \n";
+            }
+            else if(tipoReporte == "block"){
+                reporte->rep_bloques(rutaParticionReporte, nombreParticionReporte, ruta);
+                cout << " >> Generando reporte de bloques... \n";
             }
             else{
                 cout << " >> Tipo de reporte incorrecto. \n";

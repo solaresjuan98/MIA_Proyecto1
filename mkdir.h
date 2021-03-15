@@ -12,7 +12,8 @@ class mkdir
 {
 
 private:
-    void buscarCarpeta(string nombreParticion, string ruta, string nombre_carpeta);
+    bool buscarCarpeta(string nombreParticion, string ruta, string nombre_carpeta);
+    void crearBloqueCarpeta(string nombreParticion, string ruta, string nombre_carpeta, int inodo_padre);
 
 public:
     mkdir();

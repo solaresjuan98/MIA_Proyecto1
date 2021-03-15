@@ -93,9 +93,11 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     super_b.s_inode_start = super_b.s_block_start + 3*n;
 
     journaling journal;
+    journal.estado = 0;
     journal.fecha_op[0] ='\0';
     journal.path[0] = '\0';
-    journal.tipo = -1;
+    journal.tipo = '-1';
+    strcpy(journal.contenido, " -- ");
     journal.tamanio = 0;
     journal.tipo_op[0] = '\0';
 
@@ -109,15 +111,10 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     cout << " 1. " << inicio_particion + sizeof(superBloque) << "\n";
     fseek(archivo, inicio_particion +sizeof(superBloque), SEEK_SET);
 
-    // Escribir el journaling
-    for(int i = 0; i < numeroJournaling; i++){
-        fseek(archivo,inicio_particion + sizeof(superBloque)+ i, SEEK_SET);
-        fwrite(&journal, sizeof(journal), 1, archivo);
-
-    }
 
     // Escribir el journal de la carpeta
     journaling journalCarpeta;
+    journalCarpeta.estado = 1;
     strcpy(journalCarpeta.tipo_op, "mkfs");
     strcpy(journalCarpeta.fecha_op, fechaActual);
     strcpy(journalCarpeta.path, "/");
@@ -125,12 +122,13 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     strcpy(journalCarpeta.contenido, "-");
     journalCarpeta.tipo = '0';
 
-    long inicio_journaling = inicio_particion + sizeof(superBloque);
-    fseek(archivo, inicio_journaling, SEEK_SET);
-    fwrite(&journalCarpeta, sizeof(journaling), 1, archivo);
+    int inicio_journaling = inicio_particion + sizeof(superBloque);
+    //fseek(archivo, inicio_journaling, SEEK_SET);
+    //fwrite(&journalCarpeta, sizeof(journaling), 1, archivo);
 
     // Escribir el journal del archivo
     journaling journalArchivo;
+    journalArchivo.estado = 1;
     strcpy(journalArchivo.tipo_op, "mkfs");
     strcpy(journalArchivo.fecha_op, fechaActual);
     strcpy(journalArchivo.path, "/users.txt");
@@ -138,8 +136,24 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     strcpy(journalArchivo.contenido, "1,G,root\n1,U,root,root,123\n");
     journalArchivo.tipo = '1';
 
-    fseek(archivo, inicio_journaling + sizeof(journaling), SEEK_SET);
-    fwrite(&journalArchivo, sizeof(journaling), 1, archivo);
+    //fseek(archivo, inicio_journaling + sizeof(journaling), SEEK_SET);
+    //fwrite(&journalArchivo, sizeof(journaling), 1, archivo);
+
+
+    // Escribir el journaling
+    for(int i = 0; i < numeroJournaling; i++){
+        //fseek(archivo,inicio_journaling + i*sizeof(journaling) , SEEK_SET);
+        if(i == 0){
+            fseek(archivo,inicio_journaling, SEEK_SET);
+            fwrite(&journalCarpeta, sizeof(journaling), 1, archivo);
+        } else if (i == 1){
+            fseek(archivo,inicio_journaling + sizeof(journaling) , SEEK_SET);
+            fwrite(&journalArchivo, sizeof(journaling), 1, archivo);
+        }else if (i > 1){
+            fseek(archivo,inicio_journaling + i*sizeof(journaling) , SEEK_SET);
+            fwrite(&journal, sizeof(journaling), 1, archivo);
+        }
+    }
 
     // posicionarme en el lugar donde quiero escribir el bitmap de inodos
     cout << " 2. " <<inicio_particion + sizeof(superBloque)+numeroJournaling*(sizeof(journaling)) << "\n";
@@ -164,10 +178,11 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     }
 
     bloques[0] = '1';
-    bloques[1] = '2';
+    bloques[1] = '1';
 
     cout << " 3. " << inicio_particion + sizeof(superBloque)+numeroJournaling*sizeof(journaling)+bitmapInodos*sizeof(char) << "\n";
     fseek(archivo, inicio_particion + sizeof(superBloque)+numeroJournaling*sizeof(journaling)+bitmapInodos*sizeof(char), SEEK_SET);
+    //fseek(archivo, super_b.s_bm_block_start, SEEK_SET);
     fwrite(&bloques, sizeof(bloques), 1, archivo);
 
     /*
@@ -195,7 +210,7 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     fseek(archivo, inicio_particion, SEEK_SET);
     fread(&sb_aux, sizeof(superBloque), 1, archivo);
 
-    // TABLA DE INODOS
+    // TABLA DE INODOS RAIZ
     tablaInodo tInodo;
     tInodo.i_uid = 1;
     tInodo.i_gid = 1;
@@ -212,27 +227,6 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     tInodo.i_type = '0';
     tInodo.i_perm = 664; // Guarda los permisos del archivo / carpeta
     tInodo.i_block[0] = 0;
-    /*
-    // agregando los inodos a
-    for(int i = 0; i < numeroInodos; i++){
-        arregloInodos[i] = tInodo;
-    }
-    */
-
-    // posicionarme donde quiero empezar a escribir mis inodos
-    cout << " 4. " << inicio_particion+ sizeof(superBloque)+numeroJournaling*(sizeof(journaling))+bitmapInodos*sizeof(char) + bitmapBloques* sizeof(char) << "\n";
-    fseek(archivo, sizeof(superBloque)+numeroJournaling*(sizeof(journaling))+bitmapInodos*sizeof(char)+ sizeof(char), SEEK_SET);
-
-    // Escribir inodos
-    for(int i = 0; i < numeroInodos; i++){
-        //cout << sizeof(superBloque)+numeroJournaling*(sizeof(journaling))+bitmapInodos*sizeof(char)+ bitmapBloques*sizeof(char)+i*sizeof(tInodo) << endl;
-        fseek(archivo, inicio_particion + sizeof(superBloque)+numeroJournaling*(sizeof(journaling))+bitmapInodos*sizeof(char)+ bitmapBloques*sizeof(char)+i*sizeof(tablaInodo), SEEK_SET);
-        fwrite(&tInodo, sizeof(tablaInodo), 1, archivo);
-    }
-
-    // posicioname donde quiero empezar a escribir los bloques
-    cout << " 5. " << inicio_particion + sizeof(superBloque) + numeroJournaling*sizeof(journaling) +bitmapInodos*sizeof(char)+bitmapBloques*sizeof(char) + numeroInodos * sizeof(tablaInodo) << "\n";
-    fseek(archivo, sizeof(superBloque)+bitmapInodos*sizeof(char)+bitmapBloques*sizeof(bitmapBloques) , SEEK_SET);
 
     // ARREGLO DE BLOQUES
 
@@ -244,15 +238,6 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     for(int i = 0; i < 4; i++){
         bl_carpeta.b_content[i] = bl_content;
     }
-    /*
-    // Escribir bloques
-    for(int i = 0; i < numeroBloques; i++){
-        //cout << sizeof(superBloque)+numeroJournaling*(sizeof(journaling))+bitmapInodos*sizeof(char)+ bitmapBloques*sizeof(char)+i*sizeof(tInodo)+i*64 << endl;
-        fseek(archivo, inicio_particion + sizeof(superBloque)+numeroJournaling*(sizeof(journaling))+bitmapInodos*sizeof(char)+ bitmapBloques*sizeof(char)+i*sizeof(tInodo)+i*64, SEEK_SET);
-        fwrite(&bl_carpeta, sizeof(bloque_carpeta), 1, archivo);
-
-    }*/
-
 
     // ESTRUCTURA DE LOS ARCHIVOS QUE VAN EN LA RAIZ
     bloque_carpeta bloque_root;
@@ -274,14 +259,15 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
     strcpy(bloque_root.b_content[3].b_name, dir_raiz.c_str());
 
     fseek(archivo, sb_aux.s_inode_start, SEEK_SET);
-    fwrite(&tInodo, sizeof(tablaInodo), 1, archivo);
-    //super_b.s_free_inodes_count--;
+    fwrite(&tInodo, sizeof(tablaInodo), 1, archivo); // escribiendo inodo raiz
+
     fseek(archivo, sb_aux.s_block_start, SEEK_SET);
     fwrite(&bloque_root, 64,1, archivo);
+
     // posicionarme al inicio de la particion
     fseek(archivo, inicio_particion, SEEK_SET);
     // restar la cantidad de bloques e inodos libres
-    sb_aux.s_free_blocks_count--;
+    //sb_aux.s_free_blocks_count--;
     sb_aux.s_free_inodes_count--;
     fwrite(&sb_aux, sizeof(superBloque), 1, archivo);
 
@@ -302,7 +288,7 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
 
     archivo_usuarios.i_perm = 664;
     archivo_usuarios.i_block[0] = 1;
-    archivo_usuarios.i_type = '1';
+    archivo_usuarios.i_type = '1';// inodo de tipo archivo
 
 
     bloque_archivo bl_archivo;
@@ -310,10 +296,16 @@ void mkfs::formatearEXT3(string rutaDisco, string nombreParticion, string tipoFo
 
     fseek(archivo, sb_aux.s_bm_inode_start+sizeof(tablaInodo), SEEK_SET);
     fwrite(&archivo_usuarios,sizeof(tablaInodo),1, archivo);
-    sb_aux.s_free_inodes_count--;
+
     fseek(archivo, sb_aux.s_block_start + 64, SEEK_SET);
     fwrite(&bl_archivo, 64, 1, archivo);
-    sb_aux.s_free_blocks_count--;
+
+    fseek(archivo, inicio_particion, SEEK_SET);
+    // restar la cantidad de bloques e inodos libres
+    sb_aux.s_free_inodes_count--;
+    sb_aux.s_free_blocks_count--; // resto el bloque de carpeta
+    sb_aux.s_free_blocks_count--; // resto el bloque de archivos
+    fwrite(&sb_aux, sizeof(superBloque), 1, archivo);
 
     /* codigo anterior
     // escribir el archivo users.txt en la raiz
